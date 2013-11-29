@@ -1,16 +1,926 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
-  <link href="http://tangren03.github.io/atom.xml" rel="self"/>
-  <link href="http://tangren03.github.io/"/>
-  <updated>2013-11-29T10:46:00+08:00</updated>
-  <id>http://tangren03.github.io/</id>
+  <title><![CDATA[Ryan's Zone]]></title>
+  <link href="http://ryantang.me/atom.xml" rel="self"/>
+  <link href="http://ryantang.me/"/>
+  <updated>2013-11-29T11:09:54+08:00</updated>
+  <id>http://ryantang.me/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[唐韧_Ryan]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[苹果开发者账号那些事儿（三）]]></title>
+    <link href="http://ryantang.me/blog/2013/11/28/apple-account-3/"/>
+    <updated>2013-11-28T19:52:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/11/28/apple-account-3</id>
+    <content type="html"><![CDATA[<blockquote><p>这是一篇教程<br>
+这里有手把手教学<br></p></blockquote>
+
+<p>这是苹果开发者账号相关系列第三篇，本篇主要介绍Provisioning Profile，如果你还没有看过前两篇，可以先看看：</p>
+
+<ul>
+<li><a href="http://ryantang.me/blog/2013/08/28/apple-account-1/" target="_blank">苹果开发者账号那些事儿（一）</a></li>
+<li><a href="http://ryantang.me/blog/2013/09/03/apple-account-2/" target="_blank">苹果开发者账号那些事儿（二）</a></li>
+</ul>
+
+
+<!--More-->
+
+
+<h2>什么是Provisioning Profile？</h2>
+
+<p>从字面翻译，Provisioning Profile就是配置文件的意思，它在开发者账号体系中所扮演的角色也是配置和验证的作用。如果你有开发者账号，可以打开你的开发者控制台，在首页可以看到如下界面。如果你没有开发者账号，那就看图片意会吧！：）</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/0.png" alt="0" /></p>
+
+<p>现在开发者控制台相比之前在界面布局上已经进行了改版，更加直观，也更加美观。红框标记的地方我们可以看到Provisioning Profile文件夹图标，点击进去，就来到了所有证书和配置文件的管理控制中心。我们可以在最下方看到标记为Provisioning Profiles的区域，这里就是我们管理iOS或者Mac应用程序Provisioning Profile的地方啦。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/1.png" alt="1" /></p>
+
+<p>点击右上方的“+”号会提示我们新建什么类型的Provisioning Profile，可以看到，Provisioning Profile分为两大类，一类是Development，一类是Distribution，前者是创建我们在开发环境下的配置文件，不能进行发布，后者可以创建发布到App Store或者以Ad Hoc发布的配置文件。创建Development下得Provisioning Profile后，我们可以在真机上对App进行开发和调试。在Distribution下的Provisioning Profile，我们可以选择创建发布到应用商店的配置文件，另外就是Ad Hoc方式下的配置文件。Ad Hoc是指在不发布到App Store的情况下，可以将发布状态下的App装在指定的一些真机上进行测试，但是这里指定的设备数量是有限的（99台）。</p>
+
+<p>到这里，我们已经知道Provisioning Profile有两类，一类是开发状态下的，一类是发布状态下得。那Provisioning Profile里面究竟有些什么东西呢，我们接着往下看。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/2.png" alt="1" /></p>
+
+<p>我们选择创建一个Development状态下的Provisioning Profile，首先需要我们填写App ID，我们知道，每一个应用都有唯一的App ID，这个ID就好比我们应用程序的身份证，通过下图可以看到关于App ID的构成。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/3.png" alt="1" /></p>
+
+<p>现在，App ID由一个Apple产生的Team ID作为前缀，后面跟的其实就是我们在Xcode中设置的Bundle ID，其实就相当于包名（Android里面也是利用应用包名来唯一标记App）。通过这种方式，我们就将一个指定的App与一个Provisioning Profile进行绑定了，也就是说这个Provisioning Profile只能作为这一个App的开发配置文件。那我们每一次开发新应用的时候就得重新来新建Provisioning Profile，这显得非常麻烦，好在Apple已经为我们想到了这一点，我们可以通过通配符来标记App ID，这样我们可以只创建一个开发配置文件就可以来测试所有我们开发的App了，下图是使用通配符标记的App ID格式。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/4.png" alt="1" /></p>
+
+<p>关于App ID的创建，可以到证书配置管理控制台Identifiers模块下App IDs栏目下进行创建，这里就不再详细赘述了。App ID选好了，我们继续下面的步骤。这时，提示会要求我们选择Certificates。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/5.png" alt="1" /></p>
+
+<p>那什么是Certificates呢？你可以在<a href="http://ryantang.me/blog/2013/09/03/apple-account-2/" target="_blank">苹果开发者账号那些事儿（二）</a>中得到详细的答案。如果你现在不想看，那简单的说，Certificates就是一个来验证你是合法开发者的证书文件，这里通常是对你进行开发的Mac进行授权。我们可以选择一个经过验证的Certificate来配置这个Provisioning Profile。选择完毕后我们就可以进行下一步了。这时，提示会要求我们选择Device。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/6.png" alt="1" /></p>
+
+<p>选择Device也就是说我们希望这个Provisioning Profile对哪些设备进行授权，只有选中的设备，才能使用这个配置文件来进行真机调试，否则，装了也没有，因为别人压根没对你授权。设备选择完毕后，我们继续下面的步骤，这时，提示就会要求我们输入这个Provisioning Profile的名字了。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/7.png" alt="1" /></p>
+
+<p>在统计信息中我们可以看到，Provisioning Profile的类型为Development类型，选择了一个指定的App ID，指定了一个Certificates，另外指定了一台设备，这样，我们的Provisioning Profile就配置完成了。这时到配置文件列表我们可以看到刚刚生成的这个配置文件，显示为Active已激活，另外要说的是，每一个Provisioning Profile都有一个有效期，通常是一年，过期后就得重新验证一下，不需要重新生成，只需手动验证一下即可，点击查看详情。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/8.png" alt="1" /></p>
+
+<p>这里，我们可以看到比之前的详情更丰富的信息，其中Enabled Service中例举的信息是在配置App ID的时候选择的，作用是为这个配置文件申请诸如消息推送和应用内购买的权限。另外，Expires指明了这个配置文件的过期时间，最后Status就显示状态为Activie，如果不可用的话会显示Invalid。如果发现配置文件过期，就像之前说的，手动验证一下即可。最后，可以将Provisioning Profile下载到本地，下载完成后，我们就可以看到一个扩展名为.mobileprovision的文件，打开Xcode，连上设配，双击这个配置文件，这个配置文件就被安装到我们的测试设备中了，通过Xcode的Device窗口可以查看这台测试设备所有的Provisioning Profile。到这里，我们已经知道了Provisioning Profile是用来做验证授权的，也知道了它其实是装在我们的测试设备上的，当然，你也知道了如何去创建它。那么，接下来我们就来看看Provisioning Profile的内部结构图。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/9.png" alt="1" /></p>
+
+<p>这里，拿Ad Hoc方式的配置文件来举例，按照之前说的，Ad Hoc能够在不发布到App Store的前提下允许指定的设备安装App，那这个配置文件中肯定就包含Devices信息，同时也包含App ID，另外还包含一个发布状态下的Certificate。到这里，或许你会有疑问，正式发布状态下的配置文件应该是怎样的，首先要说的是，正式发布App时，Provisioning Profile是不需要提前安装到用户手机上的，如果这样的话，那估计Apple就傻了。在正式发布到Apple Store时，发布状态的Provisioning Profile已经以签名的方式和App进行了绑定，有一点不同的是，发布状态的Provisioning Profile不需要指定Device，因为它不知道将被哪些设备使用，下图是发布状态下的配置文件结构。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/10.png" alt="1" /></p>
+
+<p>最后，如果是Company类型的开发者账号，可以生成一个供团队使用的Team Provisioning Profile，通过这个配置文件，团队内成员可以共用一个配置文件来进行开发调试，当然，App ID得指定成通配类型的。</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/11.png" alt="1" /></p>
+
+<p>这里需要注意的是，每一个苹果开发者账号只有一个Agent权限，就就是说，最终真正有权限发布到App Store的人就是这个开发者账号的拥有者，他的身份类型就是Agent，另外还有两种身份类型，一种是Admin，一种是Member，关于更多团队账号角色的信息，你可以参考<a href="https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/ManagingYourTeam/ManagingYourTeam.html#//apple_ref/doc/uid/TP40012582-CH16-SW1" target="_blank">这里</a>。</p>
+
+<p>内容就到这里了，要想理解的更透彻，还是实际去操作和实验来的快。如果你是Xcode5了，进到Preferences里面，选择Accounts选项卡，将你的Apple ID添加到Xcode里面，然后到工程General和Build Settings里面去折腾吧。后面的事，你就自己琢磨吧！：）</p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/13.png" alt="1" /></p>
+
+<p><img src="http://ryantang.me/images/2013/11/apple_account_3/14.png" alt="1" /></p>
+
+<blockquote><p>本期内容就到这里了，有不足之处，欢迎指正，如果你希望经常收到一些有趣的内容，欢迎微信扫描网页右边的二维码关注我的微信公众账号“Android及iOS开发汇总”。</p></blockquote>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/11/28/apple-account-3/'>http://ryantang.me/blog/2013/11/28/apple-account-3/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ryan看新闻——第四期]]></title>
+    <link href="http://ryantang.me/blog/2013/09/28/news-4/"/>
+    <updated>2013-09-28T12:48:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/09/28/news-4</id>
+    <content type="html"><![CDATA[<h3>1.腾讯投资搜狗占股近40%</h3>
+
+<p><img src="http://ryantang.me/images/2013/09/news/4.png" alt="1" /></p>
+
+<p>前段时间，腾讯宣布以4.48亿美元战略入股搜狗，将旗下搜索业务腾讯搜搜和QQ输入法并入搜狗现有业务中，腾讯持有搜狗36.5%的股份。与此同时，搜狗继续作为搜狐的子公司独立运营。张朝阳担任董事长，王小川作为CEO，腾讯总裁刘炽平和COO任宇昕出任搜狗董事。</p>
+
+<!--More-->
+
+
+<p>我的观点：腾讯入股搜狗将给搜狗带来更多的流量和用户，同时，腾讯的搜搜和QQ输入法业务也可以大大的和搜狗的搜索和输入法业务整合。对于腾讯来说，搜搜和QQ输入法本来也是插入市场竞争的一脚，流量和变现能力都很弱。这次和搜狗的合作，有种将弱势转优势的态势。对搜狗来说，此次合作将大大提升搜狗的市场占有率，在PC端和移动端都将有比较大幅的增长，至此，百度、腾讯、360在中国互联网市场形成了三足鼎立的局面。对于我们普通用户来说，这次的合作将带来更新的产品和使用体验感受，我们也可以静观其变。</p>
+
+<h3>2.苹果发布iPhone 5s和5c</h3>
+
+<p>苹果在美国时间9月10日召开新品发布会，发布了iPhone 5s和iPhone5c，5s有三种颜色可供选择，同时加入A6处理器和M7协同处理器，指纹识别技术TouchID功能的加入也是本次5s上一次亮眼的表现。5c基本延续了iPhone 5的配置，不同的是后盖改成了多彩的塑料外壳，总共5种颜色。本次中国市场成为全球首发国家之一，可见苹果对中国市场的重视逐渐加强。</p>
+
+<p><img src="http://ryantang.me/images/2013/09/news/5.png" alt="1" /></p>
+
+<p>我的观点：很多人都说苹果近年创新力降低了，出的新品没有新意。其实反过来看，又是不是市场对苹果公司有过高的期望而导致了有这种看法？任何事物都有巅峰和走下神坛的时刻，毋庸置疑的是，苹果的iPhone确实改变了世界，就好比当初福特造车前，人们希望得到的是一匹更快的马。每年都带来当初iPhone面世时的惊艳，我想这对现有的科技和社会发展进度来说是非常有难度的。iPhone的出现也是在诺基亚统领手机业十年后，而如今，iPhone仍然是手机业界的标杆。本次的iPhone 5s在设计上几乎和5没什么区别，可能苹果也延续了两年大改款的趋势。出人意料的是，这次5s金色款出现供不应求的情况，大家也给它起了个洋气的名字“土豪金”。</p>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/09/28/news-4/'>http://ryantang.me/blog/2013/09/28/news-4/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ryan看新闻——第三期]]></title>
+    <link href="http://ryantang.me/blog/2013/09/05/news-3/"/>
+    <updated>2013-09-05T23:37:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/09/05/news-3</id>
+    <content type="html"><![CDATA[<h3>1.微软以近72亿美元收购诺基亚设备服务部门及相关专利</h3>
+
+<p><img src="http://ryantang.me/images/2013/09/news/2.png" alt="1" /></p>
+
+<p>收购在2014年第一季度将会全部完成，微软向诺基亚支付37.9亿欧元，还有16.5亿欧元用来购买专利资产，一共是54.4亿欧元，折合71.7亿美元。此外还有32000名诺基亚员工将会逐渐过渡到微软，诺基亚多名高管将会加入成为微软高管。</p>
+
+<!--More-->
+
+
+<p>我的观点：2013年9月3日，注定是要载入史册的一天，昔日的手机霸主诺基亚还是没能挺下来，百年老店被收购，不得不感叹变化的无常。诺基亚统治手机时代达14年之久，直到第一代iphone的出现，彻底改变了传统手机大牌企业的命运。不久之前，摩托罗拉移动被Google以125亿美元收购，想当初，Moto和Nokia是多么的如日中天，至今沦的被收购的境地。另一方面，苹果成为了如今智能手机的标杆和霸主，三星、HTC、小米这些新进势力依托Android平台势头猛进，一路高歌，以Apple和Google为生态系统的两大阵营展开了激烈的角逐。近日，小米估值超过100亿，一家成立不到四年的公司成长如此之神速，确实是一个奇迹。9月5日，小米发布小米3、小米电视，宣布前Google副总裁、Android产品工程副总裁加入小米，无疑预示着小米对国际市场的觊觎。昔日诺基亚已成往事，对微软来说，逐渐走上了苹果化的道路，软硬件一体化，不断完善的生态系统，日后微软诺基亚会走向何方，我们拭目以待。</p>
+
+<h3>2.Google宣布下一代Android操作系统为Android 4.4 KitKat</h3>
+
+<p><img src="http://ryantang.me/images/2013/09/news/1.png" alt="1" /></p>
+
+<p>KitKat是雀巢旗下一款巧克力棒，雀巢会在全球 19 个国家出售 5000 万个印有 Android 机器人标志的 KitKat，消费者还有机会赢得 Google 的平板电脑 Nexus 7 以及 Google Play 的礼品卡。为了卖关子，双方在保密工作方面也是下足了工夫。印有 Android 机器人的全新包装在 2 个月前开始生产，而在 Google 内部一直是以 Key Lime Pie 为代号，Google 的员工和其它合作伙伴都被蒙在鼓里。</p>
+
+<p>我的观点：之前传了半天的Android 5.0并没有如期而至，反而等来的是Android 4.4 Kitkat，秉承Android对系统命名一贯以甜点命名的方式，这回这款雀巢巧克力棒味道会怎样呢？值得注意的一点是，相比以前，现在Android的碎片化范围在逐渐缩小，这对厂商、开发者都是一个比较好的消息，Android差异化在4.0以后就已经成缩小态势，Google给OEM厂商留了足够的时间去更新系统，放缓了新版本Android系统的更新速度，这几项都是促使碎片化减小的直接原因。如今，Android系统已经在智能手机、平板、可穿戴设备、车载系统中得到了广泛的应用，相信未来Android还会以其开源的优势运用到更多的实际生产领域。</p>
+
+<h3>3.魅族、三星、小米齐发新机</h3>
+
+<p><img src="http://ryantang.me/images/2013/09/news/3.png" alt="1" /></p>
+
+<p>九月，魅族发布MX3、三星发布Note3、智能手机Galaxy Gear、小米发布MI 3和小米电视。</p>
+
+<p>我的观点：9月新机齐发，智能手机、智能手表、智能电视。一切都在不断更新着。可以看到的是，如今已不是智能手机一家独大的天下了，智能电视、手表、手环，各种可穿戴设备已经开始盛行，可以预知到的是，接下来两年，将是各种智能设备层出不穷的时候，接着我想应该是智能家电、智能汽车、智能房屋，一切事物将被植入芯片和可编程，难道这就是物联网时代的开始吗？你觉得呢？</p>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/09/05/news-3/'>http://ryantang.me/blog/2013/09/05/news-3/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[苹果开发者账号那些事儿（二）]]></title>
+    <link href="http://ryantang.me/blog/2013/09/03/apple-account-2/"/>
+    <updated>2013-09-03T21:24:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/09/03/apple-account-2</id>
+    <content type="html"><![CDATA[<blockquote><p>这是一篇教程<br>
+这里有手把手教学<br></p></blockquote>
+
+<h2>一、关于证书</h2>
+
+<p>苹果使用密文签名技术来验证App的合法性，不管是iOS应用还是Mac应用都需要相应的签名证书来作为测试或发布App用。这里主要谈谈iOS的证书，当然，Mac的证书也基本类似。</p>
+
+<p>在开发iOS应用的时候，我们需要签名证书（<code>开发证书</code>）来验证，并允许我们在真机上对App进行测试。另外，在发布App到App store的时候，我们也需要证书(<code>发布证书</code>)来做验证。那么什么是签名证书，如何获取签名证书，下面听我慢慢道来。</p>
+
+<!--More-->
+
+
+<p>首先，证书（<code>Certificate</code>）是用来证明某一件事是否成立的，好比拿到的获奖证书，是证明参加比赛并获奖的凭证。类似，在iOS开发中，用证书来证明你是否具有某些权限或者能力来做某事。代码签名验证允许我们的操作系统来判断是谁对App进行了签名，在安装了Xcode后，Xcode会在项目编译期间使用你的代码签名验证，这个验证由一个由Apple认证过的公钥-私钥对组成，私钥存储在你的钥匙串中（Mac本地，在系统实用工具中），公钥包含在证书（Certificates）中，证书在本地钥匙串和开发者账号中都有存储，这种公钥-私钥验证授权的方式在很多地方都有使用到，比如Git中的SSH协议也是通过这种方式来确认访问权限。另外，还有一个我们可以叫做媒介证书的证书来确保我们的证书（Certificates）是经过授权而发布的。如下图所示：</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/1.png" alt="1" /></p>
+
+<p>当安装好Xcode时，媒介证书（Intermediate Certificate）就已经安装到我们的钥匙串中去了。通过在开发者账号（Developer Account）和本地（Mac）都经过验证的证书（Certificate）我们就可以利用合法的证书进行App的测试和发布了。</p>
+
+<h2>二、请求证书</h2>
+
+<p>在为App签名前，我们需要向Apple请求签名证书，前提是你已经注册了开发者计划并付费。</p>
+
+<p>1、打开Xcode并进入右上角Organizer窗口，选中顶部第一个名为Devices的Tab，如下图：</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/2.png" alt="2" /></p>
+
+<p>2、点击菜单栏Editor并选择Refresh from Developer Portal</p>
+
+<p>3、输入开发者账号用户名和密码并点击“Log in”，如下图：</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/3.png" alt="3" /></p>
+
+<p>4、完成后点击“Submit Request”按钮，此时Xcode会向开发者后台请求相应的证书，证书包括开发证书（Development）和发布证书（Distribution）。窗口如下图所示：</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/4.png" alt="4" /></p>
+
+<p>5、请求完毕后，Xcode会询问是否需要导出开发者证书，选择“Export”导出。前面的介绍中我们提到过，私钥（Private key）是存储在本地的，证书（Certificate）随着公钥（Public key）存储在开发者账号后台，公钥=私钥对完成对一个开发者和一台开发Mac设备的授权，所以，当我们创建证书时就需要马上备份我们的证书，当切换Mac进行作业时，我们只需要导入我们的私钥证书即可（公钥证书在本地和开发者中心都存储有）。</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/5.png" alt="5" /></p>
+
+<p>6、导出过程中会要求你对导出的证书设置密码，下次导入此证书时需要输入该密码，所以需要记住此处设置的密码。导出的证书扩展名为.developerprofile，当下次切换Mac进行开发时，，导入该证书即可。</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/6.png" alt="6" /></p>
+
+<p>导入.developerprofile证书：</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/7.png" alt="7" /></p>
+
+<h2>三、验证证书</h2>
+
+<p>1、在Xcode Organizer中左侧TEAMS选项卡中可以看到两个证书显示其中，一个是开发证书（Development），一个是发布证书（Distribution），如果开发者证书验证授权成功，则在证书上的小人头像会显示绿色小钩。</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/8.png" alt="8" /></p>
+
+<p>2、当请求了开发者证书后，会自动在钥匙串中（系统实用工具-钥匙串访问）显示开发证书和发布证书。当选中一个证书时，顶部的说明信息包括了证书发行商和授权信息，同样如果看到绿色打钩说明证书已经安装成功。</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/9.png" alt="9" /></p>
+
+<p>3、在开发者后台查看开发证书，登陆Developer后台以后进入Certificates选项卡，分别在Development和Distribution选项卡中查看开发证书和发布证书。此时，证书的信息应该和在Xcode中一致。</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/10.png" alt="10" /></p>
+
+<h2>四、回顾总结</h2>
+
+<p>在上面的讨论中，我们介绍了签名证书以及如何请求及验证证书。在iOS开发中，总的来说主要包括两个证书，一个是开发证书（Development certificates）用来验证哪些设备能用来测试App，在开发测试阶段使用这个证书。另一个是发布证书（Distribution certificates），用来验证是否能向App store提交App审核和发布。如果是公司团队账号，发布证书能在具有发布权限的团队成员间共享。以下是官方对证书类型和名字的一个列表统计，比较详细的例举了证书类型、名字以及简要描述。</p>
+
+<p><img src="http://ryantang.me/images/2013/09/apple_account_2/11.png" alt="11" /></p>
+
+<blockquote><p>后记：本次关于苹果开发者账号证书相关的介绍就到此结束了，不足之处望大家指正和补充。下篇将主要介绍Provisioning Profile的二三事。欢迎继续关注。</p></blockquote>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/09/03/apple-account-2/'>http://ryantang.me/blog/2013/09/03/apple-account-2/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ryan看新闻——第二期]]></title>
+    <link href="http://ryantang.me/blog/2013/08/31/news-2/"/>
+    <updated>2013-08-31T21:15:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/31/news-2</id>
+    <content type="html"><![CDATA[<h3>1.ZEALER公开天使投资方为雷军，准备开始A轮</h3>
+
+<p><img src="http://ryantang.me/images/2013/08/news/4.png" alt="zealer" /></p>
+
+<p><a href = "http://zealer.com" target="_blank">ZEALER.COM</a>是一个独立科技测评媒体，主要从事手机等数码产品的测评工作，其评测视频以质量高、观点独特而闻名。创始人王自如确认ZEALER去年已接受雷军200万天使投资，已准备开始A轮融资。</p>
+
+<p>我的观点：看王自如（新浪微博@王自如ZEALER）的视频快三年了，他的测评风格和别的测评视频在风格和内容上形成鲜明对比，测评惯用专业术语、评点到位、语言犀利，不管你之前看过同一款产品的多少测评，看看自如的总会有一种新鲜感，从最初看自如一个人测评，到后来组件团队成立ZEALER，看着ZEALER一直进步，希望他们能成为中国科技测评届的标杆。</p>
+
+<!--More-->
+
+
+<h3>2.Google Android产品副总裁加盟小米</h3>
+
+<p><img src="http://ryantang.me/images/2013/08/news/5.png" alt="zealer" /></p>
+
+<p>8月29日，Google Android产品管理副总裁Hugo Barra离开Google加入小米公司，负责小米国际化产品业务。Hugo在历次Google I/O大会以及Nexus系列发布会上都有现身，曾和Android创始人安迪共事多年，是Android团队核心成员。本次加入小米他也在Google+上发表声明，希望能帮助小米在国际业务拓展上更上一个台阶，另外也希望能将Android生态系统向前推进。</p>
+
+<p>我的观点：Hugo加入小米对小米来说是一次成功的营销事件，加之小米马上要举办新产品发布会，并发表声明称Hugo也将参加本次发布会。在Android系统上独树一帜的小米能引入这位在Android亲爹旗下打拼过的人物，不光是小米本身，那些喜欢小米的消费者也希望能看到小米能更向前一步。这两年，小米的发展势头迅猛，其产品定位和营销手段是其成功的基础，当然，产品本身和对用户的照顾，也是其取得成功的前提，小米打造了一种米粉社区文化。雷军心里肯定想过做中国的乔布斯。</p>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/08/31/news-2/'>http://ryantang.me/blog/2013/08/31/news-2/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ryan看新闻——第一期]]></title>
+    <link href="http://ryantang.me/blog/2013/08/29/news-1/"/>
+    <updated>2013-08-29T21:39:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/29/news-1</id>
+    <content type="html"><![CDATA[<p>从今天起我准备在微信公众账号上推出一个新内容板块&lt;Ryan看新闻>，由于个人对互联网新鲜事比较感兴趣，平时会阅读一些国内外互联网相关新闻网站和博客，今后我会将自己看到的一些认为有价值的行业新闻或动态通过微信的方式推送给大家(扫描右侧底部二维码关注微信公众账号)。类容主要包括互联网热点新闻、最新产品、行业数据报告等，同时，我会在选取的每一个新闻后面加上自己的观点评论，也欢迎大家通过微信回复或博客评论和我交流。另外，每一期的内容我也会记录到博客上。</p>
+
+<!--More-->
+
+
+<h3>1、易信上线3天用户数突破500万</h3>
+
+<p><img src="http://ryantang.me/images/2013/08/news/1.jpg" alt="yixin" /></p>
+
+<p>中国电信和网易推出了移动端聊天软件“易信”，功能与微信类似，主要特点是能给没有安装易信的用户发送短消息和语音留言，如果对方没有安装易信，语音留言会以电话的形式送达，其他功能上基本和微信类似。上线24小时后，用户就突破了100万，而3天后易信官方微博就宣布用户突破了500万，相比起来，微信用户突破100万用了200天。</p>
+
+<p>我的看法：易信用户增长速度快无疑借助了微信的势头，加上不是什么野战军推出的，大家抱着猎奇和对比的心理去下载并安装。结果真的是否会用，我觉得未必。我周围就有很多朋友只是单纯的下载、安装，然后试用了一下，最后该干嘛还是干嘛，回到了微信。毫无疑问，微信有先入为主的优势，加上发展到5.0的微信已经比较完善了，5.0后推出的游戏平台中天天爱消除和天天连萌更是火爆。相比之下，易信显得更小清新，功能简单，易用性强。如果看后期发展，易信会走微信的老路还是另谋出路，静观其变。</p>
+
+<h3>2.Apple正式推出iWork for iCloud beta</h3>
+
+<p><img src="http://ryantang.me/images/2013/08/news/2.jpg" alt="yixin" /></p>
+
+<p>苹果正式上线了iWork for iCloud beta版，iWork for iCloud是苹果在今年WWDC上推出的套件服务，让用户通过浏览器就可使用苹果的三款办公软件Keynote、Pages和Numbers。之前只针对开发者和部分用户开放，现在，所有用户通过自己的Apple ID即可登录使用，并且支持icloud同步到自己的设备。目前支持三款浏览器，分别是Safari 6.0.3、Chrome 27.0.1、IE 9.0.8。缺陷是目前内容只支持英文，试用可以访问可以访问<a href="https://www.icloud.com">iCloud</a></p>
+
+<p>我的看法：Google也推出过Google Doc，可以看到今后办公云端化和软件使用云化是一个趋势。当网络带宽的不断提升，云软件的使用会越来越多，今后我们的PC上可能只需要安装一个浏览器就可以解决很多事情。</p>
+
+<h3>3、百度推出“轻应用”解决方案</h3>
+
+<p><img src="http://ryantang.me/images/2013/08/news/3.jpg" alt="yixin" /></p>
+
+<p>百度在百度世界2013大会上推出了“轻应用”解决方案，实现即搜即用的的功能，用户无需下载App，通过百度搜索响应的应用即可立马使用App提供的功能。在百度开发者中心开放了轻应用开发平台App Builder，需要身份验证才能获取开发资格，感兴趣的可以登陆百度开发者中心查看详情。</p>
+
+<p>我的看法：轻应用在技术上和WebApp没什么本质区别，在搜索方式上，如果搜索旅游，那出现的旅游类App哪个排在前面呢，这里肯定又会出现竞价排名。轻应用的好处是降低了开发商的开发和升级成本，另外，依靠百度搜索，在应用分发量上会显著提高。换一个角度，百度这么做就有点App store的感觉了，而苹果已经明确声明过禁止类App Store的应用上架，百度会不会步360的后尘呢？谁也不知道。不过，轻应用在Android平台上似乎更易成功。</p>
+
+<p>以上就是本期的三条新闻，看过后你的感受是怎样，对这样的方式有何好的意见和建议，欢迎回复和我交流！</p>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/08/29/news-1/'>http://ryantang.me/blog/2013/08/29/news-1/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[苹果开发者账号那些事儿（一）]]></title>
+    <link href="http://ryantang.me/blog/2013/08/28/apple-account-1/"/>
+    <updated>2013-08-28T22:55:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/28/apple-account-1</id>
+    <content type="html"><![CDATA[<blockquote><p>这不是一篇教程<br>
+这里没有手把手教学<br></p></blockquote>
+
+<p>正如前言所述，如果你是找一篇如何申请苹果开发者账号的HOTO教程，那么不耽误你的宝贵时间了，马上关闭本页面。如果你是想看我扯一下关于苹果开发者账号那些事儿，那你可以放松下接着往下看，从这一篇开始接下来几篇文章，我将完整的介绍苹果开发者账号体系！</p>
+
+<!--More-->
+
+
+<h2>账号类型</h2>
+
+<p>成为苹果开发者就必须注册苹果开发者账号并付费，拥有了开发者账号后可以开发相应计划的App并上线App store提供免费或付费下载，或是开发给企业内部使用。苹果为注册了发者账号的开发者提供了如下几类计划：</p>
+
+<ul>
+<li>iOS开发计划</li>
+</ul>
+
+
+<p><img src="http://ryantang.me/images/2013/08/apple_account_1/1.png" alt="ios" /></p>
+
+<p>iOS开发者计划主要为iOS设备进行App开发，比如iPhone和iPad等，iOS计划也是目前苹果整个开发者计划类型中人数最多的。账号类型分为个人（Individual）、公司（Company）、企业（Enterprise）、高校（University）四种类型，每年资费分别为$99、$99、$299、免费。根据账号类型的不同，申请的条件和所具有的权限也不同。</p>
+
+<p>个人计划只需要填写个人信息并通过苹果审核即可，公司计划需要出示相应的公司信息、营业执照等，企业账号需要出示的信息和公司账号类似，高校计划需要提供高校基本信息，在注册方式上苹果开发者官网有详细的流程。</p>
+
+<p>在权限上，个人账号和公司账号同为$99/年，但是在发布署名上，公司账号可以填写公司或组织信息（比如某某公司、某某工作室），而个人账号只能默认显示注册时填写的个人信息，并且不能修改。另外，公司账号提供团队开发的模式，一个公司类型账号可以管理添加开发者作为Team member协同开发。当然，也可以将个人账号升级为公司账号，前提是得提供相关公司信息并且得邮件联系开发者支持中心或者拨打支持电话。企业账号为$299/年，企业账号和前两者最大的不同在于不能将App发布到App store，但可以将App放到内部服务器上提供给企业内部任意一台设备进行安装，并且不需要特别绑定Device ID。例如企业内部OA系统如果是用iOS设备的话，那就适合这个计划。最后一种是高校计划，苹果为鼓励高校更多的参与到苹果开发者计划中来，特意推出这一项计划，高校计划具有在真机上测试等权限，但不能将App发布到App store。</p>
+
+<ul>
+<li>Mac开发计划</li>
+</ul>
+
+
+<p><img src="http://ryantang.me/images/2013/08/apple_account_1/2.png" alt="ios" /></p>
+
+<p>Mac开发者计划主要是针对在Mac电脑上进行App开发的开发人员，费用是$99每年。账号类型也分为个人和公司两种，两种账号的区别和iOS设备开发者账号类似。</p>
+
+<ul>
+<li>Safari扩展开发计划</li>
+</ul>
+
+
+<p><img src="http://ryantang.me/images/2013/08/apple_account_1/3.png" alt="ios" /></p>
+
+<p>Safari开发者计划主要是在Safari浏览器上进行一些扩展开发，比如自定义Safari的控件或者页面显示方式等，这个计划申请是免费的。同样分为个人和公司两种类型。</p>
+
+<ul>
+<li>MFi计划</li>
+</ul>
+
+
+<p><img src="http://ryantang.me/images/2013/08/apple_account_1/4.png" alt="ios" /></p>
+
+<p>MFi计划主要针对iPod、iPhone以及iPad的一些外设的开发，这个计划也是免费的，通过苹果提供的一些接口和条款进行外设的开发，比如针对iPod和iPhone的外设音响。</p>
+
+<p>以上就是对苹果开发者账号的开发者计划的简要介绍，详细信息可以查看<a href="https://developer.apple.com/programs/">Apple Developer Programs</a>,那里有非常详细的介绍，同时也可以在那里进行注册和开发计划选择。后面几篇文章我将围绕iOS开发计划相关的内容进行解释，主要包括几种证书的介绍、签名、证书迁移等内容，敬请期待！</p>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/08/28/apple-account-1/'>http://ryantang.me/blog/2013/08/28/apple-account-1/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Android模拟神器——Genymotion]]></title>
+    <link href="http://ryantang.me/blog/2013/08/16/genymotion/"/>
+    <updated>2013-08-16T15:35:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/16/genymotion</id>
+    <content type="html"><![CDATA[<blockquote><p>纠结的时光总会过去，<br>
+美好和光明就在前方！</p></blockquote>
+
+<p><img src="http://ryantang.me/images/2013/08/genymotion/logo.png" alt="logo" /></p>
+
+<p>刚开始接触Android开发的同学不免都接触过Android自带的模拟器，启动慢、操作卡、没法用，基本属于摆设状态。这是大家对Android模拟器的普遍印象，时至今日，终于出现了一款神器来改变这一印象，那就是<a href = http://www.genymotion.com/ target = _blank >Genymotion</a>，Genymotion是一个基于虚拟机的Android模拟环境，包括了除电话和短信外大部分Android真机的功能，其流畅性和使用体验完全不亚于真机，是Android开发者、测试人员等非常有力的工具。它支持Window、MacOS、Linux，今天的话题就是Genymotion的特性和在Mac上的安装及使用。</p>
+
+<!--More-->
+
+
+<h2>一、基本特性</h2>
+
+<ul>
+<li>支持OpenGL加速以提供良好的3D表现</li>
+<li>能从Google Play下载和安装应用</li>
+<li>提供电量控制、GPS和加速传感器控制模拟</li>
+<li>和ADB完美结合，能像传统模拟器和真机一样通过命令行控制模拟器</li>
+<li>提供丰富的自定义属性，包括屏幕分辨率、内存大小和CPU控制等</li>
+<li>能在Eclipse上进行应用开发和调试</li>
+<li>支持多模拟器运行</li>
+</ul>
+
+
+<h2>二、安装</h2>
+
+<ul>
+<li>1.Genymotion依赖于虚拟机VirtualBox，它是Oracle公司开发的一套虚拟机运行环境，和VMware类似。所以，安装之前我们先需要安装<a href = https://www.virtualbox.org/wiki/Downloads target = _blank >VirtualBox</a>。</li>
+<li>2.安装完VirtualBox后就可以到<a href = https://cloud.genymotion.com/page/launchpad/download/ target = _blank >Genymotion下载</a>页下载安装包了（在此需要先注册Genymotion的使用账号）。下载完成后双击dmg文件并将Genymotion和Genymotion shell拖入Application文件夹中，至此，便完成了Genymotion的下载和安装。</li>
+<li>3.到Application文件夹中找到Genymotion并双击运行，可以看到如下界面，从列表中选择一个准备安装的虚拟机点击Add(这一步需要登陆之前注册的账号)，然后便会下载该模拟器需要的安装文件和配置信息：</li>
+</ul>
+
+
+<p><img src="http://ryantang.me/images/2013/08/genymotion/1.png" alt="1" /></p>
+
+<p>下载完成后点击Next：</p>
+
+<p><img src="http://ryantang.me/images/2013/08/genymotion/3.png" alt="3" /></p>
+
+<ul>
+<li>4.下载完成后就可以看到我们选择的模拟器已经存在于我们的虚拟机列表中了，运行前，先要启动一下VirtualBox然后在点击窗口中的Play图标，后续使用时直接点击Play即可启动Android模拟器了。</li>
+</ul>
+
+
+<p>运行VirtualBox：</p>
+
+<p><img src="http://ryantang.me/images/2013/08/genymotion/7.png" alt="7" /></p>
+
+<p>运行安装好的Android模拟器，点击右边的小显示器图标可以配置模拟器的显示分辨率：</p>
+
+<p><img src="http://ryantang.me/images/2013/08/genymotion/4.png" alt="4" /></p>
+
+<ul>
+<li>5.启动后会要求配置Android SDK的路径，选择并确定SDK的安装目录，然后点击OK，至此，Genymotion的下载和安装就完成了。</li>
+</ul>
+
+
+<p>配置Android SDK路径：</p>
+
+<p><img src="http://ryantang.me/images/2013/08/genymotion/5.png" alt="5" /></p>
+
+<p>Android模拟器运行效果：</p>
+
+<p><img src="http://ryantang.me/images/2013/08/genymotion/6.png" alt="6" /></p>
+
+<h2>支持</h2>
+
+<p>Genymotion支持Eclipse和IntelliJ插件，可以直接通过Eclipse进行项目开发和调试，同时，也可以通过ADB命令行对模拟器进行相应的操作。</p>
+
+<p>Eclipse连接Genymotion模拟器：</p>
+
+<p><img src="http://ryantang.me/images/2013/08/genymotion/2.png" alt="2" /></p>
+
+<p>更多功能请参阅官方<a href="https://cloud.genymotion.com/page/doc/">User Guide</a></p>
+
+<blockquote><p>后记：Genymotion的出现可以说是一场革命，改变了开发者对Android模拟器以往糟糕表现的看法。Genymotion基于VirtualBox虚拟机搭建，所以如果本机配置够高的话，用Genymotion来取代真机进行测试和开发是完全可以的（大部分项目），另外，不足的是Genymotion目前支持的模拟器类型有限，相信后期会不断的新增和优化！</p></blockquote>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/08/16/genymotion/'>http://ryantang.me/blog/2013/08/16/genymotion/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[微信，和你和我！]]></title>
+    <link href="http://ryantang.me/blog/2013/08/10/about-weichat/"/>
+    <updated>2013-08-10T17:05:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/10/about-weichat</id>
+    <content type="html"><![CDATA[<blockquote><p>一个软件！<br>
+一种工具！<br>
+一份消遣！<br>
+一个平台！</p></blockquote>
+
+<p><img src="http://ryantang.me/images/2013/08/about_wechat/1.png" alt="wechat" /></p>
+
+<p>微信是什么？对于这个问题，微信之父张小龙也没有给出答案，他认为，微信对每个人都有他们的理解方式。微信可以是一个手机软件、是一种聊天工具、是一份在无聊时的消遣、是一个充满商机的平台……。每个人，都对它有不同的解释和理解，或许，这样的效果是张小龙所希望的。没错，微信有很多种，它的每一种形态，都和你和我有关！</p>
+
+<!--More-->
+
+
+<p>微信5.0更新有几天了，引起了很多的反响，不管谁对它是一种怎样的理解方式，微信效应在不断的侵蚀着整个移动互联网。一款将近4亿用户的手机应用，正在影响和改变着人们的生活。这里，我不再写说明说去介绍微信5.0的那些新功能或充斥对微信那些细致入微的评测，我只是来谈谈微信和你和我的关系，和一直在改变的这种关系！</p>
+
+<h2>一、那些年我们用过的微信</h2>
+
+<p>很久很久以前，你有没有上课传过小纸条？很久以前，你有没有写过信？不是很久以前，你有没有用着诺基亚通过手机版QQ和小伙伴们重复那些小纸条和信里的内容？没错，这些，都是那些年我们用过的微信。</p>
+
+<p>是什么改变了这一切？是iPhone？是科技进步了？是小纸条和信封略显老土了吗？我觉得都不是，而是人们在寻找一种更直接、更方便、更及时的方式来重复那些年的小纸条和信。乔布斯说过，“Apple存在的目的不是像其他公司一样为了利益而制造产品，而是生产优化人类固有能力的工具”。小纸条和信是表达和传递我们需要交流和沟通这种固有能力的工具，而微信，只是在科技的进步、智能手机的出现、产品技术成型的条件下出现的一种取代纸笔的另一种工具。最初的微信，解决的就是我们需要沟通和交流这种固有能力的工具。</p>
+
+<p>随着小伙伴们都不断长大，去了别的城市、去上大学、去工作、去出国，都开始有了各自的圈子和各自丰富的生活。小伙伴的友谊总是那么深厚，于是开始给各自寄照片、寄明信片，述说着自己的生活和故事。同样，这种原始的需求在传统的工具条件下得不到直接的满足，照片需要冲洗、邮寄需要跑邮局，而这时，“朋友圈”的出现优化了这种固有能力，前提也是那些变化着的东西。</p>
+
+<p>随着时间的推移，小伙伴们开始怀念童年那种天性的释然，放学操场丢沙包、打弹珠、跳皮筋，比比谁赢的多。而今，时间、地域的限制让小伙伴们只能怀念那些曾今的美好。而这次出现的“游戏中心”，把小伙伴们都带回了遗失的那些年。不同的是，这次是下班或不忙的时候，玩玩那个简单又粗糙的“打飞机”游戏，和小伙伴们比比谁的分数高。其实，玩的不是游戏，打的不是飞机，而是怀念曾今那份和小伙伴们打沙包、调皮筋的美好。分数超过谁了，去炫耀一下，看被谁超过了，不甘心一定要追上去，这些都是我们最本真的欲望和需求。</p>
+
+<p><img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-5.png" alt="wechat" />
+<img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-6.png" alt="wechat" /></p>
+
+<h2>二、一切从找朋友开始</h2>
+
+<p>一个人的世界总是无色的、苍白的，是没有快乐的。人类的存在和发展最初也是以群落为基础而慢慢进化。生活中，我们需要家人需要朋友；工作中，我们需要同事和合作伙伴。这些都是我们身边的人，而和这些人建立联系，总需要一个切入点，或者是朋友聚会，或者是工作关系，或者只是路边的一次邂逅。我们需要和别人交流，而交流的对象就是朋友。找朋友，有两种最原始的方式，一种是直接认识，第二种是通过别人介绍认识，而往往来说，第一种方式会让大部分人感觉不自在，人天生都有羞涩感，所以这是一个需求。微信中“附近的人”和“漂流瓶”正好就满足了这个需求，尽管当初的设计不是为了让有些人利用这个功能来做某些别的事。而第二种方式是让人们感觉比较舒服的方式，没有那种羞涩和局促感，可以很自然的去接受。新朋友找到了，为了维持一份长久的联系，需要交换各自的联系方式，而当初的“摇一摇”和这次新增的“按住找朋友”满足了这个需求，相比之下，我个人更喜欢后者。</p>
+
+<p>好了，有了朋友了，我们可以开始无时无刻的聊天，可以在朋友圈分享生活和工作中的点点滴滴，可以比比玩游戏谁的分数高。一切，从找朋友开始！</p>
+
+<p><img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-7.png" alt="wechat" />
+<img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-3.png" alt="wechat" /></p>
+
+<h2>三、来自生活，服务生活</h2>
+
+<p>微信中还有很多功能在我们的生活和工作中都能用到，可能更多的时候大家是把它当做一种聊天和娱乐工具，这和其天生的基因是分不开的，那么它都有哪些来自于生活，又服务于生活的功能呢，我例举本次更新的几个：</p>
+
+<ul>
+<li>收藏夹，这个功能类似记事本，可以记录文字、声音、图片以及位置等，这些功能都不出奇，很多更好的产品已经做的很好了，但这些功能加在微信上就有了其特别的意义，你可以收藏和朋友间温馨的一次交谈，可以收藏可以永久珍藏的一段语音记录，可以收藏照片，可以收藏你去过的地点，可以将公众账号你觉得精彩的内容收藏起来稍后阅读。这些功能都不出奇，但因为他们在微信上，所以有了天然的优势。</li>
+</ul>
+
+
+<p><img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-9.png" alt="wechat" />
+<img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-10.png" alt="wechat" /></p>
+
+<ul>
+<li>街景导航，以前，当我们和朋友越好见面地点时，因为描述不清楚附近的具体位置，导致很多的麻烦和不便。街景地图的出现，即可以解决这以问题，另外还能衍生出很多很多的服务，想象空间很大。试想，发送一个位置给好友赴约，是一个死板的地址更好呢，还是一副生动的街景地图更合适？</li>
+</ul>
+
+
+<p><img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-11.png" alt="wechat" />
+<img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-12.png" alt="wechat" /></p>
+
+<ul>
+<li>扫一扫，新版的扫一扫集成了二维码、条形码、封面、街景、翻译，这些功能需求都来源于生活，同时又服务于生活。二维码和条码就不说了，封面和街景以及翻译功能可谓是丰富了扫一扫这个功能集。扫一扫封面可以查看到书籍或是CD的具体信息，介绍以及购买地点等，用街景扫一扫可以看到周围地点的实景图，另外，翻译功能直接对准文字可以进行及时翻译。这些功能单独拿出来可以说都不出奇，但恰恰因为他们是在微信上。</li>
+</ul>
+
+
+<p><img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-4.png" alt="wechat" />
+<img src="http://ryantang.me/images/2013/08/about_wechat/QQ20130810-2.png" alt="wechat" /></p>
+
+<h2>四、我想要的微信</h2>
+
+<p>我想要的微信是一个设计漂亮、体验卓越的手机软件；我想要的微信是一个让我在生活和工作上与朋友无缝沟通和提高效率的工具；我想要的微信是一个能在我闲暇时光给我带来一份消遣的寄托；我想要的微信是一个能提供丰富信息和咨询的平台。我想要的这些，现在都有了。因为我是个普通用户，我不知道我想要什么。但同时我也是一个App设计和开发者，偶尔会站在产品和技术的角度去思考一下这些我认为已经带给我的东西。</p>
+
+<p>微信，和你和我！我们究竟要的是什么？这个问题每个人都有自己的答案，而微信团队给我们的答案是，“微信，是一个生活方式”！</p>
+
+<blockquote><p>后记：我即将毕业，没有经验，没有阅历，我所说的都是错的！</p></blockquote>
+
+<p><code>Focus on life. Focus on work. Don't let yourself regret forever! ——Ryan</code></p>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/08/10/about-weichat/'>http://ryantang.me/blog/2013/08/10/about-weichat/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Android推送服务——百度云推送]]></title>
+    <link href="http://ryantang.me/blog/2013/08/06/baidu-push-service/"/>
+    <updated>2013-08-06T15:59:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/06/baidu-push-service</id>
+    <content type="html"><![CDATA[<p>本文已授权InfoQ进行转载：<a href="http://www.infoq.com/cn/articles/baidu-android-cloud-push">http://www.infoq.com/cn/articles/baidu-android-cloud-push</a></p>
+
+<blockquote><p>身在天朝，置身墙内<br>
+或是自给，或是出走</p></blockquote>
+
+<h2>一、推送服务简介</h2>
+
+<p>消息推送，顾名思义，是由一方主动发起，而另一方与发起方以某一种方式建立连接并接收消息。在Android开发中，这里的发起方我们把它叫做<code>推送服务器（Push Server）</code>，接收方叫做<code>客户端（Client）</code>。相比通过轮询来获取新消息或通知，推送无论是在对客户端的资源消耗还是设备耗电量来说都比轮询要好，所以，目前绝大多数需要及时消息推送的App都采用Push的方式来进行消息通知。</p>
+
+<p><img src="http://ryantang.me/images/2013/08/baidu_push_service/1.jpg" alt="push" /></p>
+
+<!--more-->
+
+
+<p>身在天朝，置身墙内！Android生态系统原本提供了类似于Apple iOS推送服务<code>APNS</code>的<code>GCM(Google Cloud Messaging for Android)</code>，以前叫<code>C2DM</code>,但是由于某些原因，导致这项服务在国内不是很好使，为了弥补这个不足，并且我朝各大同胞又想使用Android推送服务，所以国内各大平台陆续推出了<code>GCM</code>的替代品，今天要介绍的就是其中一家，由百度提供的云推送。另外，国内做消息推送服务的还有极光推送和个推等，他们的客户包括新浪微博、淘宝等国内一线大公司。</p>
+
+<p>推送的实现技术简单来说就是利用Socket维持Client和Server间的一个TCP长连接，通过这种方式能大大降低由轮询方式带来的Device的耗电量和数据访问流量。目前，百度云推送提供的推送服务支持的单一消息体大小是4k，如果超过4k，则建议在消息内携带服务请求URL进行二次请求。目前，百度云推送针对Android端提供通知推送，文本消息推送以及富媒体推送。</p>
+
+<h2>二、使用场景</h2>
+
+<h4>1. 单播消息推送</h4>
+
+<p>Push Server向指定的设备（Device）或是用户（User）推送消息，一个用户对应一个<code>userID</code>，一个User可能拥有多台Device，我们希望向同一个userID推送消息时，他所有绑定了userID的Device都能收到消息。百度云推送给出的解决方案是通过Client向Push Server注册，并在Client端的监听端口取得Push Server返回的  <code>channelID</code>和<code>userID</code>，<code>channelID</code>指定一个终端，在向Push Server注册的过程中，Device可以发送IMIE码或者UUID作为唯一标示，在Push Server注册后再返回给Client生成的<code>channelID</code>和<code>userID</code>。这两个ID获取到后由开发者自行维护，注册完毕后，Push Server维护一个注册设备列表，这个列表维护了<code>userID</code>和<code>channelID</code>以及与Device对应的关系，当需要向指定的设备或用户推送消息时，Push Server会首先遍历这个设备列表，通过这两个ID来做唯一性判断并找到需要推送消息的Device，然后就可以进行消息推送了。</p>
+
+<p><img src="http://ryantang.me/images/2013/08/baidu_push_service/2.jpg" alt="push" /></p>
+
+<p>实例：用户A发表问题时，记录问题id及其对应的A的userID（或channelID），用户B发表问题回答时，通过服务端API向问题id对应的userID（或channelID）指向的Device推送答案。</p>
+
+<h4>2. 分组消息推送</h4>
+
+<p>百度云推送通过对Client设置标签（Tag）的方式来进行用户分组，Tag的产生方式可以是由Client维护也可以由Server收集，Push Server针对不同的Tag进行推送过滤，最终将消息推送到指定的Client。无论是由Client主动设置的Tag还是由Server根据用户使用习惯收集的，都由Push Server进行统一管理，在基于Tag的分组消息推送实现上，Push Server首先根据指定Tag从所有Tag下遍历出的对应的已注册的Device，从而可以获得与Device对应的<code>userID</code>和<code>channelID</code>，继而可以针对指定Tag进行分组消息推送。对比单播消息推送，分组消息推送在推送周期上势必要长一些，并且在待推消息列表的维护上也需要做一些处理，哪些消息是推送成功的，哪些是失败的，这需要接收消息推送的Client在接收到消息后给Push Server一个消息回执，这样就保证了消息送达的准确性，如果消息推送失败，则分组列表里的待推消息会继续推送，直到推送消息成功。另外，在消息推送的实时性上，分组消息推送对比单播消息推送会根据分组消息队列的先后存在一个消息接收的延时，好比现在微信公众账号的推送，就是一个分组消息推送的实例，在消息接收的时效性上对比单播推送存在一定的延时性。</p>
+
+<p>另外，还有一类消息推送使用场景，就是广播消息，该类型可以理解为分组消息的一个特列，即向所有的Tag对应的Client推送消息。广播消息是对全体集合的一个消息推送，在消息队列维护和消息推送时效性上比单个或几个Tag的分组推送成本要高。</p>
+
+<p>实例：给应用提供喜好设置页面，用户勾选不同的类别，触发对应Tag的设置，这种方式是由Client主动维护Tag。或者用户阅读了某个类别的图书，触发对应Tag的设置，在服务端，给指定类别的图书设置Tag，后续会根据服务端收集的Tag给应用推送该Tag下的新书信息，这种方式就是由服务端来维护Tag分组。</p>
+
+<h2>三、百度云推送Android_SDK</h2>
+
+<p>百度提供了完整的Demo帮助开发者集成云推送服务，推送服务SDK通过.jar包和.so文件的方式可以集成到我们自己的工程中。在此之前，需要到百度开发者中心进行应用注册并获取<code>API Key</code>，这个作为使用推送服务应用的唯一标示，具体流程我就不赘述了，需要使用的话可以直接访问<code>百度开发者中心</code>进行查看。</p>
+
+<p>下面主要看看Android_SDK的整体概览和内部运行机制：</p>
+
+<p><img src="http://ryantang.me/images/2013/07/baidu_push_service/1.png" alt="structure" /></p>
+
+<p>上图是百度云推送Android_SDK的框架图，通过SDK可以绕过复杂的Push HTTP/HTTPS API直接和Push服务器进行交互，主要提供如下功能：</p>
+
+<ul>
+<li>Push服务初始化以及Client注册绑定</li>
+<li>创建或删除标签（Tag）</li>
+<li>接收Push Server的通知并提供自定义展现消息方式</li>
+<li>推送统计分析功能，包括通知的点击和删除统计以及应用使用情况统计</li>
+<li>富媒体推送</li>
+</ul>
+
+
+<p>在Android端，总共实现了三个Receiver和一个Service，其中，一个Receiver是用来处理注册绑定后接收服务端返回的channelID等信息：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;receiver</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.RegistrationReceiver&quot;</span>
+</span><span class='line'><span class="na">android:process=</span><span class="s">&quot;: bdservice_v1&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;intent-filter&gt;</span>
+</span><span class='line'><span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.action.METHOD &quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.action.BIND_SYNC &quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/intent-filter&gt;</span>
+</span><span class='line'><span class="nt">&lt;intent-filter&gt;</span>
+</span><span class='line'><span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.PACKAGE_REMOVED&quot;</span><span class="nt">/&gt;</span> <span class="nt">&lt;data</span> <span class="na">android:scheme=</span><span class="s">&quot;package&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/intent-filter&gt;</span>
+</span><span class='line'><span class="nt">&lt;/receiver&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第二个Receiver是用于接收系统消息以保证PushService正常运行：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;receiver</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.PushServiceReceiver&quot;</span> <span class="na">android:process=</span><span class="s">&quot;: bdservice_v1&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;intent-filter&gt;</span>
+</span><span class='line'><span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.BOOT_COMPLETED&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.net.conn.CONNECTIVITY_CHANGE&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.action.notification.SHOW&quot;</span> <span class="nt">/&gt;</span> <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.action.media.CLICK&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/intent-filter&gt;</span>
+</span><span class='line'><span class="nt">&lt;/receiver&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第三个Receiver就是开发者自己实现的用来接收并处理推送消息：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;receiver</span> <span class="na">android:name=</span><span class="s">&quot;your.package.PushMessageReceiver&quot;</span><span class="nt">&gt;</span> <span class="nt">&lt;intent-filter&gt;</span>
+</span><span class='line'><span class="c">&lt;!-- 接收 push 消息 --&gt;</span>
+</span><span class='line'><span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.action.MESSAGE&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="c">&lt;!-- 接收 bind、setTags 等 method 的返回结果 --&gt;</span>
+</span><span class='line'><span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.action.RECEIVE&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/intent-filter&gt;</span>
+</span><span class='line'><span class="nt">&lt;/receiver&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一个Service就是在后台运行的用于保障与Push Server维持长连接并做相关处理的后台服务：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;service</span> <span class="na">android:name=</span><span class="s">&quot;com.baidu.android.pushservice.PushService&quot;</span>
+</span><span class='line'><span class="na">android:exported=</span><span class="s">&quot;true&quot;</span> <span class="na">android:process=</span><span class="s">&quot; bdservice_v1&quot;</span><span class="nt">/&gt;</span> <span class="c">&lt;!-- push service end --&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在开发者自己需要处理的广播接收器中，可以对接收到的推送消息进行处理，Push消息通过 action为com.baidu.android.pushservice.action.MESSAGE的Intent把数据发送给客户端your.package.PushMessageReceiver，消息格式由应用自己决定，PushService只负责把服务器下发的消息以字符串格式透传给客户端。接口调用回调通过action为com.baidu.android.pushservice.action.RECEIVE的Intent 返回给your.package.PushMessageReceiver。</p>
+
+<figure class='code'><figcaption><span>PushMessageReceiver.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Push消息处理receiver</span>
+</span><span class='line'><span class="cm"> * @Author Ryan</span>
+</span><span class='line'><span class="cm"> * @Create 2013-8-6 下午5:59:38</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PushMessageReceiver</span> <span class="kd">extends</span> <span class="n">BroadcastReceiver</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TAG</span> <span class="o">=</span> <span class="n">PushMessageReceiver</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getSimpleName</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Override</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onReceive</span><span class="o">(</span><span class="kd">final</span> <span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">Intent</span> <span class="n">intent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">intent</span><span class="o">.</span><span class="na">getAction</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">PushConstants</span><span class="o">.</span><span class="na">ACTION_MESSAGE</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>          <span class="c1">//获取消息内容</span>
+</span><span class='line'>          <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="na">getExtras</span><span class="o">().</span><span class="na">getString</span><span class="o">(</span>
+</span><span class='line'>                  <span class="n">PushConstants</span><span class="o">.</span><span class="na">EXTRA_PUSH_MESSAGE_STRING</span><span class="o">);</span>
+</span><span class='line'>          <span class="c1">//消息的用户自定义内容读取方式</span>
+</span><span class='line'>          <span class="n">Log</span><span class="o">.</span><span class="na">i</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="s">&quot;onMessage: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">intent</span><span class="o">.</span><span class="na">getAction</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">PushConstants</span><span class="o">.</span><span class="na">ACTION_RECEIVE</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>          <span class="c1">//处理绑定等方法的返回数据</span>
+</span><span class='line'>          <span class="c1">//PushManager.startWork()的返回值通过PushConstants.METHOD_BIND得到</span>
+</span><span class='line'>          
+</span><span class='line'>          <span class="c1">//获取方法</span>
+</span><span class='line'>          <span class="kd">final</span> <span class="n">String</span> <span class="n">method</span> <span class="o">=</span> <span class="n">intent</span>
+</span><span class='line'>                  <span class="o">.</span><span class="na">getStringExtra</span><span class="o">(</span><span class="n">PushConstants</span><span class="o">.</span><span class="na">EXTRA_METHOD</span><span class="o">);</span>
+</span><span class='line'>          <span class="c1">//方法返回错误码。若绑定返回错误（非0），则应用将不能正常接收消息。</span>
+</span><span class='line'>          <span class="c1">//绑定失败的原因有多种，如网络原因，或access token过期。</span>
+</span><span class='line'>          <span class="c1">//请不要在出错时进行简单的startWork调用，这有可能导致死循环。</span>
+</span><span class='line'>          <span class="c1">//可以通过限制重试次数，或者在其他时机重新调用来解决。</span>
+</span><span class='line'>          <span class="kd">final</span> <span class="kt">int</span> <span class="n">errorCode</span> <span class="o">=</span> <span class="n">intent</span>
+</span><span class='line'>                  <span class="o">.</span><span class="na">getIntExtra</span><span class="o">(</span><span class="n">PushConstants</span><span class="o">.</span><span class="na">EXTRA_ERROR_CODE</span><span class="o">,</span>
+</span><span class='line'>                          <span class="n">PushConstants</span><span class="o">.</span><span class="na">ERROR_SUCCESS</span><span class="o">);</span>
+</span><span class='line'>          <span class="c1">//返回内容</span>
+</span><span class='line'>          <span class="kd">final</span> <span class="n">String</span> <span class="n">content</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span>
+</span><span class='line'>                  <span class="n">intent</span><span class="o">.</span><span class="na">getByteArrayExtra</span><span class="o">(</span><span class="n">PushConstants</span><span class="o">.</span><span class="na">EXTRA_CONTENT</span><span class="o">));</span>
+</span><span class='line'>          
+</span><span class='line'>          <span class="c1">//用户在此自定义处理消息,以下代码为demo界面展示用 </span>
+</span><span class='line'>          <span class="n">Log</span><span class="o">.</span><span class="na">d</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="s">&quot;onMessage: method : &quot;</span> <span class="o">+</span> <span class="n">method</span><span class="o">);</span>
+</span><span class='line'>          <span class="n">Log</span><span class="o">.</span><span class="na">d</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="s">&quot;onMessage: result : &quot;</span> <span class="o">+</span> <span class="n">errorCode</span><span class="o">);</span>
+</span><span class='line'>          <span class="n">Log</span><span class="o">.</span><span class="na">d</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="s">&quot;onMessage: content : &quot;</span> <span class="o">+</span> <span class="n">content</span><span class="o">);</span>
+</span><span class='line'>          
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过在入口Activity的onCreate方法中进行推送服务的注册绑定后，即可在推送管理后台或是自己的应用服务器上进行消息推送的操作了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">PushManager</span><span class="o">.</span><span class="na">startWork</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span><span class="n">PushConstants</span><span class="o">.</span><span class="na">LOGIN_TYPE_API_KEY</span><span class="o">,</span> <span class="s">&quot;you_api_key&quot;</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外，云推送提供php、java等Server端的SDK供开发者在自己的服务器上实现推送服务进行定制化管理和操作。</p>
+
+<h2>四、单服务单通道机制</h2>
+
+<p>百度云推送实现了单服务单通道的机制，如果在一台Device上安装了多款Push SDK的应用，不会为每个应用都创建PushService，而是会采用多应用共享一个PushService的模式。这样既能减少资源消耗也能降低网络流量。PushService运行于一个独立进程，没有和主进程运行于同一进程，所以主进程不需要常驻内存，当有新的Push消息时，PushService会通过Intent发送消息给主进程进行处理。通过Intent，以指定目标应用包名的方式，发送私有消息给应用。应用即不能接收不属于自己的消息，也不能截取别人的消息，同时又降低了消耗，如下为示意图：</p>
+
+<p><img src="http://ryantang.me/images/2013/07/baidu_push_service/2.png" alt="structure" /></p>
+
+<blockquote><p>后记：如今，国内提供Android推送服务的还有很多家，例如个推和极光推送等，实现的原理大同小异，开发者可以根据自身需要进行选择。身在天朝，置身墙内，用不到GCM，就创造Android Push Service for China自给，或者，出走！</p></blockquote>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/08/06/baidu-push-service/'>http://ryantang.me/blog/2013/08/06/baidu-push-service/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[博客写作之我说]]></title>
+    <link href="http://ryantang.me/blog/2013/08/02/how-to-write-blog/"/>
+    <updated>2013-08-02T15:03:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/02/how-to-write-blog</id>
+    <content type="html"><![CDATA[<blockquote><p>写或不写，博客就在那里！<br>
+带不走什么，却带来很多！<br>
+惊不起风云，却掀起心中涟漪！</p></blockquote>
+
+<h2>一、为什么迁移</h2>
+
+<p><img src="http://ryantang.me/images/2013/07/how_to_write_blog/zone1.png" title="CSDN" alt="old" />
+<img src="http://ryantang.me/images/2013/07/how_to_write_blog/zone2.png" title="ryantang.me" alt="new" /></p>
+
+<!--more-->
+
+
+<p>首先感谢大家一直以来的支持，如果你看到这篇文章，说明你是<code>Ryan's Zone</code>的QQ群友或是微信公众账号<code>Android及iOS开发汇总</code>的朋友。前阵子折腾了几天，使用Octopress基于Github搭建了自己的博客，申请绑定了自己的域名<code>ryantang.me</code>，直到今天才开始正式写第一篇文章，之前的文章还是会留在<a href="http://blog.csdn.net/ryantang03" target="_blank">CSDN博客</a>上，今后的文章我会全部发表在<code>ryantang.me</code>上。对我来说，这又是一个新的开始，重新开始在这里写博客主要基于如下几个考虑：</p>
+
+<blockquote><ul>
+<li>使用Github能对文章进行备份，拥有本地版本和线上版本</li>
+<li>能在没有网络的情况下照样写博客，并且能本地预览效果，联网后部署即可</li>
+<li>使用Markdown写作，写代码一样写博客，降低了写作成本，方便很多</li>
+<li>博客自定义度非常高，并且能绑定专属域名，关键是没人在你这打广告</li>
+<li>至于为什么没用WordPress，去问问那些从WordPress转过来的朋友：）</li>
+</ul>
+</blockquote>
+
+<h2>二、为什么写作</h2>
+
+<p>为什么写博客？这个问题很多人都问过我，其实很简单，我的第一篇文章纯粹是为了记录一个笔记，为了不让自己忘记，为了能有地可查，就这么简单。但后来发现，写作的过程其实本身是对知识梳理的过程，能更清晰的加深对内容的理解，同时，自己记录的一些东西能帮助到别人，能给别人一些参考，这样，写作的意义就不仅仅是原本记录那么简单了。</p>
+
+<p>我从2012年7月开始正式写博客，到现在正好一年，在CSDN累计发表文章100篇，平均4天一篇，博客访问量截止这篇文章写作时共33万次，累计评论近600条。基于博客上互动的朋友建立Android群两个、iOS群两个，累计人数近2000人，开通微信公众账号<code>Android及iOS开发汇总</code>，订阅人数近1000人，写过的文章有被<code>雷锋网</code>和<code>伯乐在线</code>转载。这些，都是刚开始写作时没有想到的。如果让我现在来回答为什么写博客？我可以这么说：“写作让我所学沉淀，写作让我广交朋友，写作让我实现个人价值”！</p>
+
+<h2>三、如何写作</h2>
+
+<p>其实这个问题没有标准的回答，就像每个人都有自己的穿衣喜好，而我的写作喜好往往是遵循以下流程：</p>
+
+<blockquote><ol>
+<li>选题，必须是我感兴趣的、觉得有用的、不只我一个人会遇到的问题，或者是一个写我想说的话（例如这篇文章）；</li>
+<li>写作构思，我一般按总分总的形式来写（是不是有点像在上作文课，哈哈！），围绕题目阐明目的、作用等，然后说明相关的原理和使用流程以及注意事项，最后再总结以下感受等（以上针对技术类文章）；</li>
+<li>文章结构，我比较喜欢条理清晰，我自己写或是看别人的文章都倾向条理性比较强的，不喜欢什么东西一大堆，看不出重点和所以然，所以多用标注和数字来划分结构；</li>
+<li>语言风格，我比较倾向平民化的文风，不太喜欢那些太高深、让人觉得有距离的语言风格，写东西本来是让别人看的，让别人看得懂、不费劲儿，才是首要目的，所以不在乎写的有多优美，自己能看懂、别人能看懂，你若看懂，便是晴天！</li>
+<li>文章排版，字体不要太小、太密，让别人看的不舒服。能用图说明的问题尽量用图，千言万语也抵不过一张一目了然的图解。要是能图文并茂，那真是极好的！</li>
+</ol>
+</blockquote>
+
+<p>以上5点就是我写作的方法流程，是这一年多以来自己慢慢总结和感受的一些东西，说不上对所有人有用，起码我认为对我有用，就像本节开头说的，这是我的“穿衣喜好”！</p>
+
+<h2>四、何时何地写作</h2>
+
+<p>写东西是需要花时间的，一篇好文章尤其需要精雕细琢，成文前的准备工作就需要花上一些时间，写作的过程和后期的校对也需要花时间。对于我等IT从业者来说，时间本是一奢侈物。平时工作学习就很忙，很多朋友说腾不出时间写东西，或是说下班就累的不行，哪有精力还去写东西。我的观点是，写作并不需要安排专门的时间，不要把它当做一项固定的任务，如果这样，你会很累。如果是技术类文章，肯定是工作或学习中遇到或正在研究的问题，取得一定的进展后，自己肯定有些方法和心得，这个时候，花上半个到一个小时，把思路整理一下，迅速成文，要知道，解决问题的那一刹那，你的思维是最活跃、也是最清晰的。我的很多文章都是在那个时候写出来的。</p>
+
+<p>对我来说，写东西是个放松的过程，所以我一般会选择晚上或者周末写，在家里躺床上、坐椅子上，听着音乐一边写一边吃点零食，不是很享受吗，起码我很享受！嘿嘿！平时学习或工作的空档期我也会用来写写东西，闲着也是闲着，写点东西沉淀下自己，追求内心的一种平静吧！另外，我在家里写过、在学校图书馆写过、在教室写过、在实验室写过、在公司写过、在咖啡厅写过、在机场写过、在飞机上写过，我还想去山上写写、去海边写写、去异国他乡写写！</p>
+
+<h2>五、写作带给我什么</h2>
+
+<p>要说写作带给我什么，更多的是一种对事物理解方式的变化。以前看待事物大都停留于表象，难以剖析内涵。开始写东西后，逐渐不满足于现象，开始喜欢深究本源。写作带给我一群认真的朋友，他们很多是没有见过面的，但网络的好处就是你可以结识各地志同道合的朋友。他们给你意见、帮你成长、带给你喜悦、指出你的问题。写作带给我知识上的沉淀，所学所用不可能永远存在脑海里，随着时间和经历的变迁，很多东西会遗忘，通过记录把当下学习、工作或是经历的一些东西记下来，一年后、两年后······，会有让自己感动的那一天，因为你看到了自己经历的那些年，看到了自己成长的那些轨迹。写作带给我一种成就感，当自己的文章被阅读成千上万次，当看到文章有留言表示对自己的感谢，当看到文章被转载，这都是一种成就感，虽然不是物质上的，但这更超过物质上的回报。写作带给我一个机会，让我组织了一群人，让我建立了一个交流平台，让我获得更多的机会，让我锻炼了各方面的能力。写作让我更接近真实的自我，能让浮躁的心平静下来，能感受到一些不一样的东西！</p>
+
+<p>写或不写，博客就在那里，见证你的经历和成长！带不走什么，却带来很多，带给你知识、朋友、成就感！惊不起风云，却掀起心中涟漪，如果你爱上写作，它会让你重新认识生活、学习、工作！</p>
+
+<blockquote><p>后记：我即将毕业，没有经验，没有阅历，我所说的都是错的！</p></blockquote>
+
+<p><code>Focus on life. Focus on work. Don't let yourself regret forever! ——Ryan</code></p>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/08/02/how-to-write-blog/'>http://ryantang.me/blog/2013/08/02/how-to-write-blog/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
   
 </feed>

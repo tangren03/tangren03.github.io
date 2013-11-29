@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://tangren03.github.io/sitemap.xml 
+Sitemap: http://ryantang.me/sitemap.xml 

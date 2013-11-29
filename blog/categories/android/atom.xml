@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Android | Ryan's Zone]]></title>
+  <link href="http://ryantang.me/blog/categories/android/atom.xml" rel="self"/>
+  <link href="http://ryantang.me/"/>
+  <updated>2013-11-29T11:09:54+08:00</updated>
+  <id>http://ryantang.me/</id>
+  <author>
+    <name><![CDATA[唐韧_Ryan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Android模拟神器——Genymotion]]></title>
+    <link href="http://ryantang.me/blog/2013/08/16/genymotion/"/>
+    <updated>2013-08-16T15:35:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/16/genymotion</id>
+    <content type="html"><![CDATA[<blockquote><p>纠结的时光总会过去，<br>
+美好和光明就在前方！</p></blockquote>
+
+<p><img src="/images/2013/08/genymotion/logo.png" alt="logo" /></p>
+
+<p>刚开始接触Android开发的同学不免都接触过Android自带的模拟器，启动慢、操作卡、没法用，基本属于摆设状态。这是大家对Android模拟器的普遍印象，时至今日，终于出现了一款神器来改变这一印象，那就是<a href = http://www.genymotion.com/ target = _blank >Genymotion</a>，Genymotion是一个基于虚拟机的Android模拟环境，包括了除电话和短信外大部分Android真机的功能，其流畅性和使用体验完全不亚于真机，是Android开发者、测试人员等非常有力的工具。它支持Window、MacOS、Linux，今天的话题就是Genymotion的特性和在Mac上的安装及使用。</p>
+
+<!--More-->
+
+
+<h2>一、基本特性</h2>
+
+<ul>
+<li>支持OpenGL加速以提供良好的3D表现</li>
+<li>能从Google Play下载和安装应用</li>
+<li>提供电量控制、GPS和加速传感器控制模拟</li>
+<li>和ADB完美结合，能像传统模拟器和真机一样通过命令行控制模拟器</li>
+<li>提供丰富的自定义属性，包括屏幕分辨率、内存大小和CPU控制等</li>
+<li>能在Eclipse上进行应用开发和调试</li>
+<li>支持多模拟器运行</li>
+</ul>
+
+
+<h2>二、安装</h2>
+
+<ul>
+<li>1.Genymotion依赖于虚拟机VirtualBox，它是Oracle公司开发的一套虚拟机运行环境，和VMware类似。所以，安装之前我们先需要安装<a href = https://www.virtualbox.org/wiki/Downloads target = _blank >VirtualBox</a>。</li>
+<li>2.安装完VirtualBox后就可以到<a href = https://cloud.genymotion.com/page/launchpad/download/ target = _blank >Genymotion下载</a>页下载安装包了（在此需要先注册Genymotion的使用账号）。下载完成后双击dmg文件并将Genymotion和Genymotion shell拖入Application文件夹中，至此，便完成了Genymotion的下载和安装。</li>
+<li>3.到Application文件夹中找到Genymotion并双击运行，可以看到如下界面，从列表中选择一个准备安装的虚拟机点击Add(这一步需要登陆之前注册的账号)，然后便会下载该模拟器需要的安装文件和配置信息：</li>
+</ul>
+
+
+<p><img src="/images/2013/08/genymotion/1.png" alt="1" /></p>
+
+<p>下载完成后点击Next：</p>
+
+<p><img src="/images/2013/08/genymotion/3.png" alt="3" /></p>
+
+<ul>
+<li>4.下载完成后就可以看到我们选择的模拟器已经存在于我们的虚拟机列表中了，运行前，先要启动一下VirtualBox然后在点击窗口中的Play图标，后续使用时直接点击Play即可启动Android模拟器了。</li>
+</ul>
+
+
+<p>运行VirtualBox：</p>
+
+<p><img src="/images/2013/08/genymotion/7.png" alt="7" /></p>
+
+<p>运行安装好的Android模拟器，点击右边的小显示器图标可以配置模拟器的显示分辨率：</p>
+
+<p><img src="/images/2013/08/genymotion/4.png" alt="4" /></p>
+
+<ul>
+<li>5.启动后会要求配置Android SDK的路径，选择并确定SDK的安装目录，然后点击OK，至此，Genymotion的下载和安装就完成了。</li>
+</ul>
+
+
+<p>配置Android SDK路径：</p>
+
+<p><img src="/images/2013/08/genymotion/5.png" alt="5" /></p>
+
+<p>Android模拟器运行效果：</p>
+
+<p><img src="/images/2013/08/genymotion/6.png" alt="6" /></p>
+
+<h2>支持</h2>
+
+<p>Genymotion支持Eclipse和IntelliJ插件，可以直接通过Eclipse进行项目开发和调试，同时，也可以通过ADB命令行对模拟器进行相应的操作。</p>
+
+<p>Eclipse连接Genymotion模拟器：</p>
+
+<p><img src="/images/2013/08/genymotion/2.png" alt="2" /></p>
+
+<p>更多功能请参阅官方<a href="https://cloud.genymotion.com/page/doc/">User Guide</a></p>
+
+<blockquote><p>后记：Genymotion的出现可以说是一场革命，改变了开发者对Android模拟器以往糟糕表现的看法。Genymotion基于VirtualBox虚拟机搭建，所以如果本机配置够高的话，用Genymotion来取代真机进行测试和开发是完全可以的（大部分项目），另外，不足的是Genymotion目前支持的模拟器类型有限，相信后期会不断的新增和优化！</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Android推送服务——百度云推送]]></title>
+    <link href="http://ryantang.me/blog/2013/08/06/baidu-push-service/"/>
+    <updated>2013-08-06T15:59:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/06/baidu-push-service</id>
+    <content type="html"><![CDATA[<p>本文已授权InfoQ进行转载：<a href="http://www.infoq.com/cn/articles/baidu-android-cloud-push">http://www.infoq.com/cn/articles/baidu-android-cloud-push</a></p>
+
+<blockquote><p>身在天朝，置身墙内<br>
+或是自给，或是出走</p></blockquote>
+
+<h2>一、推送服务简介</h2>
+
+<p>消息推送，顾名思义，是由一方主动发起，而另一方与发起方以某一种方式建立连接并接收消息。在Android开发中，这里的发起方我们把它叫做<code>推送服务器（Push Server）</code>，接收方叫做<code>客户端（Client）</code>。相比通过轮询来获取新消息或通知，推送无论是在对客户端的资源消耗还是设备耗电量来说都比轮询要好，所以，目前绝大多数需要及时消息推送的App都采用Push的方式来进行消息通知。</p>
+
+<p><img src="/images/2013/08/baidu_push_service/1.jpg" alt="push" /></p>
+
+<!--more-->
+
+
+<p>身在天朝，置身墙内！Android生态系统原本提供了类似于Apple iOS推送服务<code>APNS</code>的<code>GCM(Google Cloud Messaging for Android)</code>，以前叫<code>C2DM</code>,但是由于某些原因，导致这项服务在国内不是很好使，为了弥补这个不足，并且我朝各大同胞又想使用Android推送服务，所以国内各大平台陆续推出了<code>GCM</code>的替代品，今天要介绍的就是其中一家，由百度提供的云推送。另外，国内做消息推送服务的还有极光推送和个推等，他们的客户包括新浪微博、淘宝等国内一线大公司。</p>
+
+<p>推送的实现技术简单来说就是利用Socket维持Client和Server间的一个TCP长连接，通过这种方式能大大降低由轮询方式带来的Device的耗电量和数据访问流量。目前，百度云推送提供的推送服务支持的单一消息体大小是4k，如果超过4k，则建议在消息内携带服务请求URL进行二次请求。目前，百度云推送针对Android端提供通知推送，文本消息推送以及富媒体推送。</p>
+
+<h2>二、使用场景</h2>
+
+<h4>1. 单播消息推送</h4>
+
+<p>Push Server向指定的设备（Device）或是用户（User）推送消息，一个用户对应一个<code>userID</code>，一个User可能拥有多台Device，我们希望向同一个userID推送消息时，他所有绑定了userID的Device都能收到消息。百度云推送给出的解决方案是通过Client向Push Server注册，并在Client端的监听端口取得Push Server返回的  <code>channelID</code>和<code>userID</code>，<code>channelID</code>指定一个终端，在向Push Server注册的过程中，Device可以发送IMIE码或者UUID作为唯一标示，在Push Server注册后再返回给Client生成的<code>channelID</code>和<code>userID</code>。这两个ID获取到后由开发者自行维护，注册完毕后，Push Server维护一个注册设备列表，这个列表维护了<code>userID</code>和<code>channelID</code>以及与Device对应的关系，当需要向指定的设备或用户推送消息时，Push Server会首先遍历这个设备列表，通过这两个ID来做唯一性判断并找到需要推送消息的Device，然后就可以进行消息推送了。</p>
+
+<p><img src="/images/2013/08/baidu_push_service/2.jpg" alt="push" /></p>
+
+<p>实例：用户A发表问题时，记录问题id及其对应的A的userID（或channelID），用户B发表问题回答时，通过服务端API向问题id对应的userID（或channelID）指向的Device推送答案。</p>
+
+<h4>2. 分组消息推送</h4>
+
+<p>百度云推送通过对Client设置标签（Tag）的方式来进行用户分组，Tag的产生方式可以是由Client维护也可以由Server收集，Push Server针对不同的Tag进行推送过滤，最终将消息推送到指定的Client。无论是由Client主动设置的Tag还是由Server根据用户使用习惯收集的，都由Push Server进行统一管理，在基于Tag的分组消息推送实现上，Push Server首先根据指定Tag从所有Tag下遍历出的对应的已注册的Device，从而可以获得与Device对应的<code>userID</code>和<code>channelID</code>，继而可以针对指定Tag进行分组消息推送。对比单播消息推送，分组消息推送在推送周期上势必要长一些，并且在待推消息列表的维护上也需要做一些处理，哪些消息是推送成功的，哪些是失败的，这需要接收消息推送的Client在接收到消息后给Push Server一个消息回执，这样就保证了消息送达的准确性，如果消息推送失败，则分组列表里的待推消息会继续推送，直到推送消息成功。另外，在消息推送的实时性上，分组消息推送对比单播消息推送会根据分组消息队列的先后存在一个消息接收的延时，好比现在微信公众账号的推送，就是一个分组消息推送的实例，在消息接收的时效性上对比单播推送存在一定的延时性。</p>
+
+<p>另外，还有一类消息推送使用场景，就是广播消息，该类型可以理解为分组消息的一个特列，即向所有的Tag对应的Client推送消息。广播消息是对全体集合的一个消息推送，在消息队列维护和消息推送时效性上比单个或几个Tag的分组推送成本要高。</p>
+
+<p>实例：给应用提供喜好设置页面，用户勾选不同的类别，触发对应Tag的设置，这种方式是由Client主动维护Tag。或者用户阅读了某个类别的图书，触发对应Tag的设置，在服务端，给指定类别的图书设置Tag，后续会根据服务端收集的Tag给应用推送该Tag下的新书信息，这种方式就是由服务端来维护Tag分组。</p>
+
+<h2>三、百度云推送Android_SDK</h2>
+
+<p>百度提供了完整的Demo帮助开发者集成云推送服务，推送服务SDK通过.jar包和.so文件的方式可以集成到我们自己的工程中。在此之前，需要到百度开发者中心进行应用注册并获取<code>API Key</code>，这个作为使用推送服务应用的唯一标示，具体流程我就不赘述了，需要使用的话可以直接访问<code>百度开发者中心</code>进行查看。</p>
+
+<p>下面主要看看Android_SDK的整体概览和内部运行机制：</p>
+
+<p><img src="/images/2013/07/baidu_push_service/1.png" alt="structure" /></p>
+
+<p>上图是百度云推送Android_SDK的框架图，通过SDK可以绕过复杂的Push HTTP/HTTPS API直接和Push服务器进行交互，主要提供如下功能：</p>
+
+<ul>
+<li>Push服务初始化以及Client注册绑定</li>
+<li>创建或删除标签（Tag）</li>
+<li>接收Push Server的通知并提供自定义展现消息方式</li>
+<li>推送统计分析功能，包括通知的点击和删除统计以及应用使用情况统计</li>
+<li>富媒体推送</li>
+</ul>
+
+
+<p>在Android端，总共实现了三个Receiver和一个Service，其中，一个Receiver是用来处理注册绑定后接收服务端返回的channelID等信息：</p>
+
+<p><code>xml
+&lt;receiver android:name="com.baidu.android.pushservice.RegistrationReceiver"android:process=": bdservice_v1"&gt;&lt;intent-filter&gt;&lt;action android:name="com.baidu.android.pushservice.action.METHOD " /&gt;&lt;action android:name="com.baidu.android.pushservice.action.BIND_SYNC " /&gt;
+&lt;/intent-filter&gt;&lt;intent-filter&gt;&lt;action android:name="android.intent.action.PACKAGE_REMOVED"/&gt; &lt;data android:scheme="package" /&gt;&lt;/intent-filter&gt;
+&lt;/receiver&gt;
+</code></p>
+
+<p>第二个Receiver是用于接收系统消息以保证PushService正常运行：</p>
+
+<p><code>xml
+&lt;receiver android:name="com.baidu.android.pushservice.PushServiceReceiver" android:process=": bdservice_v1"&gt;&lt;intent-filter&gt;&lt;action android:name="android.intent.action.BOOT_COMPLETED" /&gt;&lt;action android:name="android.net.conn.CONNECTIVITY_CHANGE" /&gt;&lt;action android:name="com.baidu.android.pushservice.action.notification.SHOW" /&gt; &lt;action android:name="com.baidu.android.pushservice.action.media.CLICK" /&gt;&lt;/intent-filter&gt;&lt;/receiver&gt;
+</code></p>
+
+<p>第三个Receiver就是开发者自己实现的用来接收并处理推送消息：</p>
+
+<p><code>xml
+&lt;receiver android:name="your.package.PushMessageReceiver"&gt; &lt;intent-filter&gt;&lt;!-- 接收 push 消息 --&gt;&lt;action android:name="com.baidu.android.pushservice.action.MESSAGE" /&gt;&lt;!-- 接收 bind、setTags 等 method 的返回结果 --&gt;&lt;action android:name="com.baidu.android.pushservice.action.RECEIVE" /&gt;&lt;/intent-filter&gt;
+&lt;/receiver&gt;
+</code></p>
+
+<p>一个Service就是在后台运行的用于保障与Push Server维持长连接并做相关处理的后台服务：</p>
+
+<p><code>xml
+&lt;service android:name="com.baidu.android.pushservice.PushService"android:exported="true" android:process=" bdservice_v1"/&gt; &lt;!-- push service end --&gt;
+</code>
+在开发者自己需要处理的广播接收器中，可以对接收到的推送消息进行处理，Push消息通过 action为com.baidu.android.pushservice.action.MESSAGE的Intent把数据发送给客户端your.package.PushMessageReceiver，消息格式由应用自己决定，PushService只负责把服务器下发的消息以字符串格式透传给客户端。接口调用回调通过action为com.baidu.android.pushservice.action.RECEIVE的Intent 返回给your.package.PushMessageReceiver。</p>
+
+<p>```java PushMessageReceiver.java
+/<em>*
+ * Push消息处理receiver
+ * @Author Ryan
+ * @Create 2013-8-6 下午5:59:38
+ </em>/
+public class PushMessageReceiver extends BroadcastReceiver {</p>
+
+<pre><code>public static final String TAG = PushMessageReceiver.class.getSimpleName();
+
+@Override
+public void onReceive(final Context context, Intent intent) {
+
+    if (intent.getAction().equals(PushConstants.ACTION_MESSAGE)) {
+        //获取消息内容
+        String message = intent.getExtras().getString(
+                PushConstants.EXTRA_PUSH_MESSAGE_STRING);
+        //消息的用户自定义内容读取方式
+        Log.i(TAG, "onMessage: " + message);
+
+    } else if (intent.getAction().equals(PushConstants.ACTION_RECEIVE)) {
+        //处理绑定等方法的返回数据
+        //PushManager.startWork()的返回值通过PushConstants.METHOD_BIND得到
+
+        //获取方法
+        final String method = intent
+                .getStringExtra(PushConstants.EXTRA_METHOD);
+        //方法返回错误码。若绑定返回错误（非0），则应用将不能正常接收消息。
+        //绑定失败的原因有多种，如网络原因，或access token过期。
+        //请不要在出错时进行简单的startWork调用，这有可能导致死循环。
+        //可以通过限制重试次数，或者在其他时机重新调用来解决。
+        final int errorCode = intent
+                .getIntExtra(PushConstants.EXTRA_ERROR_CODE,
+                        PushConstants.ERROR_SUCCESS);
+        //返回内容
+        final String content = new String(
+                intent.getByteArrayExtra(PushConstants.EXTRA_CONTENT));
+
+        //用户在此自定义处理消息,以下代码为demo界面展示用  
+        Log.d(TAG, "onMessage: method : " + method);
+        Log.d(TAG, "onMessage: result : " + errorCode);
+        Log.d(TAG, "onMessage: content : " + content);
+
+    } 
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>通过在入口Activity的onCreate方法中进行推送服务的注册绑定后，即可在推送管理后台或是自己的应用服务器上进行消息推送的操作了。</p>
+
+<p><code>java
+PushManager.startWork(getApplicationContext(),PushConstants.LOGIN_TYPE_API_KEY, "you_api_key");
+</code></p>
+
+<p>另外，云推送提供php、java等Server端的SDK供开发者在自己的服务器上实现推送服务进行定制化管理和操作。</p>
+
+<h2>四、单服务单通道机制</h2>
+
+<p>百度云推送实现了单服务单通道的机制，如果在一台Device上安装了多款Push SDK的应用，不会为每个应用都创建PushService，而是会采用多应用共享一个PushService的模式。这样既能减少资源消耗也能降低网络流量。PushService运行于一个独立进程，没有和主进程运行于同一进程，所以主进程不需要常驻内存，当有新的Push消息时，PushService会通过Intent发送消息给主进程进行处理。通过Intent，以指定目标应用包名的方式，发送私有消息给应用。应用即不能接收不属于自己的消息，也不能截取别人的消息，同时又降低了消耗，如下为示意图：</p>
+
+<p><img src="/images/2013/07/baidu_push_service/2.png" alt="structure" /></p>
+
+<blockquote><p>后记：如今，国内提供Android推送服务的还有很多家，例如个推和极光推送等，实现的原理大同小异，开发者可以根据自身需要进行选择。身在天朝，置身墙内，用不到GCM，就创造Android Push Service for China自给，或者，出走！</p></blockquote>
+]]></content>
+  </entry>
+  
+</feed>

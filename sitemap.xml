@@ -1,15 +1,63 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://tangren03.github.io/blog/archives/</loc>
+        <loc>http://ryantang.me/blog/2013/08/02/how-to-write-blog/</loc>
+        <lastmod>2013-11-28T23:25:22+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/08/06/baidu-push-service/</loc>
+        <lastmod>2013-11-23T17:31:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/08/10/about-weichat/</loc>
+        <lastmod>2013-11-28T23:04:14+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/08/16/genymotion/</loc>
+        <lastmod>2013-11-23T17:31:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/08/28/apple-account-1/</loc>
+        <lastmod>2013-11-28T23:25:22+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/08/29/news-1/</loc>
+        <lastmod>2013-11-23T17:31:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/08/31/news-2/</loc>
+        <lastmod>2013-11-23T17:31:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/09/03/apple-account-2/</loc>
+        <lastmod>2013-11-23T17:31:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/09/05/news-3/</loc>
+        <lastmod>2013-11-23T17:31:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/09/28/news-4/</loc>
+        <lastmod>2013-11-23T17:31:24+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/2013/11/28/apple-account-3/</loc>
+        <lastmod>2013-11-28T23:04:14+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/archives/</loc>
+        <lastmod>2013-11-28T23:25:22+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/blog/categories/</loc>
+        <lastmod>2013-11-28T23:25:22+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ryantang.me/</loc>
         <lastmod>2013-11-29T10:43:15+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tangren03.github.io/</loc>
-        <lastmod>2013-11-29T10:43:15+08:00</lastmod>
-    </url>
-    <url>
-        <loc>http://tangren03.github.io/robots.txt</loc>
+        <loc>http://ryantang.me/robots.txt</loc>
         <lastmod>2013-11-29T10:43:15+08:00</lastmod>
     </url>
 </urlset>
