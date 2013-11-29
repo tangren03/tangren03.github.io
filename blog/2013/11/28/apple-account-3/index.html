@@ -31,6 +31,27 @@
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 -->
+<!--为markdown超链接添加targe=_blank-->
+<script type="text/javascript">
+    
+    function addBlankTargetForLinks () {
+        
+        $('a[href^="http"]').each(function(){
+                                  
+                                  $(this).attr('target', '_blank');
+                                  
+                                  });
+                                  
+    }
+
+$(document).bind('DOMNodeInserted', function(event) {
+                 
+                 addBlankTargetForLinks();
+                 
+                 });
+                 
+    </script>
+
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -175,6 +196,18 @@
 
 <p>这里需要注意的是，每一个苹果开发者账号只有一个Agent权限，就就是说，最终真正有权限发布到App Store的人就是这个开发者账号的拥有者，他的身份类型就是Agent，另外还有两种身份类型，一种是Admin，一种是Member，关于更多团队账号角色的信息，你可以参考<a href="https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/ManagingYourTeam/ManagingYourTeam.html#//apple_ref/doc/uid/TP40012582-CH16-SW1" target="_blank">这里</a>。</p>
 
+<h2>总结</h2>
+
+<p>通过上面的内容，你是否已经能够回答最开始提出的问题呢？什么是Provisioning Profile？这里做一个简单的总结：</p>
+
+<ul>
+<li>Provisioning Profile是一个安装在测试设备上的配置文件，文件扩展名为.mobileprovision</li>
+<li>Provisioning Profile有两种类型，一种是Development、一种是Distribution，分别对应开发状态和发布状态的配置文件</li>
+<li>配置Provisioning Profile之前需要先设置好Certificates、App ID、Devices等信息</li>
+<li>Provisioning Profile的有效期为12个月，过期后得手动验证方可继续使用</li>
+</ul>
+
+
 <p>内容就到这里了，要想理解的更透彻，还是实际去操作和实验来的快。如果你是Xcode5了，进到Preferences里面，选择Accounts选项卡，将你的Apple ID添加到Xcode里面，然后到工程General和Build Settings里面去折腾吧。后面的事，你就自己琢磨吧！：）</p>
 
 <p><img src="/images/2013/11/apple_account_3/13.png" alt="1" /></p>
@@ -182,6 +215,8 @@
 <p><img src="/images/2013/11/apple_account_3/14.png" alt="1" /></p>
 
 <blockquote><p>本期内容就到这里了，有不足之处，欢迎指正，如果你希望经常收到一些有趣的内容，欢迎微信扫描网页右边的二维码关注我的微信公众账号“Android及iOS开发汇总”。</p></blockquote>
+
+<p>Reference From <a href="https://developer.apple.com/library/mac/documentation/IDEs/Conceptual/AppDistributionGuide/Introduction/Introduction.html">Apple Developer Center</a></p>
 
 <p class='post-footer'>
         原文地址：
