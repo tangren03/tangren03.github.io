@@ -32,7 +32,7 @@ Google App Engine是一个网络服务挂载，我们可以将自己的服务挂
 进入Application列表我们就可以看到刚才创建的应用了。Application一列显示的就是App ID，最后一列显示了当前应用的状态，由于这是一个新应用，所以状态为None-Deployed。到这里，Google App Engine我们就配置好了。
 
 ### 二、安装配置GoAgent
-进入[GoAgent官网](https://code.google.com/p/GoAgent/)下载GoAgent压缩包，并解压到用户根目录下，进入GoAgent/local目录，找到proxy.ini文件并用编辑器打开。
+进入[GoAgent官网](https://code.google.com/p/goagent/)下载GoAgent压缩包，并解压到用户根目录下，进入GoAgent/local目录，找到proxy.ini文件并用编辑器打开。
 
 ![1](/images/2013/11/goagent/3.png)
 

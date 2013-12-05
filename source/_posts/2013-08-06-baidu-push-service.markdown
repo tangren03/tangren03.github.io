@@ -5,7 +5,6 @@ date: 2013-08-06 15:59
 comments: true
 keywords: 百度云推送, Android
 description: 
-publish: false
 categories: Android
 ---
 本文已授权InfoQ进行转载：[http://www.infoq.com/cn/articles/baidu-android-cloud-push](http://www.infoq.com/cn/articles/baidu-android-cloud-push)
