@@ -64,6 +64,6 @@ categories: RyanSay
 微信，和你和我！我们究竟要的是什么？这个问题每个人都有自己的答案，而微信团队给我们的答案是，“微信，是一个生活方式”！
 
 
-> 后记：我即将毕业，没有经验，没有阅历，我所说的都是错的！
+> 后记：我所说的不一定是对的！
 
 ```Focus on life. Focus on work. Don't let yourself regret forever! ——Ryan```

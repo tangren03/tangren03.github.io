@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "iOS事件传递机制(一)"
+title: "iOS事件机制(一)"
 date: 2013-12-07 15:10:42 +0800
 comments: true
 keywords: iOS事件,响应者链
@@ -10,6 +10,8 @@ categories: iOS
 > 掌握的本质是理解
 
 ![](/images/2013/12/ios_event_dispatch/1.png)
+
+<!--More-->
 
 本篇内容将围绕iOS中事件及其传递机制进行学习和分析。在iOS中，事件分为三类：
 
@@ -129,5 +131,5 @@ Gesture Recognizers是一类手势识别器对象，它可以附属在你指定�
 - UITouch和UIEvent对象，他们都是UIKit中来进行事件处理的对象，多个UITouch对象构成一个UIEvent对象，重写相应的方法可以控制和处理事件各个阶段的操作。
 - 系寻找hit-test view的方式、事件传递机、制响应者链
 
-> 后记：本篇是iOS事件传递机制的上篇，下篇将继续讨论多点触控事件和传感器事件及后续内容，敬请期待！
+> 后记：本篇是iOS事件传递机制的上篇，下篇将继续讨论多点触控事件和手势操作的内容！
 
