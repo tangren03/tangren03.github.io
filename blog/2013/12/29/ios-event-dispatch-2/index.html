@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Ryan's Zone</title>
+  <title>iOS事件机制(二) - Ryan's Zone</title>
   <meta name="author" content="唐韧_Ryan">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ryantang.me">
+  <link rel="canonical" href="http://ryantang.me/blog/2013/12/29/ios-event-dispatch-2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
        <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -100,15 +100,12 @@ $(document).bind('DOMNodeInserted', function(event) {
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/12/29/ios-event-dispatch-2/">iOS事件机制(二)</a></h1>
+      <h1 class="entry-title">iOS事件机制(二)</h1>
     
     
       <p class="meta">
@@ -131,7 +128,7 @@ $(document).bind('DOMNodeInserted', function(event) {
   </header>
 
 
-  <div class="entry-content"><p>本篇内容接上一篇<a href="http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/">iOS事件机制(一)</a>，本次主要介绍iOS事件中的多点触控事件和手势事件。</p>
+<div class="entry-content"><p>本篇内容接上一篇<a href="http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/">iOS事件机制(一)</a>，本次主要介绍iOS事件中的多点触控事件和手势事件。</p>
 
 <p>从上一篇的内容我们知道，在iOS中一个事件用一个UIEvent对象表示，UITouch用来表示一次对屏幕的操作动作，由多个UITouch对象构成了一个UIEvent对象。另外，<code>UIResponder</code>是所有响应者的父类，UIView、UIViewController、UIWindow、UIApplication都直接或间接的集成了UIResponder。关于事件响应者链的传递机制在上一篇中也有阐述，如果你还不是很了解，可以先看看<a href="http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/">iOS事件机制(一)</a>。</p>
 
@@ -581,66 +578,15 @@ $(document).bind('DOMNodeInserted', function(event) {
         </p>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/12/07/ios-event-dispatch-1/">iOS事件机制(一)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
-
-<time datetime="2013-12-07T15:10:42+08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><blockquote><p>运用的前提是掌握</br>
-掌握的本质是理解</p></blockquote>
-
-<p><img src="/images/2013/12/ios_event_dispatch/1.png" alt="" /></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/12/07/ios-event-dispatch-1/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+<span class="byline author vcard">Posted by <span class="fn">唐韧_Ryan</span></span>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/30/use-goagent/">使用GoAgent翻墙</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -652,284 +598,71 @@ $(document).bind('DOMNodeInserted', function(event) {
   
 
 
-<time datetime="2013-11-30T14:17:16+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><blockquote><p>天朝上国，长城伟岸<br>
-茫茫世界，何止一墙</p></blockquote>
-
-<p>互联网本是个开放的世界，互联网的本质就是开放、交流和分享，无奈身在天朝，一堵伟岸的墙将我们与一些美好的事物隔离开来。有压迫的地方就总有反抗，有技术的地方就总有解决方法。虽然我们置身墙内，但还是有方法绕过这道墙去领略外面的世界，也就是我们俗称的翻墙。现在的翻墙方法有很多，网上也有一些翻墙工具下载，但大多不稳定，稳定的就要收费。既然我们是搞技术的，那就用技术手段来翻墙吧。本次要介绍的就是使用GoAgent来实现翻墙。以下操作均在Mac OS X 10.9上完成,Windows用户操作基本类似。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/11/30/use-goagent/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2013-12-29T10:20:43+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2013</time>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/28/apple-account-3/">苹果开发者账号那些事儿（三）</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="categories">
   
+    <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
 
 
-<time datetime="2013-11-28T19:52:00+08:00" pubdate data-updated="true">Nov 28<span>th</span>, 2013</time>
-        
-      </p>
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><blockquote><p>这是一篇教程<br>
-这里有手把手教学<br></p></blockquote>
-
-<p>这是苹果开发者账号相关系列第三篇，本篇主要介绍Provisioning Profile，如果你还没有看过前两篇，可以先看看：</p>
-
-<ul>
-<li><a href="http://ryantang.me/blog/2013/08/28/apple-account-1/" target="_blank">苹果开发者账号那些事儿（一）</a></li>
-<li><a href="http://ryantang.me/blog/2013/09/03/apple-account-2/" target="_blank">苹果开发者账号那些事儿（二）</a></li>
-</ul>
-
-
+      <div class="sharing">
+  <!--
+  
+   -->
+  
+  <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_tqq">腾讯微博</a>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_douban">豆瓣</a>
+	<a class="jiathis_button_hi">百度空间</a>
+	<a class="jiathis_button_ydnote">有道云笔记</a>
+	<a href="http://www.jiathis.com/share?uid=1817416" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/11/28/apple-account-3/">Read on &rarr;</a>
-    </footer>
-  
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1817416" charset="utf-8"></script>
+<!-- JiaThis Button END -->
 
-
-    </article>
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread"></div>
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"ryantang"};
+	(function() {
+     var ds = document.createElement('script');
+     ds.type = 'text/javascript';ds.async = true;
+     ds.src = 'http://static.duoshuo.com/embed.js';
+     ds.charset = 'UTF-8';
+     (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+     })();
+	</script>
+<!-- Duoshuo Comment END -->
   
-  
-    <article>
+</div>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/09/28/news-4/">Ryan看新闻——第四期</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-28T12:48:00+08:00" pubdate data-updated="true">Sep 28<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>1.腾讯投资搜狗占股近40%</h3>
-
-<p><img src="/images/2013/09/news/4.png" alt="1" /></p>
-
-<p>前段时间，腾讯宣布以4.48亿美元战略入股搜狗，将旗下搜索业务腾讯搜搜和QQ输入法并入搜狗现有业务中，腾讯持有搜狗36.5%的股份。与此同时，搜狗继续作为搜狐的子公司独立运营。张朝阳担任董事长，王小川作为CEO，腾讯总裁刘炽平和COO任宇昕出任搜狗董事。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/09/28/news-4/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <a class="basic-alignment left" href="/blog/2013/12/07/ios-event-dispatch-1/" title="Previous Post: iOS事件机制(一)">&laquo; iOS事件机制(一)</a>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/09/05/news-3/">Ryan看新闻——第三期</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-05T23:37:00+08:00" pubdate data-updated="true">Sep 5<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>1.微软以近72亿美元收购诺基亚设备服务部门及相关专利</h3>
-
-<p><img src="/images/2013/09/news/2.png" alt="1" /></p>
-
-<p>收购在2014年第一季度将会全部完成，微软向诺基亚支付37.9亿欧元，还有16.5亿欧元用来购买专利资产，一共是54.4亿欧元，折合71.7亿美元。此外还有32000名诺基亚员工将会逐渐过渡到微软，诺基亚多名高管将会加入成为微软高管。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/09/05/news-3/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/09/03/apple-account-2/">苹果开发者账号那些事儿（二）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-03T21:24:00+08:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><blockquote><p>这是一篇教程<br>
-这里有手把手教学<br></p></blockquote>
-
-<p>这是苹果开发者账号系列第二篇，如果你还没有看过第一篇，也许你会想看一看：</p>
-
-<ul>
-<li><a href="http://ryantang.me/blog/2013/08/28/apple-account-1/" target="_blank">苹果开发者账号那些事儿（一）</a></li>
-</ul>
-
-
-<h2>一、关于证书</h2>
-
-<p>苹果使用密文签名技术来验证App的合法性，不管是iOS应用还是Mac应用都需要相应的签名证书来作为测试或发布App用。这里主要谈谈iOS的证书，当然，Mac的证书也基本类似。</p>
-
-<p>在开发iOS应用的时候，我们需要签名证书（<code>开发证书</code>）来验证，并允许我们在真机上对App进行测试。另外，在发布App到App store的时候，我们也需要证书(<code>发布证书</code>)来做验证。那么什么是签名证书，如何获取签名证书，下面听我慢慢道来。</p>
+    </p>
+  </footer>
+</article>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/09/03/apple-account-2/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/08/31/news-2/">Ryan看新闻——第二期</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-31T21:15:00+08:00" pubdate data-updated="true">Aug 31<span>st</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>1.ZEALER公开天使投资方为雷军，准备开始A轮</h3>
-
-<p><img src="/images/2013/08/news/4.png" alt="zealer" /></p>
-
-<p><a href = "http://zealer.com" target="_blank">ZEALER.COM</a>是一个独立科技测评媒体，主要从事手机等数码产品的测评工作，其评测视频以质量高、观点独特而闻名。创始人王自如确认ZEALER去年已接受雷军200万天使投资，已准备开始A轮融资。</p>
-
-<p>我的观点：看王自如（新浪微博@王自如ZEALER）的视频快三年了，他的测评风格和别的测评视频在风格和内容上形成鲜明对比，测评惯用专业术语、评点到位、语言犀利，不管你之前看过同一款产品的多少测评，看看自如的总会有一种新鲜感，从最初看自如一个人测评，到后来组件团队成立ZEALER，看着ZEALER一直进步，希望他们能成为中国科技测评届的标杆。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/08/31/news-2/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-      <a class="prev" href="/blog/page/2/">&larr; Older</a>
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
   <h1>About Me</h1>
-  <p><a href = "http://weibo.com/renrentang"  target="_blank"><img class="left" src="/images/me.png"></a>Focus on life. Focus on work. Don&#8217;t let yourself regret forever!</p>
+  <p><a href = "http://weibo.com/renrentang"  target="_blank"><img class="left" src="/images/me.png"></a>Focus on life. Focus on work. Don't let yourself regret forever!</p>
   <p>
     <html xmlns:wb=“http://open.weibo.com/wb”>
         <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
@@ -942,7 +675,7 @@ $(document).bind('DOMNodeInserted', function(event) {
   <p>[Android及iOS开发汇总] 微信公众账号</p>
   <p><img class="center" src="/images/qrcode.png"></p>
   <p>
-    Ryan&#8217;s Zone QQ讨论群<br/>
+    Ryan's Zone QQ讨论群<br/>
     [Android群：320277793]<br/>
     [iOS群：320277961]
   </p>
@@ -950,6 +683,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
   
 </aside>
+
 
     </div>
   </div>
