@@ -4,7 +4,7 @@
   <title><![CDATA[Ryan's Zone]]></title>
   <link href="http://ryantang.me/atom.xml" rel="self"/>
   <link href="http://ryantang.me/"/>
-  <updated>2013-12-29T15:53:37+08:00</updated>
+  <updated>2013-12-29T15:54:20+08:00</updated>
   <id>http://ryantang.me/</id>
   <author>
     <name><![CDATA[唐韧_Ryan]]></name>
@@ -21,6 +21,9 @@
     <content type="html"><![CDATA[<p>本篇内容接上一篇<a href="http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/">iOS事件机制(一)</a>，本次主要介绍iOS事件中的多点触控事件和手势事件。</p>
 
 <p>从上一篇的内容我们知道，在iOS中一个事件用一个UIEvent对象表示，UITouch用来表示一次对屏幕的操作动作，由多个UITouch对象构成了一个UIEvent对象。另外，<code>UIResponder</code>是所有响应者的父类，UIView、UIViewController、UIWindow、UIApplication都直接或间接的集成了UIResponder。关于事件响应者链的传递机制在上一篇中也有阐述，如果你还不是很了解，可以先看看<a href="http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/">iOS事件机制(一)</a>。</p>
+
+<!--More-->
+
 
 <h2>事件处理方法</h2>
 
