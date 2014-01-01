@@ -4,7 +4,7 @@ title: "使用GoAgent翻墙"
 date: 2013-11-30 14:17:16 +0800
 comments: true
 keywords: GoAgent，翻墙
-categories: Tools
+categories: Others
 ---
 > 天朝上国，长城伟岸<br>
 > 茫茫世界，何止一墙
