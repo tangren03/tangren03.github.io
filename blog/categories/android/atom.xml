@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Android | Ryan's Zone]]></title>
   <link href="http://ryantang.me/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://ryantang.me/"/>
-  <updated>2014-01-02T20:41:26+08:00</updated>
+  <updated>2014-01-02T20:43:45+08:00</updated>
   <id>http://ryantang.me/</id>
   <author>
     <name><![CDATA[唐韧_Ryan]]></name>
@@ -25,6 +25,9 @@
 
 <p>本篇内容将结合Android源码来分析Android的事件传递机制。众所周知，点按、滑动、触摸构成了Android等智能设备的基本操作，几乎所有的应用都通过对触摸屏的操作来进行应用程序的使用。那么，在Android中，触摸事件是如何响应及传递的呢，通过本篇内容你将有一个初步的了解。</p>
 
+<!--More-->
+
+
 <h4>实验环境</h4>
 
 <ul>
@@ -32,9 +35,6 @@
 <li>Eclipse(ADT)</li>
 <li>Android源码版本：API Level 19（Android 4.4）</li>
 </ul>
-
-
-<!--More-->
 
 
 <h2>Android事件构成</h2>
