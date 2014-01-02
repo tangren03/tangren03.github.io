@@ -9,7 +9,8 @@
   <meta name="author" content="唐韧_Ryan">
 
   
-  <meta name="description" content="春去冬来又一年，前进并思考着！ 2013已经过去，今天是2014年1月1日，新年伊始！刚刚过去的2013年我经历了很多事情，有过希望、有过激情、有过彷徨、有过犹豫、有过无助、有过力量、有过憧憬。太多的太多，今天，在这里，一并回顾总结一下，作为向过去的告别和对未来的迎接！ ">
+  <meta name="description" content="本文为InfoQ中文站特供稿件，首发地址为：http://www.infoq.com/cn/articles/android-event-delivery-mechanism。如需转载，请与InfoQ中文站联系。 运用的前提是掌握
+掌握的本质是理解 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -102,6 +103,61 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/01/02/android-event-dispatch/">Android事件传递机制</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-02T10:12:13+08:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h6>本文为InfoQ中文站特供稿件，首发地址为：<a href="http://www.infoq.com/cn/articles/android-event-delivery-mechanism">http://www.infoq.com/cn/articles/android-event-delivery-mechanism</a>。如需转载，请与InfoQ中文站联系。</h6>
+
+<blockquote><p>运用的前提是掌握</br>
+掌握的本质是理解</p></blockquote>
+
+<p>本篇内容将结合Android源码来分析Android的事件传递机制。众所周知，点按、滑动、触摸构成了Android等智能设备的基本操作，几乎所有的应用都通过对触摸屏的操作来进行应用程序的使用。那么，在Android中，触摸事件是如何响应及传递的呢，通过本篇内容你将有一个初步的了解。</p>
+
+<h4>实验环境</h4>
+
+<ul>
+<li>OS X 10.9</li>
+<li>Eclipse(ADT)</li>
+<li>Android源码版本：API Level 19（Android 4.4）</li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/01/02/android-event-dispatch/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -279,56 +335,6 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/28/apple-account-3/">苹果开发者账号那些事儿（三）</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-11-28T19:52:00+08:00" pubdate data-updated="true">Nov 28<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><blockquote><p>这是一篇教程<br>
-这里有手把手教学<br></p></blockquote>
-
-<p>这是苹果开发者账号相关系列第三篇，本篇主要介绍Provisioning Profile，如果你还没有看过前两篇，可以先看看：</p>
-
-<ul>
-<li><a href="http://ryantang.me/blog/2013/08/28/apple-account-1/" target="_blank">苹果开发者账号那些事儿（一）</a></li>
-<li><a href="http://ryantang.me/blog/2013/09/03/apple-account-2/" target="_blank">苹果开发者账号那些事儿（二）</a></li>
-</ul>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/11/28/apple-account-3/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -355,8 +361,10 @@ $(document).bind('DOMNodeInserted', function(event) {
   <p><img class="center" src="/images/qrcode.png"></p>
   <p>
     Ryan&#8217;s Zone QQ讨论群<br/>
-    [Android群：320277793]<br/>
-    [iOS群：320277961]
+    [Android-1群：282552849](满)<br/>
+    [Android-2群：320277793]<br/>
+    [iOS-1群：220223507](满)<br/>
+    [iOS-2群：320277961]
   </p>
 </section>
 
