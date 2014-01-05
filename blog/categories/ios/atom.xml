@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | Ryan's Zone]]></title>
   <link href="http://ryantang.me/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://ryantang.me/"/>
-  <updated>2014-01-02T20:43:45+08:00</updated>
+  <updated>2014-01-05T20:25:01+08:00</updated>
   <id>http://ryantang.me/</id>
   <author>
     <name><![CDATA[唐韧_Ryan]]></name>
@@ -12,6 +12,127 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[使用CocoaPods管理依赖库]]></title>
+    <link href="http://ryantang.me/blog/2014/01/05/cocoapods/"/>
+    <updated>2014-01-05T20:16:17+08:00</updated>
+    <id>http://ryantang.me/blog/2014/01/05/cocoapods</id>
+    <content type="html"><![CDATA[<blockquote><p>工欲善其事，必先利其器</p></blockquote>
+
+<p><img src="/images/2014/01/cocoapods/1.png" alt="" /></p>
+
+<p>本篇内容将介绍Mac和iOS开发中必备的一个依赖库管理工具<a href="https://github.com/CocoaPods/CocoaPods">CocoaPods</a>。</p>
+
+<!--More-->
+
+
+<h2>CocoaPods是什么</h2>
+
+<p>在iOS开发中势必会用到一些第三方依赖库，比如大家都熟悉的ASIHttpRequest、AFNetworking、JSONKit等。使用这些第三方类库能极大的方便项目的开发，但是，集成这些依赖库需要我们手动去配置，例如集成ASIHttpRequest库时除了加入源码以外还需要手动去添加一些系统的framework，CFNetwork、MobileCoreServices等，如果这些第三方库发生了更新，还需要手动去更新项目。这就显得非常麻烦。有麻烦自然有解决办法，CocoaPods就是为了解决这个问题而生的。通过CocoaPods，我们可以将第三方的依赖库统一管理起来，配置和更新只需要通过简单的几行命令即可完成，大大的提高了实际开发中的工作效率，使我们的主要精力集中到更重要的事情上去。</p>
+
+<h2>安装CocoaPods</h2>
+
+<p>我的环境为Mac OS X 10.9.1，安装CocoaPods之前，先确保本地有Ruby环境，因为CocoaPods运行于Ruby之上，默认情况下，Mac是自带了Ruby环境的，可以通过命令行<code>ruby -v</code>查看当前Ruby的版本，我用的是1.9.3p448。接下来我们就可以通过如下命令安装CocoaPods了。</p>
+
+<p><code>
+$ sudo gem install cocoapods
+</code>
+输入上述命令后可能会无响应，那是因为你身在天朝，伟大的墙拦住了你的去路，不知为什么，cocoapods.org这种无害产物也要被墙。不过没关系，我们可以通过淘宝的Ruby镜像来访问Cocoapods，在终端输入如下命令将Ruby镜像替换为淘宝的。</p>
+
+<p><code>
+$ gem sources --remove https://rubygems.org/
+$ gem sources -a http://ruby.taobao.org/
+</code></p>
+
+<p>完成后可以通过如下命令来查看当前的Ruby镜像是否已经指向了淘宝的。</p>
+
+<p><code>
+$ gem sources -l
+</code></p>
+
+<p>如果输出结果是如下这样，那说明这一步就成功了。</p>
+
+<p>```
+<strong><em> CURRENT SOURCES </em></strong></p>
+
+<p><a href="http://ruby.taobao.org/">http://ruby.taobao.org/</a>
+```</p>
+
+<p>接下来就可以重新运行安装命令来安装CocoaPods了，根据你的网络情况，几秒或十几秒后安装过程就完成了，总的来说，安装过程还是比较简单的。如果其中你遇到了什么问题，请自行Google解决，都能找到你想要的答案。</p>
+
+<h2>使用CocoaPods</h2>
+
+<p>我们通过集成JSONKit类库来演示如何使用CocoaPods来做依赖库管理。首先，建立一个xcode工程，命名为CocoaPodsTest，现在的工程结构如下图所示。</p>
+
+<p><img src="/images/2014/01/cocoapods/2.png" alt="" /></p>
+
+<p>这里我们要集成JSONKit，可以先通过如下命令来判断其是否支持CocoaPods。</p>
+
+<p><code>
+$ pod search JSONKit
+</code></p>
+
+<p>执行后通过输出结果可以看到JSONKit是支持CocoaPods的，注意红框标记的内容，这是待会我们配置xcode时需要的信息，这条配置项就是告诉CocoaPods去下载和管理哪一个第三方库。</p>
+
+<p><img src="/images/2014/01/cocoapods/3.png" alt="" /></p>
+
+<p>检测完毕后我们来到工程CocoaPodsTest的目录下，新建一个名为Podfile的文件（这里通过命令行创建）</p>
+
+<p><code>
+$ vim Podfile
+</code></p>
+
+<p>这个Podfile文件的作用是配置依赖库信息，就是告诉CocoaPods去下载和管理哪些依赖库，文件创建好以后，打开文件并加入如下内容。（vim打开文件后按i进入插入模式，编辑完成后按esc退出编辑模式，接着输入:wq保存并退出文件）</p>
+
+<p><img src="/images/2014/01/cocoapods/4.png" alt="" /></p>
+
+<p>这时候，工程目录下就会有一个Podfile文件了，注意必须和.xcodeproj在同一个目录下。接下来就可以使用CocoaPods来安装并管理JSONKit库了，确保命令行当前路径是在CocoaPodsTest目录下，运行如下命令。</p>
+
+<p><code>
+$ pod install
+</code></p>
+
+<p>安装完成后会提示如下信息，并且我们的工程目录下会多出一个.xcworkspace结尾的文件，命令行信息绿色部分提醒我们“从此使用CocoaPodsTest.xcworkspace来打开项目”。</p>
+
+<p><img src="/images/2014/01/cocoapods/5.png" alt="" /></p>
+
+<p>通过CocoaPodsTest.xcworkspace来打开项目，这时，我们的项目工程结构就会变成下图这样，多出一个名为Pods的依赖工程，打开Pods文件夹后，发现JSONKit已经在里面了</p>
+
+<p><img src="/images/2014/01/cocoapods/6.png" alt="" /></p>
+
+<p>这时候就可以在项目文件中引入JSONKit.h了，这时候如果你发现import的时候没有提示JSONKit的文件，可以在target-Build Settings下修改“User Header Search Paths”项，新增${SRCROOT}并选择rcursive，如下图。</p>
+
+<p><img src="/images/2014/01/cocoapods/7.png" alt="" /></p>
+
+<p>设置完成后就可以在文件中直接引用第三方库的文件并使用了。</p>
+
+<p><img src="/images/2014/01/cocoapods/8.png" alt="" /></p>
+
+<p>到此，新建工程并使用CocoaPods来管理依赖库的过程就完成了，如果是直接使用已有CocoaPods的项目，则需要首先运行一下pod update命令来更新项，然后照样通过.xcworkspace来打开工程。</p>
+
+<p>如果需要依赖多个第三方类库，只需要修改Podfile文件的配置，然后运行pod update命令即可，比如新增一个AFNetworking的依赖库，首先执行pod search AFNetworking查看一下AFNetworking的配置信息，修改Podfile文件，在后面增加AFNetworking的对应配置信息，然后运行pod update命令就完成了对AFNetworking的集成。</p>
+
+<p><img src="/images/2014/01/cocoapods/9.png" alt="" /></p>
+
+<p>添加AFNetworking库后的目录结构如下。</p>
+
+<p><img src="/images/2014/01/cocoapods/10.png" alt="" /></p>
+
+<p>如果类库有更新，查看更新配置并执行pod update即可简单完成了，从此从手动更新繁重的体力劳动中解脱出来。</p>
+
+<p>简单小结一下：</p>
+
+<ul>
+<li>安装CocoaPods</li>
+<li>新建项目并在工程根目录下新建Podfile文件，配置需要管理的第三方库</li>
+<li>运行pod install下载安装第三方库</li>
+</ul>
+
+
+<h6>更多内容请参考<a href="http://guides.cocoapods.org/">CocoaPods Guides</a></h6>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[iOS事件机制(二)]]></title>
@@ -649,67 +770,6 @@ return self;
 <p><img src="/images/2013/09/apple_account_2/11.png" alt="11" /></p>
 
 <blockquote><p>后记：本次关于苹果开发者账号证书相关的介绍就到此结束了，不足之处望大家指正和补充。下篇将主要介绍Provisioning Profile的二三事。欢迎继续关注。</p></blockquote>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[苹果开发者账号那些事儿（一）]]></title>
-    <link href="http://ryantang.me/blog/2013/08/28/apple-account-1/"/>
-    <updated>2013-08-28T22:55:00+08:00</updated>
-    <id>http://ryantang.me/blog/2013/08/28/apple-account-1</id>
-    <content type="html"><![CDATA[<blockquote><p>这不是一篇教程<br>
-这里没有手把手教学<br></p></blockquote>
-
-<p>正如前言所述，如果你是找一篇如何申请苹果开发者账号的HOTO教程，那么不耽误你的宝贵时间了，马上关闭本页面。如果你是想看我扯一下关于苹果开发者账号那些事儿，那你可以放松下接着往下看，从这一篇开始接下来几篇文章，我将完整的介绍苹果开发者账号体系！</p>
-
-<!--More-->
-
-
-<h2>账号类型</h2>
-
-<p>成为苹果开发者就必须注册苹果开发者账号并付费，拥有了开发者账号后可以开发相应计划的App并上线App store提供免费或付费下载，或是开发给企业内部使用。苹果为注册了发者账号的开发者提供了如下几类计划：</p>
-
-<ul>
-<li>iOS开发计划</li>
-</ul>
-
-
-<p><img src="/images/2013/08/apple_account_1/1.png" alt="ios" /></p>
-
-<p>iOS开发者计划主要为iOS设备进行App开发，比如iPhone和iPad等，iOS计划也是目前苹果整个开发者计划类型中人数最多的。账号类型分为个人（Individual）、公司（Company）、企业（Enterprise）、高校（University）四种类型，每年资费分别为$99、$99、$299、免费。根据账号类型的不同，申请的条件和所具有的权限也不同。</p>
-
-<p>个人计划只需要填写个人信息并通过苹果审核即可，公司计划需要出示相应的公司信息、营业执照等，企业账号需要出示的信息和公司账号类似，高校计划需要提供高校基本信息，在注册方式上苹果开发者官网有详细的流程。</p>
-
-<p>在权限上，个人账号和公司账号同为$99/年，但是在发布署名上，公司账号可以填写公司或组织信息（比如某某公司、某某工作室），而个人账号只能默认显示注册时填写的个人信息，并且不能修改。另外，公司账号提供团队开发的模式，一个公司类型账号可以管理添加开发者作为Team member协同开发。当然，也可以将个人账号升级为公司账号，前提是得提供相关公司信息并且得邮件联系开发者支持中心或者拨打支持电话。企业账号为$299/年，企业账号和前两者最大的不同在于不能将App发布到App store，但可以将App放到内部服务器上提供给企业内部任意一台设备进行安装，并且不需要特别绑定Device ID。例如企业内部OA系统如果是用iOS设备的话，那就适合这个计划。最后一种是高校计划，苹果为鼓励高校更多的参与到苹果开发者计划中来，特意推出这一项计划，高校计划具有在真机上测试等权限，但不能将App发布到App store。</p>
-
-<ul>
-<li>Mac开发计划</li>
-</ul>
-
-
-<p><img src="/images/2013/08/apple_account_1/2.png" alt="ios" /></p>
-
-<p>Mac开发者计划主要是针对在Mac电脑上进行App开发的开发人员，费用是$99每年。账号类型也分为个人和公司两种，两种账号的区别和iOS设备开发者账号类似。</p>
-
-<ul>
-<li>Safari扩展开发计划</li>
-</ul>
-
-
-<p><img src="/images/2013/08/apple_account_1/3.png" alt="ios" /></p>
-
-<p>Safari开发者计划主要是在Safari浏览器上进行一些扩展开发，比如自定义Safari的控件或者页面显示方式等，这个计划申请是免费的。同样分为个人和公司两种类型。</p>
-
-<ul>
-<li>MFi计划</li>
-</ul>
-
-
-<p><img src="/images/2013/08/apple_account_1/4.png" alt="ios" /></p>
-
-<p>MFi计划主要针对iPod、iPhone以及iPad的一些外设的开发，这个计划也是免费的，通过苹果提供的一些接口和条款进行外设的开发，比如针对iPod和iPhone的外设音响。</p>
-
-<p>以上就是对苹果开发者账号的开发者计划的简要介绍，详细信息可以查看<a href="https://developer.apple.com/programs/">Apple Developer Programs</a>,那里有非常详细的介绍，同时也可以在那里进行注册和开发计划选择。后面几篇文章我将围绕iOS开发计划相关的内容进行解释，主要包括几种证书的介绍、签名、证书迁移等内容，敬请期待！</p>
 ]]></content>
   </entry>
   

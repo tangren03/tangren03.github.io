@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Others | Ryan's Zone]]></title>
-  <link href="http://ryantang.me/blog/categories/others/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Tools | Ryan's Zone]]></title>
+  <link href="http://ryantang.me/blog/categories/tools/atom.xml" rel="self"/>
   <link href="http://ryantang.me/"/>
-  <updated>2014-01-02T20:43:45+08:00</updated>
+  <updated>2014-01-05T20:25:01+08:00</updated>
   <id>http://ryantang.me/</id>
   <author>
     <name><![CDATA[唐韧_Ryan]]></name>
