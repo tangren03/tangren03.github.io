@@ -4,7 +4,7 @@
   <title><![CDATA[Ryan's Zone]]></title>
   <link href="http://ryantang.me/atom.xml" rel="self"/>
   <link href="http://ryantang.me/"/>
-  <updated>2014-01-05T20:25:01+08:00</updated>
+  <updated>2014-01-24T16:26:04+08:00</updated>
   <id>http://ryantang.me/</id>
   <author>
     <name><![CDATA[唐韧_Ryan]]></name>
@@ -12,6 +12,475 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Android布局优化]]></title>
+    <link href="http://ryantang.me/blog/2014/01/24/android-optimise-layout/"/>
+    <updated>2014-01-24T20:42:44+08:00</updated>
+    <id>http://ryantang.me/blog/2014/01/24/android-optimise-layout</id>
+    <content type="html"><![CDATA[<h6>本文为InfoQ中文站特供稿件，首发地址为：<a href="http://www.infoq.com/cn/articles/android-optimise-layout">http://www.infoq.com/cn/articles/android-optimise-layout</a>。如需转载，请与InfoQ中文站联系。</h6>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/0.png" alt="" /></p>
+
+<p>在Android开发中，我们常用的布局方式主要有LinearLayout、RelativeLayout、FrameLayout等，通过这些布局我们可以实现各种各样的界面。与此同时，如何正确、高效的使用这些布局方式来组织UI控件，是我们构建优秀Android App的主要前提之一。本篇内容就主要围绕Android布局优化来讨论在日常开发中我们使用常用布局需要注意的一些方面，同时介绍一款SDK自带的UI性能检测工具HierarchyViewer。</p>
+
+<!--More-->
+
+
+<h2>布局原则</h2>
+
+<p>通过一些惯用、有效的布局原则，我们可以制作出加载效率高并且复用性高的UI。简单来说，在Android UI布局过程中，需要遵守的原则包括如下几点：</p>
+
+<ul>
+<li>尽量多使用RelativeLayout，不要使用绝对布局AbsoluteLayout；</li>
+<li>将可复用的组件抽取出来并通过&lt; include />标签使用；</li>
+<li>使用&lt; ViewStub />标签来加载一些不常用的布局；</li>
+<li>使用&lt; merge />标签减少布局的嵌套层次；</li>
+</ul>
+
+
+<p>由于Android的碎片化程度很高，市面上存在的屏幕尺寸也是各式各样，使用RelativeLayout能使我们构建的布局适应性更强，构建出来的UI布局对多屏幕的适配效果越好，通过指定UI控件间的相对位置，使在不同屏幕上布局的表现能基本保持一致。当然，也不是所有情况下都得使用相对布局，根据具体情况来选择和其他布局方式的搭配来实现最优布局。</p>
+
+<h4>1、&lt; include />的使用</h4>
+
+<p>在实际开发中，我们经常会遇到一些共用的UI组件，比如带返回按钮的导航栏，如果为每一个xml文件都设置这部分布局，一是重复的工作量大，二是如果有变更，那么每一个xml文件都得修改。还好，Android为我们提供了&lt; include />标签，顾名思义，通过它，我们可以将这些共用的组件抽取出来单独放到一个xml文件中，然后使用&lt; include />标签导入共用布局，这样，前面提到的两个问题都解决了。例如上面提到的例子，新建一个xml布局文件作为顶部导航的共用布局。</p>
+
+<figure class='code'><figcaption><span>common_navitationbar.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+</span><span class='line'>    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>    <span class="na">android:background=</span><span class="s">&quot;@android:color/white&quot;</span>
+</span><span class='line'>    <span class="na">android:padding=</span><span class="s">&quot;10dip&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;Button</span>
+</span><span class='line'>        <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_alignParentLeft=</span><span class="s">&quot;true&quot;</span>
+</span><span class='line'>        <span class="na">android:text=</span><span class="s">&quot;Back&quot;</span>
+</span><span class='line'>        <span class="na">android:textColor=</span><span class="s">&quot;@android:color/black&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;TextView</span>
+</span><span class='line'>        <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_centerInParent=</span><span class="s">&quot;true&quot;</span>
+</span><span class='line'>        <span class="na">android:text=</span><span class="s">&quot;Title&quot;</span>
+</span><span class='line'>        <span class="na">android:textColor=</span><span class="s">&quot;@android:color/black&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/RelativeLayout&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后我们在需要引入导航栏的布局xml中通过&lt; include />导入这个共用布局。</p>
+
+<figure class='code'><figcaption><span>main.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+</span><span class='line'>    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;include</span>
+</span><span class='line'>        <span class="na">android:layout_alignParentTop=</span><span class="s">&quot;true&quot;</span>
+</span><span class='line'>        <span class="na">layout=</span><span class="s">&quot;@layout/common_navitationbar&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/RelativeLayout&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过这种方式，我们既能提高UI的制作和复用效率，也能保证制作的UI布局更加规整和易维护。布局完成后我们运行一下，可以看到如下布局效果，这就是我们刚才完成的带导航栏的界面。</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/1.png" alt="" /></p>
+
+<p>接着我们进入sdk目录下的tools文件夹下，找到HierarchyViewer并运行（此时保持你的模拟器或真机正在运行需要进行分析的App），双击我们正在显示的这个App所代表的进程。</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/3.png" alt="" /></p>
+
+<p>接下来便会进入hierarchyviewer的界面，我们可以在这里很清晰看到正在运行的UI的布局层次结构以及它们之间的关系。</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/4.png" alt="" /></p>
+
+<p>分析刚刚我们构建的导航栏布局，放大布局分析图可以看到，被include进来的common_navitationbar.xml根节点是一个RelativeLayout，而包含它的主界面main.xml根节点也是一个RelativeLayout，它前面还有一个FrameLayout等几个节点，FrameLayout就是Activity布局中默认的父布局节点，再往上是一个LinearLayout，这个LinearLayout就是包含Activity布局和状态栏的整个屏幕显示的布局父节点，这个LinearLayout还有一个子节点就是ViewStub，关于这个节点我们在后面会详细介绍。</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/2.png" alt="" /></p>
+
+<h4>2、&lt; merge />的使用</h4>
+
+<p><merge>标签的作用是合并UI布局，使用该标签能降低UI布局的嵌套层次。该标签的主要使用场景主要包括两个，第一是当xml文件的根布局是FrameLayout时，可以用merge作为根节点。理由是因为Activity的内容布局中，默认就用了一个FrameLayout作为xml布局根节点的父节点，这一点可以从上图中看到，main.xml的根节点是一个RelativeLayout，其父节点就是一个FrameLayout，如果我们在main.xml里面使用FrameLayout作为根节点的话，这时就可以使用merge来合并成一个FrameLayout，这样就降低了布局嵌套层次。</p>
+
+<p>我们修改一下main.xml的内容，将根节点修改为merge标签。</p>
+
+<figure class='code'><figcaption><span>main.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;merge</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+</span><span class='line'>    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+</span><span class='line'>    <span class="na">android:background=</span><span class="s">&quot;@android:color/darker_gray&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;include</span> <span class="na">layout=</span><span class="s">&quot;@layout/common_navitationbar&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/merge&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重新运行并打开HierarchyViewer查看此时的布局层次结构，发现之前多出来的一个RelativeLayout就没有了，直接将common_navigationbar.xml里面的内容合并到了main.xml里面。</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/5.png" alt="" /></p>
+
+<p>使用&lt; merge />的第二种情况是当用include标签导入一个共用布局时，如果父布局和子布局根节点为同一类型，可以使用merge将子节点布局的内容合并包含到父布局中，这样就可以减少一级嵌套层次。首先我们看看不使用merge的情况。我们新建一个布局文件common_navi_right.xml用来构建一个在导航栏右边的按钮布局。</p>
+
+<figure class='code'><figcaption><span>common_navi_right.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+</span><span class='line'>    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;Button</span>
+</span><span class='line'>        <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_alignParentRight=</span><span class="s">&quot;true&quot;</span>
+</span><span class='line'>        <span class="na">android:text=</span><span class="s">&quot;Ok&quot;</span>
+</span><span class='line'>        <span class="na">android:textColor=</span><span class="s">&quot;@android:color/black&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/RelativeLayout&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后修改common_navitationbar.xml的内容，添加一个include，将右侧按钮的布局导入：</p>
+
+<figure class='code'><figcaption><span>common_navitationbar.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+</span><span class='line'>    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>    <span class="na">android:background=</span><span class="s">&quot;@android:color/white&quot;</span>
+</span><span class='line'>    <span class="na">android:padding=</span><span class="s">&quot;10dip&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;Button</span>
+</span><span class='line'>        <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_alignParentLeft=</span><span class="s">&quot;true&quot;</span>
+</span><span class='line'>        <span class="na">android:text=</span><span class="s">&quot;Back&quot;</span>
+</span><span class='line'>        <span class="na">android:textColor=</span><span class="s">&quot;@android:color/black&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;TextView</span>
+</span><span class='line'>        <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_centerInParent=</span><span class="s">&quot;true&quot;</span>
+</span><span class='line'>        <span class="na">android:text=</span><span class="s">&quot;Title&quot;</span>
+</span><span class='line'>        <span class="na">android:textColor=</span><span class="s">&quot;@android:color/black&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;include</span> <span class="na">layout=</span><span class="s">&quot;@layout/common_center&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/RelativeLayout&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行后的效果如下图，在导航栏右侧添加了一个按钮“ok”</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/6.png" alt="" /></p>
+
+<p>然后再运行HierarchyViewer看看现在的布局结构，发现common_navi_right.xml作为一个布局子节点嵌套在了common_navitationbar.xml下面。</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/7.png" alt="" /></p>
+
+<p>这时我们再将common_navi_right.xml的根节点类型改为merge。</p>
+
+<figure class='code'><figcaption><span>common_navi_right.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;merge</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+</span><span class='line'>    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;Button</span>
+</span><span class='line'>        <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_alignParentRight=</span><span class="s">&quot;true&quot;</span>
+</span><span class='line'>        <span class="na">android:text=</span><span class="s">&quot;Ok&quot;</span>
+</span><span class='line'>        <span class="na">android:textColor=</span><span class="s">&quot;@android:color/black&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/merge&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重新运行并打开HierarchyViewer查看布局结构，发现之前嵌套的一个RelativeLayout就没有了，这就是使用merge的效果，能降低布局的嵌套层次。</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/8.png" alt="" /></p>
+
+<h4>3、&lt; ViewStub />的使用</h4>
+
+<p>也许有不少同学对ViewStub还比较陌生，首先来看看ViewStub在官方文档里是怎么介绍的：</p>
+
+<p>A ViewStub is an invisible, zero-sized View that can be used to lazily inflate layout resources at runtime. When a ViewStub is made visible, or when inflate() is invoked, the layout resource is inflated. The ViewStub then replaces itself in its parent with the inflated View or Views. Therefore, the ViewStub exists in the view hierarchy until setVisibility(int) or inflate() is invoked. The inflated View is added to the ViewStub&rsquo;s parent with the ViewStub&rsquo;s layout parameters.</p>
+
+<p>大致意思是：ViewStub是一个不可见的，能在运行期间延迟加载的大小为0的View，它直接继承于View。当对一个ViewStub调用inflate()方法或设置它可见时，系统会加载在ViewStub标签中引入的我们自己定义的View，然后填充在父布局当中。也就是说，在对ViewStub调用inflate()方法或设置visible之前，它是不占用布局空间和系统资源的。它的使用场景可以是在我们需要加载并显示一些不常用的View时，例如一些网络异常的提示信息等。</p>
+
+<p>我们新建一个xml文件用来显示一个提示信息：</p>
+
+<figure class='code'><figcaption><span>common_msg.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+</span><span class='line'>    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nt">&lt;TextView</span>
+</span><span class='line'>        <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_centerInParent=</span><span class="s">&quot;true&quot;</span>
+</span><span class='line'>        <span class="na">android:background=</span><span class="s">&quot;@android:color/white&quot;</span>
+</span><span class='line'>        <span class="na">android:padding=</span><span class="s">&quot;10dip&quot;</span>
+</span><span class='line'>        <span class="na">android:text=</span><span class="s">&quot;Message&quot;</span>
+</span><span class='line'>        <span class="na">android:textColor=</span><span class="s">&quot;@android:color/black&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/RelativeLayout&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后在main.xml里面加入ViewStub的标签引入上面的布局：</p>
+
+<figure class='code'><figcaption><span>main.xml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;merge</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+</span><span class='line'>    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+</span><span class='line'>    <span class="na">android:background=</span><span class="s">&quot;@android:color/darker_gray&quot;</span>
+</span><span class='line'>    <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span> <span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;include</span> <span class="na">layout=</span><span class="s">&quot;@layout/common_navitationbar&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;ViewStub</span>
+</span><span class='line'>        <span class="na">android:id=</span><span class="s">&quot;@+id/msg_layout&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_width=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+</span><span class='line'>        <span class="na">android:layout_gravity=</span><span class="s">&quot;center&quot;</span>
+</span><span class='line'>        <span class="na">android:layout=</span><span class="s">&quot;@layout/common_msg&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;/merge&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修改MainActivity.java的代码，我们这里设置为点击右上角按钮的时候显示自定义的common_msg.xml的内容。</p>
+
+<figure class='code'><figcaption><span>MainActivity.java</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainActivity</span> <span class="kd">extends</span> <span class="n">Activity</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">View</span> <span class="n">msgView</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">flag</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>  
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_main</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">rightButton</span><span class="o">).</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>          
+</span><span class='line'>          <span class="nd">@Override</span>
+</span><span class='line'>          <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">arg0</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">(</span><span class="s">&quot;111&quot;</span><span class="o">);</span>
+</span><span class='line'>              <span class="k">if</span><span class="o">(</span><span class="n">flag</span><span class="o">){</span>
+</span><span class='line'>                  <span class="n">showMsgView</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span><span class="k">else</span><span class="o">{</span>
+</span><span class='line'>                  <span class="n">closeMsgView</span><span class="o">();</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>              <span class="n">flag</span> <span class="o">=</span> <span class="o">!</span><span class="n">flag</span><span class="o">;</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">});</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">showMsgView</span><span class="o">(){</span>
+</span><span class='line'>      <span class="k">if</span><span class="o">(</span><span class="n">msgView</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">){</span>
+</span><span class='line'>          <span class="n">msgView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+</span><span class='line'>          <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="n">ViewStub</span> <span class="n">stub</span> <span class="o">=</span> <span class="o">(</span><span class="n">ViewStub</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">msg_layout</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">msgView</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="na">inflate</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">closeMsgView</span><span class="o">(){</span>
+</span><span class='line'>      <span class="k">if</span><span class="o">(</span><span class="n">msgView</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">){</span>
+</span><span class='line'>          <span class="n">msgView</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>代码中我们通过flag来切换显示和隐藏common_msg.xml的内容，然后我们运行一下并点击右上角按钮来切换，效果如下：</p>
+
+<p><img src="http://ryantang.me/images/2014/01/android_optimise_layout/9.png" alt="" /></p>
+
+<h2>总结</h2>
+
+<p>好了，到目前为止，我们就介绍了Android中关于布局优化的一些内容以及工具HierarchyViewer的使用。将前文提及的布局原则再列一下，欢迎大家补充更多的关于Android布局优化的实用原则。</p>
+
+<ul>
+<li>尽量多使用RelativeLayout，不要使用绝对布局AbsoluteLayout；</li>
+<li>将可复用的组件抽取出来并通过&lt; include />标签使用；</li>
+<li>使用&lt; ViewStub />标签来加载一些不常用的布局；</li>
+<li>使用&lt; merge />标签减少布局的嵌套层次；</li>
+</ul>
+
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2014/01/24/android-optimise-layout/'>http://ryantang.me/blog/2014/01/24/android-optimise-layout/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用CocoaPods管理依赖库]]></title>
@@ -2009,82 +2478,6 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Ryan看新闻——第四期]]></title>
-    <link href="http://ryantang.me/blog/2013/09/28/news-4/"/>
-    <updated>2013-09-28T12:48:00+08:00</updated>
-    <id>http://ryantang.me/blog/2013/09/28/news-4</id>
-    <content type="html"><![CDATA[<h3>1.腾讯投资搜狗占股近40%</h3>
-
-<p><img src="http://ryantang.me/images/2013/09/news/4.png" alt="1" /></p>
-
-<p>前段时间，腾讯宣布以4.48亿美元战略入股搜狗，将旗下搜索业务腾讯搜搜和QQ输入法并入搜狗现有业务中，腾讯持有搜狗36.5%的股份。与此同时，搜狗继续作为搜狐的子公司独立运营。张朝阳担任董事长，王小川作为CEO，腾讯总裁刘炽平和COO任宇昕出任搜狗董事。</p>
-
-<!--More-->
-
-
-<p>我的观点：腾讯入股搜狗将给搜狗带来更多的流量和用户，同时，腾讯的搜搜和QQ输入法业务也可以大大的和搜狗的搜索和输入法业务整合。对于腾讯来说，搜搜和QQ输入法本来也是插入市场竞争的一脚，流量和变现能力都很弱。这次和搜狗的合作，有种将弱势转优势的态势。对搜狗来说，此次合作将大大提升搜狗的市场占有率，在PC端和移动端都将有比较大幅的增长，至此，百度、腾讯、360在中国互联网市场形成了三足鼎立的局面。对于我们普通用户来说，这次的合作将带来更新的产品和使用体验感受，我们也可以静观其变。</p>
-
-<h3>2.苹果发布iPhone 5s和5c</h3>
-
-<p>苹果在美国时间9月10日召开新品发布会，发布了iPhone 5s和iPhone5c，5s有三种颜色可供选择，同时加入A6处理器和M7协同处理器，指纹识别技术TouchID功能的加入也是本次5s上一次亮眼的表现。5c基本延续了iPhone 5的配置，不同的是后盖改成了多彩的塑料外壳，总共5种颜色。本次中国市场成为全球首发国家之一，可见苹果对中国市场的重视逐渐加强。</p>
-
-<p><img src="http://ryantang.me/images/2013/09/news/5.png" alt="1" /></p>
-
-<p>我的观点：很多人都说苹果近年创新力降低了，出的新品没有新意。其实反过来看，又是不是市场对苹果公司有过高的期望而导致了有这种看法？任何事物都有巅峰和走下神坛的时刻，毋庸置疑的是，苹果的iPhone确实改变了世界，就好比当初福特造车前，人们希望得到的是一匹更快的马。每年都带来当初iPhone面世时的惊艳，我想这对现有的科技和社会发展进度来说是非常有难度的。iPhone的出现也是在诺基亚统领手机业十年后，而如今，iPhone仍然是手机业界的标杆。本次的iPhone 5s在设计上几乎和5没什么区别，可能苹果也延续了两年大改款的趋势。出人意料的是，这次5s金色款出现供不应求的情况，大家也给它起了个洋气的名字“土豪金”。</p>
-
-<p class='post-footer'>
-        原文地址：
-        <a href='http://ryantang.me/blog/2013/09/28/news-4/'>http://ryantang.me/blog/2013/09/28/news-4/</a>
-        <br/>
-        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
-        </p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Ryan看新闻——第三期]]></title>
-    <link href="http://ryantang.me/blog/2013/09/05/news-3/"/>
-    <updated>2013-09-05T23:37:00+08:00</updated>
-    <id>http://ryantang.me/blog/2013/09/05/news-3</id>
-    <content type="html"><![CDATA[<h3>1.微软以近72亿美元收购诺基亚设备服务部门及相关专利</h3>
-
-<p><img src="http://ryantang.me/images/2013/09/news/2.png" alt="1" /></p>
-
-<p>收购在2014年第一季度将会全部完成，微软向诺基亚支付37.9亿欧元，还有16.5亿欧元用来购买专利资产，一共是54.4亿欧元，折合71.7亿美元。此外还有32000名诺基亚员工将会逐渐过渡到微软，诺基亚多名高管将会加入成为微软高管。</p>
-
-<!--More-->
-
-
-<p>我的观点：2013年9月3日，注定是要载入史册的一天，昔日的手机霸主诺基亚还是没能挺下来，百年老店被收购，不得不感叹变化的无常。诺基亚统治手机时代达14年之久，直到第一代iphone的出现，彻底改变了传统手机大牌企业的命运。不久之前，摩托罗拉移动被Google以125亿美元收购，想当初，Moto和Nokia是多么的如日中天，至今沦的被收购的境地。另一方面，苹果成为了如今智能手机的标杆和霸主，三星、HTC、小米这些新进势力依托Android平台势头猛进，一路高歌，以Apple和Google为生态系统的两大阵营展开了激烈的角逐。近日，小米估值超过100亿，一家成立不到四年的公司成长如此之神速，确实是一个奇迹。9月5日，小米发布小米3、小米电视，宣布前Google副总裁、Android产品工程副总裁加入小米，无疑预示着小米对国际市场的觊觎。昔日诺基亚已成往事，对微软来说，逐渐走上了苹果化的道路，软硬件一体化，不断完善的生态系统，日后微软诺基亚会走向何方，我们拭目以待。</p>
-
-<h3>2.Google宣布下一代Android操作系统为Android 4.4 KitKat</h3>
-
-<p><img src="http://ryantang.me/images/2013/09/news/1.png" alt="1" /></p>
-
-<p>KitKat是雀巢旗下一款巧克力棒，雀巢会在全球 19 个国家出售 5000 万个印有 Android 机器人标志的 KitKat，消费者还有机会赢得 Google 的平板电脑 Nexus 7 以及 Google Play 的礼品卡。为了卖关子，双方在保密工作方面也是下足了工夫。印有 Android 机器人的全新包装在 2 个月前开始生产，而在 Google 内部一直是以 Key Lime Pie 为代号，Google 的员工和其它合作伙伴都被蒙在鼓里。</p>
-
-<p>我的观点：之前传了半天的Android 5.0并没有如期而至，反而等来的是Android 4.4 Kitkat，秉承Android对系统命名一贯以甜点命名的方式，这回这款雀巢巧克力棒味道会怎样呢？值得注意的一点是，相比以前，现在Android的碎片化范围在逐渐缩小，这对厂商、开发者都是一个比较好的消息，Android差异化在4.0以后就已经成缩小态势，Google给OEM厂商留了足够的时间去更新系统，放缓了新版本Android系统的更新速度，这几项都是促使碎片化减小的直接原因。如今，Android系统已经在智能手机、平板、可穿戴设备、车载系统中得到了广泛的应用，相信未来Android还会以其开源的优势运用到更多的实际生产领域。</p>
-
-<h3>3.魅族、三星、小米齐发新机</h3>
-
-<p><img src="http://ryantang.me/images/2013/09/news/3.png" alt="1" /></p>
-
-<p>九月，魅族发布MX3、三星发布Note3、智能手机Galaxy Gear、小米发布MI 3和小米电视。</p>
-
-<p>我的观点：9月新机齐发，智能手机、智能手表、智能电视。一切都在不断更新着。可以看到的是，如今已不是智能手机一家独大的天下了，智能电视、手表、手环，各种可穿戴设备已经开始盛行，可以预知到的是，接下来两年，将是各种智能设备层出不穷的时候，接着我想应该是智能家电、智能汽车、智能房屋，一切事物将被植入芯片和可编程，难道这就是物联网时代的开始吗？你觉得呢？</p>
-
-<p class='post-footer'>
-        原文地址：
-        <a href='http://ryantang.me/blog/2013/09/05/news-3/'>http://ryantang.me/blog/2013/09/05/news-3/</a>
-        <br/>
-        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
-        </p>
-
-]]></content>
-  </entry>
-  
-  <entry>
     <title type="html"><![CDATA[苹果开发者账号那些事儿（二）]]></title>
     <link href="http://ryantang.me/blog/2013/09/03/apple-account-2/"/>
     <updated>2013-09-03T21:24:00+08:00</updated>
@@ -2169,86 +2562,6 @@
 <p class='post-footer'>
         原文地址：
         <a href='http://ryantang.me/blog/2013/09/03/apple-account-2/'>http://ryantang.me/blog/2013/09/03/apple-account-2/</a>
-        <br/>
-        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
-        </p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Ryan看新闻——第二期]]></title>
-    <link href="http://ryantang.me/blog/2013/08/31/news-2/"/>
-    <updated>2013-08-31T21:15:00+08:00</updated>
-    <id>http://ryantang.me/blog/2013/08/31/news-2</id>
-    <content type="html"><![CDATA[<h3>1.ZEALER公开天使投资方为雷军，准备开始A轮</h3>
-
-<p><img src="http://ryantang.me/images/2013/08/news/4.png" alt="zealer" /></p>
-
-<p><a href = "http://zealer.com" target="_blank">ZEALER.COM</a>是一个独立科技测评媒体，主要从事手机等数码产品的测评工作，其评测视频以质量高、观点独特而闻名。创始人王自如确认ZEALER去年已接受雷军200万天使投资，已准备开始A轮融资。</p>
-
-<p>我的观点：看王自如（新浪微博@王自如ZEALER）的视频快三年了，他的测评风格和别的测评视频在风格和内容上形成鲜明对比，测评惯用专业术语、评点到位、语言犀利，不管你之前看过同一款产品的多少测评，看看自如的总会有一种新鲜感，从最初看自如一个人测评，到后来组件团队成立ZEALER，看着ZEALER一直进步，希望他们能成为中国科技测评届的标杆。</p>
-
-<!--More-->
-
-
-<h3>2.Google Android产品副总裁加盟小米</h3>
-
-<p><img src="http://ryantang.me/images/2013/08/news/5.png" alt="zealer" /></p>
-
-<p>8月29日，Google Android产品管理副总裁Hugo Barra离开Google加入小米公司，负责小米国际化产品业务。Hugo在历次Google I/O大会以及Nexus系列发布会上都有现身，曾和Android创始人安迪共事多年，是Android团队核心成员。本次加入小米他也在Google+上发表声明，希望能帮助小米在国际业务拓展上更上一个台阶，另外也希望能将Android生态系统向前推进。</p>
-
-<p>我的观点：Hugo加入小米对小米来说是一次成功的营销事件，加之小米马上要举办新产品发布会，并发表声明称Hugo也将参加本次发布会。在Android系统上独树一帜的小米能引入这位在Android亲爹旗下打拼过的人物，不光是小米本身，那些喜欢小米的消费者也希望能看到小米能更向前一步。这两年，小米的发展势头迅猛，其产品定位和营销手段是其成功的基础，当然，产品本身和对用户的照顾，也是其取得成功的前提，小米打造了一种米粉社区文化。雷军心里肯定想过做中国的乔布斯。</p>
-
-<p class='post-footer'>
-        原文地址：
-        <a href='http://ryantang.me/blog/2013/08/31/news-2/'>http://ryantang.me/blog/2013/08/31/news-2/</a>
-        <br/>
-        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
-        </p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Ryan看新闻——第一期]]></title>
-    <link href="http://ryantang.me/blog/2013/08/29/news-1/"/>
-    <updated>2013-08-29T21:39:00+08:00</updated>
-    <id>http://ryantang.me/blog/2013/08/29/news-1</id>
-    <content type="html"><![CDATA[<p>从今天起我准备在微信公众账号上推出一个新内容板块&lt;Ryan看新闻>，由于个人对互联网新鲜事比较感兴趣，平时会阅读一些国内外互联网相关新闻网站和博客，今后我会将自己看到的一些认为有价值的行业新闻或动态通过微信的方式推送给大家(扫描右侧底部二维码关注微信公众账号)。类容主要包括互联网热点新闻、最新产品、行业数据报告等，同时，我会在选取的每一个新闻后面加上自己的观点评论，也欢迎大家通过微信回复或博客评论和我交流。另外，每一期的内容我也会记录到博客上。</p>
-
-<!--More-->
-
-
-<h3>1、易信上线3天用户数突破500万</h3>
-
-<p><img src="http://ryantang.me/images/2013/08/news/1.jpg" alt="yixin" /></p>
-
-<p>中国电信和网易推出了移动端聊天软件“易信”，功能与微信类似，主要特点是能给没有安装易信的用户发送短消息和语音留言，如果对方没有安装易信，语音留言会以电话的形式送达，其他功能上基本和微信类似。上线24小时后，用户就突破了100万，而3天后易信官方微博就宣布用户突破了500万，相比起来，微信用户突破100万用了200天。</p>
-
-<p>我的看法：易信用户增长速度快无疑借助了微信的势头，加上不是什么野战军推出的，大家抱着猎奇和对比的心理去下载并安装。结果真的是否会用，我觉得未必。我周围就有很多朋友只是单纯的下载、安装，然后试用了一下，最后该干嘛还是干嘛，回到了微信。毫无疑问，微信有先入为主的优势，加上发展到5.0的微信已经比较完善了，5.0后推出的游戏平台中天天爱消除和天天连萌更是火爆。相比之下，易信显得更小清新，功能简单，易用性强。如果看后期发展，易信会走微信的老路还是另谋出路，静观其变。</p>
-
-<h3>2.Apple正式推出iWork for iCloud beta</h3>
-
-<p><img src="http://ryantang.me/images/2013/08/news/2.jpg" alt="yixin" /></p>
-
-<p>苹果正式上线了iWork for iCloud beta版，iWork for iCloud是苹果在今年WWDC上推出的套件服务，让用户通过浏览器就可使用苹果的三款办公软件Keynote、Pages和Numbers。之前只针对开发者和部分用户开放，现在，所有用户通过自己的Apple ID即可登录使用，并且支持icloud同步到自己的设备。目前支持三款浏览器，分别是Safari 6.0.3、Chrome 27.0.1、IE 9.0.8。缺陷是目前内容只支持英文，试用可以访问可以访问<a href="https://www.icloud.com">iCloud</a></p>
-
-<p>我的看法：Google也推出过Google Doc，可以看到今后办公云端化和软件使用云化是一个趋势。当网络带宽的不断提升，云软件的使用会越来越多，今后我们的PC上可能只需要安装一个浏览器就可以解决很多事情。</p>
-
-<h3>3、百度推出“轻应用”解决方案</h3>
-
-<p><img src="http://ryantang.me/images/2013/08/news/3.jpg" alt="yixin" /></p>
-
-<p>百度在百度世界2013大会上推出了“轻应用”解决方案，实现即搜即用的的功能，用户无需下载App，通过百度搜索响应的应用即可立马使用App提供的功能。在百度开发者中心开放了轻应用开发平台App Builder，需要身份验证才能获取开发资格，感兴趣的可以登陆百度开发者中心查看详情。</p>
-
-<p>我的看法：轻应用在技术上和WebApp没什么本质区别，在搜索方式上，如果搜索旅游，那出现的旅游类App哪个排在前面呢，这里肯定又会出现竞价排名。轻应用的好处是降低了开发商的开发和升级成本，另外，依靠百度搜索，在应用分发量上会显著提高。换一个角度，百度这么做就有点App store的感觉了，而苹果已经明确声明过禁止类App Store的应用上架，百度会不会步360的后尘呢？谁也不知道。不过，轻应用在Android平台上似乎更易成功。</p>
-
-<p>以上就是本期的三条新闻，看过后你的感受是怎样，对这样的方式有何好的意见和建议，欢迎回复和我交流！</p>
-
-<p class='post-footer'>
-        原文地址：
-        <a href='http://ryantang.me/blog/2013/08/29/news-1/'>http://ryantang.me/blog/2013/08/29/news-1/</a>
         <br/>
         <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
         </p>
