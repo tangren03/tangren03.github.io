@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>苹果开发者账号那些事儿（二） - Ryan's Zone</title>
+  <meta name="author" content="唐韧_Ryan">
+
+  
+  <meta name="description" content="这是一篇教程
+这里有手把手教学 这是苹果开发者账号系列第二篇，如果你还没有看过第一篇，也许你会想看一看： 苹果开发者账号那些事儿（一） 一、关于证书 苹果使用密文签名技术来验证App的合法性，不管是iOS应用还是Mac应用都需要相应的签名证书来作为测试或发布App用。这里主要谈谈iOS的证书，当然 &hellip;">
+  <meta name="keywords" content="苹果开发者账号,iOS">
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ryantang.me/blog/2013/09/03/apple-account-2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+       <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <link href="/atom.xml" rel="alternate" title="Ryan's Zone" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<!--为markdown超链接添加targe=_blank-->
+<script type="text/javascript">
+    
+    function addBlankTargetForLinks () {
+        
+        $('a[href^="http"]').each(function(){
+                                  
+                                  $(this).attr('target', '_blank');
+                                  
+                                  });
+                                  
+    }
+
+$(document).bind('DOMNodeInserted', function(event) {
+                 
+                 addBlankTargetForLinks();
+                 
+                 });
+                 
+    </script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42752334-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Ryan's Zone</a></h1>
+  
+    <h2>In Android & iOS</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ryantang.me" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories/index.html">Categories</a></li>
+  <li><a href="http://blog.csdn.net/ryantang03" target = "_blank">CSDN Blog</a></li>
+    
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">苹果开发者账号那些事儿（二）</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-03T21:24:00+08:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><blockquote><p>这是一篇教程<br>
+这里有手把手教学<br></p></blockquote>
+
+<p>这是苹果开发者账号系列第二篇，如果你还没有看过第一篇，也许你会想看一看：</p>
+
+<ul>
+<li><a href="http://ryantang.me/blog/2013/08/28/apple-account-1/" target="_blank">苹果开发者账号那些事儿（一）</a></li>
+</ul>
+
+
+<h2>一、关于证书</h2>
+
+<p>苹果使用密文签名技术来验证App的合法性，不管是iOS应用还是Mac应用都需要相应的签名证书来作为测试或发布App用。这里主要谈谈iOS的证书，当然，Mac的证书也基本类似。</p>
+
+<p>在开发iOS应用的时候，我们需要签名证书（<code>开发证书</code>）来验证，并允许我们在真机上对App进行测试。另外，在发布App到App store的时候，我们也需要证书(<code>发布证书</code>)来做验证。那么什么是签名证书，如何获取签名证书，下面听我慢慢道来。</p>
+
+<!--More-->
+
+
+<p>首先，证书（<code>Certificate</code>）是用来证明某一件事是否成立的，好比拿到的获奖证书，是证明参加比赛并获奖的凭证。类似，在iOS开发中，用证书来证明你是否具有某些权限或者能力来做某事。代码签名验证允许我们的操作系统来判断是谁对App进行了签名，在安装了Xcode后，Xcode会在项目编译期间使用你的代码签名验证，这个验证由一个由Apple认证过的公钥-私钥对组成，私钥存储在你的钥匙串中（Mac本地，在系统实用工具中），公钥包含在证书（Certificates）中，证书在本地钥匙串和开发者账号中都有存储，这种公钥-私钥验证授权的方式在很多地方都有使用到，比如Git中的SSH协议也是通过这种方式来确认访问权限。另外，还有一个我们可以叫做媒介证书的证书来确保我们的证书（Certificates）是经过授权而发布的。如下图所示：</p>
+
+<p><img src="/images/2013/09/apple_account_2/1.png" alt="1" /></p>
+
+<p>当安装好Xcode时，媒介证书（Intermediate Certificate）就已经安装到我们的钥匙串中去了。通过在开发者账号（Developer Account）和本地（Mac）都经过验证的证书（Certificate）我们就可以利用合法的证书进行App的测试和发布了。</p>
+
+<h2>二、请求证书</h2>
+
+<p>在为App签名前，我们需要向Apple请求签名证书，前提是你已经注册了开发者计划并付费。</p>
+
+<p>1、打开Xcode并进入右上角Organizer窗口，选中顶部第一个名为Devices的Tab，如下图：</p>
+
+<p><img src="/images/2013/09/apple_account_2/2.png" alt="2" /></p>
+
+<p>2、点击菜单栏Editor并选择Refresh from Developer Portal</p>
+
+<p>3、输入开发者账号用户名和密码并点击“Log in”，如下图：</p>
+
+<p><img src="/images/2013/09/apple_account_2/3.png" alt="3" /></p>
+
+<p>4、完成后点击“Submit Request”按钮，此时Xcode会向开发者后台请求相应的证书，证书包括开发证书（Development）和发布证书（Distribution）。窗口如下图所示：</p>
+
+<p><img src="/images/2013/09/apple_account_2/4.png" alt="4" /></p>
+
+<p>5、请求完毕后，Xcode会询问是否需要导出开发者证书，选择“Export”导出。前面的介绍中我们提到过，私钥（Private key）是存储在本地的，证书（Certificate）随着公钥（Public key）存储在开发者账号后台，公钥=私钥对完成对一个开发者和一台开发Mac设备的授权，所以，当我们创建证书时就需要马上备份我们的证书，当切换Mac进行作业时，我们只需要导入我们的私钥证书即可（公钥证书在本地和开发者中心都存储有）。</p>
+
+<p><img src="/images/2013/09/apple_account_2/5.png" alt="5" /></p>
+
+<p>6、导出过程中会要求你对导出的证书设置密码，下次导入此证书时需要输入该密码，所以需要记住此处设置的密码。导出的证书扩展名为.developerprofile，当下次切换Mac进行开发时，，导入该证书即可。</p>
+
+<p><img src="/images/2013/09/apple_account_2/6.png" alt="6" /></p>
+
+<p>导入.developerprofile证书：</p>
+
+<p><img src="/images/2013/09/apple_account_2/7.png" alt="7" /></p>
+
+<h2>三、验证证书</h2>
+
+<p>1、在Xcode Organizer中左侧TEAMS选项卡中可以看到两个证书显示其中，一个是开发证书（Development），一个是发布证书（Distribution），如果开发者证书验证授权成功，则在证书上的小人头像会显示绿色小钩。</p>
+
+<p><img src="/images/2013/09/apple_account_2/8.png" alt="8" /></p>
+
+<p>2、当请求了开发者证书后，会自动在钥匙串中（系统实用工具-钥匙串访问）显示开发证书和发布证书。当选中一个证书时，顶部的说明信息包括了证书发行商和授权信息，同样如果看到绿色打钩说明证书已经安装成功。</p>
+
+<p><img src="/images/2013/09/apple_account_2/9.png" alt="9" /></p>
+
+<p>3、在开发者后台查看开发证书，登陆Developer后台以后进入Certificates选项卡，分别在Development和Distribution选项卡中查看开发证书和发布证书。此时，证书的信息应该和在Xcode中一致。</p>
+
+<p><img src="/images/2013/09/apple_account_2/10.png" alt="10" /></p>
+
+<h2>四、回顾总结</h2>
+
+<p>在上面的讨论中，我们介绍了签名证书以及如何请求及验证证书。在iOS开发中，总的来说主要包括两个证书，一个是开发证书（Development certificates）用来验证哪些设备能用来测试App，在开发测试阶段使用这个证书。另一个是发布证书（Distribution certificates），用来验证是否能向App store提交App审核和发布。如果是公司团队账号，发布证书能在具有发布权限的团队成员间共享。以下是官方对证书类型和名字的一个列表统计，比较详细的例举了证书类型、名字以及简要描述。</p>
+
+<p><img src="/images/2013/09/apple_account_2/11.png" alt="11" /></p>
+
+<blockquote><p>后记：本次关于苹果开发者账号证书相关的介绍就到此结束了，不足之处望大家指正和补充。下篇将主要介绍Provisioning Profile的二三事。欢迎继续关注。</p></blockquote>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/09/03/apple-account-2/'>http://ryantang.me/blog/2013/09/03/apple-account-2/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">唐韧_Ryan</span></span>
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-03T21:24:00+08:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <!--
+  
+   -->
+  
+  <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_tqq">腾讯微博</a>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_douban">豆瓣</a>
+	<a class="jiathis_button_hi">百度空间</a>
+	<a class="jiathis_button_ydnote">有道云笔记</a>
+	<a href="http://www.jiathis.com/share?uid=1817416" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1817416" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread"></div>
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"ryantang"};
+	(function() {
+     var ds = document.createElement('script');
+     ds.type = 'text/javascript';ds.async = true;
+     ds.src = 'http://static.duoshuo.com/embed.js';
+     ds.charset = 'UTF-8';
+     (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+     })();
+	</script>
+<!-- Duoshuo Comment END -->
+  
+</div>
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/08/28/apple-account-1/" title="Previous Post: 苹果开发者账号那些事儿（一）">&laquo; 苹果开发者账号那些事儿（一）</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/11/28/apple-account-3/" title="Next Post: 苹果开发者账号那些事儿（三）">苹果开发者账号那些事儿（三） &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Me</h1>
+  <p><a href = "http://weibo.com/renrentang"  target="_blank"><img class="left" src="/images/me.png"></a>Focus on life. Focus on work. Don't let yourself regret forever!</p>
+  <p>
+    <html xmlns:wb=“http://open.weibo.com/wb”>
+        <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+        <wb:follow-button uid="2127420750" type="red_3" width="100%" height="24" ></wb:follow-button>
+  </p>
+</section>
+<section>
+  <h1>Join Us</h1>
+  <p>[Android及iOS开发汇总] 微信公众账号</p>
+  <p><img class="center" src="/images/qrcode.png"></p>
+  <p>
+    Ryan's Zone QQ讨论群<br/>
+    [Android-1群：282552849](满)<br/>
+    [Android-2群：320277793](满)<br/>
+    [Android-3群：366026653]<br/><br/>
+    [iOS-1群：220223507](满)<br/>
+    [iOS-2群：320277961](满)<br/>
+    [iOS-3群：372023474]
+  </p>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - 唐韧_Ryan -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F4fb6e3dcf98b3708272cf85211d6709d' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+</body>
+</html>

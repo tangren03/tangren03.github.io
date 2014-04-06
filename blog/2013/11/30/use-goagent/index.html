@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>使用GoAgent翻墙 - Ryan's Zone</title>
+  <meta name="author" content="唐韧_Ryan">
+
+  
+  <meta name="description" content="天朝上国，长城伟岸
+茫茫世界，何止一墙 互联网本是个开放的世界，互联网的本质就是开放、交流和分享，无奈身在天朝，一堵伟岸的墙将我们与一些美好的事物隔离开来。有压迫的地方就总有反抗，有技术的地方就总有解决方法。虽然我们置身墙内，但还是有方法绕过这道墙去领略外面的世界，也就是我们俗称的翻墙。 &hellip;">
+  <meta name="keywords" content="GoAgent，翻墙">
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ryantang.me/blog/2013/11/30/use-goagent">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+       <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <link href="/atom.xml" rel="alternate" title="Ryan's Zone" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<!--为markdown超链接添加targe=_blank-->
+<script type="text/javascript">
+    
+    function addBlankTargetForLinks () {
+        
+        $('a[href^="http"]').each(function(){
+                                  
+                                  $(this).attr('target', '_blank');
+                                  
+                                  });
+                                  
+    }
+
+$(document).bind('DOMNodeInserted', function(event) {
+                 
+                 addBlankTargetForLinks();
+                 
+                 });
+                 
+    </script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42752334-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Ryan's Zone</a></h1>
+  
+    <h2>In Android & iOS</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ryantang.me" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories/index.html">Categories</a></li>
+  <li><a href="http://blog.csdn.net/ryantang03" target = "_blank">CSDN Blog</a></li>
+    
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">使用GoAgent翻墙</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-30T14:17:16+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><blockquote><p>天朝上国，长城伟岸<br>
+茫茫世界，何止一墙</p></blockquote>
+
+<p>互联网本是个开放的世界，互联网的本质就是开放、交流和分享，无奈身在天朝，一堵伟岸的墙将我们与一些美好的事物隔离开来。有压迫的地方就总有反抗，有技术的地方就总有解决方法。虽然我们置身墙内，但还是有方法绕过这道墙去领略外面的世界，也就是我们俗称的翻墙。现在的翻墙方法有很多，网上也有一些翻墙工具下载，但大多不稳定，稳定的就要收费。既然我们是搞技术的，那就用技术手段来翻墙吧。本次要介绍的就是使用GoAgent来实现翻墙。以下操作均在Mac OS X 10.9上完成,Windows用户操作基本类似。</p>
+
+<!--More-->
+
+
+<h2>GoAgent是什么</h2>
+
+<p>GoAgent是使用Python编写的网络软件，可以运行在Windows/Mac/Linux/Android/iTouch/iPhone/iPad/webOS/OpenWRT/Maemo上</p>
+
+<h2>使用GoAgent有什么好处</h2>
+
+<p>简单来说，使用GoAgent翻墙最大的好处就是稳定，不会像一些翻墙软件一样出现时常掉线的情况。俗话说，好不好，只有自己用了才知道！</p>
+
+<h2>如何使用GoAgent</h2>
+
+<h3>一、申请Google App Engine</h3>
+
+<p>Google App Engine是一个网络服务挂载，我们可以将自己的服务挂载在上面，首先，我们进入<a href="https://appengine.google.com/">Google App Engine</a>，如果你有gmail账户，则直接登录即可，登录成功后我们新建一个Application</p>
+
+<p><img src="/images/2013/11/goagent/1.png" alt="1" /></p>
+
+<p>新建成功后就可以看到如下信息</p>
+
+<p><img src="/images/2013/11/goagent/2.png" alt="2" /></p>
+
+<p>进入Application列表我们就可以看到刚才创建的应用了。Application一列显示的就是App ID，最后一列显示了当前应用的状态，由于这是一个新应用，所以状态为None-Deployed。到这里，Google App Engine我们就配置好了。</p>
+
+<h3>二、安装配置GoAgent</h3>
+
+<p>进入<a href="https://code.google.com/p/goagent/">GoAgent官网</a>下载GoAgent压缩包，并解压到用户根目录下，进入GoAgent/local目录，找到proxy.ini文件并用编辑器打开。</p>
+
+<p><img src="/images/2013/11/goagent/3.png" alt="1" /></p>
+
+<p>打开proxy.ini后找到appid一栏，将默认的值修改成之前注册的Google App Engine的App ID，然后保存。</p>
+
+<p><img src="/images/2013/11/goagent/4.png" alt="1" /></p>
+
+<p>接下来用命令行进入GoAgent目录下的server文件夹，然后运行python uploader.zip命令将我们的应用上传到Google App Engine。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>cd GoAgent/server
+</span><span class='line'>python uploader.zip
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>命令执行后，会要求我们输入APPID，输入我们在Google App Engine创建的App ID。</p>
+
+<p><img src="/images/2013/11/goagent/5.png" alt="1" /></p>
+
+<p>输入完AppID后回车，接着会要我们输入Emial，此处输入你的Gmail邮箱地址，接下来就是输入密码。输入密码这里需要注意，如果你的Gmail开启了<code>两步验证</code>，那么你需要到Google账户设置-安全性-两步验证里去获取临时密码，如果你没有设置两步验证，那这里的密码就输入你的Gmial邮箱密码。</p>
+
+<p><img src="/images/2013/11/goagent/6.png" alt="1" /></p>
+
+<p>点击“管理您的应用专用密码”进入下面界面</p>
+
+<p><img src="/images/2013/11/goagent/7.png" alt="1" /></p>
+
+<p>在输入框中输入描述点击生成密码就会跳转到另外的界面，同时会看到为你生成的密码，将这个密码输入到前面的密码输入中（不要带空格），最后回车，就开始上传了。上传工程后你会看到Complete update&hellip;等信息。</p>
+
+<p>接下来命令行进入/GoAgent/local目录，运行python proxy.py命令，就开启GoAgent服务了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>cd GoAgent/local
+</span><span class='line'>python proxy.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果运行上述命令后你看到有WARNING信息输出，提示权限问题，这时可以找到GoAgent/local目录下CA.cer文件，双击安装这个证书，在钥匙串中就可以看到这个证书了，双击打开，并且修改权限为总是信任，重启命令窗口再运行上述命令就可以了。</p>
+
+<p><img src="/images/2013/11/goagent/8.png" alt="1" /></p>
+
+<h3>三、设置浏览器代理插件</h3>
+
+<p>Chrome可以安装这个插件<a href="https://chrome.google.com/webstore/detail/proxy-switchysharp/dpplabbmogkhghncfbfdeeokoefdjegm">SwitchySharp</a>，然后下载并在SwitchySharp设置中导入已经配置好的文件<a href="https://code.google.com/p/wwqgtxx-GoAgent/downloads/detail?name=SwitchyOptions.bak&amp;can=2&amp;q=">SwitchyOptions.bak</a></p>
+
+<p><img src="/images/2013/11/goagent/9.png" alt="1" /></p>
+
+<p>导入成功后就可以看到配置信息了</p>
+
+<p><img src="/images/2013/11/goagent/10.png" alt="1" /></p>
+
+<p>FirFox可以安装<a href="https://addons.mozilla.org/zh-cn/firefox/addon/foxyproxy-standard/">FoxyProxy</a>插件。到这里，所有的安装和设置我们都已经完成了，接下来我们就看看如何使用GoAgent来进行翻墙。</p>
+
+<h4>四、平时使用GoAgent翻墙</h4>
+
+<p>1、打开命令行窗口，运行下列命令开启GoAgent服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>cd GoAgent/local
+</span><span class='line'>python proxy.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2、打开Chrome浏览器，将地址栏右侧的蓝色地球点开，选择代理为GoAgent</p>
+
+<p><img src="/images/2013/11/goagent/11.png" alt="1" /></p>
+
+<p>好了，输入youtube.com，尽情去享受墙外的世界吧！</p>
+
+<p><img src="/images/2013/11/goagent/12.png" alt="1" /></p>
+
+<p><img src="/images/2013/11/goagent/13.png" alt="1" /></p>
+
+<p>3、不用的时候切换代理然后关闭命令行窗口即可，需要注意的是，一个Google App Engine上得Application一天只提供1G的流量限制，但是，我们可以最多申请10个Application，如果1G不够用，你可以多申请几个，然后在之前提到的proxy.ini文件中appid一项添加App ID即可，多个之间用|分割。</p>
+
+<blockquote><p>本次关于GoAgent翻墙的介绍就到此结束了，有不足之处还望指正，如果过程中有问题可以在下面留言讨论！</p></blockquote>
+
+<p>另外这有个叫<a href="https://github.com/ohdarling/GoAgentX">GoAgentX</a>的东东，感兴趣的自己去折腾吧！</p>
+
+<p><a href="https://code.google.com/p/GoAgent/">More Tips About GoAgent</a></p>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/11/30/use-goagent/'>http://ryantang.me/blog/2013/11/30/use-goagent/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">唐韧_Ryan</span></span>
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-30T14:17:16+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tools/'>Tools</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <!--
+  
+   -->
+  
+  <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_tqq">腾讯微博</a>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_douban">豆瓣</a>
+	<a class="jiathis_button_hi">百度空间</a>
+	<a class="jiathis_button_ydnote">有道云笔记</a>
+	<a href="http://www.jiathis.com/share?uid=1817416" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1817416" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread"></div>
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"ryantang"};
+	(function() {
+     var ds = document.createElement('script');
+     ds.type = 'text/javascript';ds.async = true;
+     ds.src = 'http://static.duoshuo.com/embed.js';
+     ds.charset = 'UTF-8';
+     (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+     })();
+	</script>
+<!-- Duoshuo Comment END -->
+  
+</div>
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/11/28/apple-account-3/" title="Previous Post: 苹果开发者账号那些事儿（三）">&laquo; 苹果开发者账号那些事儿（三）</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/12/07/ios-event-dispatch-1/" title="Next Post: iOS事件机制(一)">iOS事件机制(一) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Me</h1>
+  <p><a href = "http://weibo.com/renrentang"  target="_blank"><img class="left" src="/images/me.png"></a>Focus on life. Focus on work. Don't let yourself regret forever!</p>
+  <p>
+    <html xmlns:wb=“http://open.weibo.com/wb”>
+        <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+        <wb:follow-button uid="2127420750" type="red_3" width="100%" height="24" ></wb:follow-button>
+  </p>
+</section>
+<section>
+  <h1>Join Us</h1>
+  <p>[Android及iOS开发汇总] 微信公众账号</p>
+  <p><img class="center" src="/images/qrcode.png"></p>
+  <p>
+    Ryan's Zone QQ讨论群<br/>
+    [Android-1群：282552849](满)<br/>
+    [Android-2群：320277793](满)<br/>
+    [Android-3群：366026653]<br/><br/>
+    [iOS-1群：220223507](满)<br/>
+    [iOS-2群：320277961](满)<br/>
+    [iOS-3群：372023474]
+  </p>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - 唐韧_Ryan -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F4fb6e3dcf98b3708272cf85211d6709d' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+</body>
+</html>

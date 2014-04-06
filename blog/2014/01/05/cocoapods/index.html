@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>使用CocoaPods管理依赖库 - Ryan's Zone</title>
+  <meta name="author" content="唐韧_Ryan">
+
+  
+  <meta name="description" content="工欲善其事，必先利其器 本篇内容将介绍Mac和iOS开发中必备的一个依赖库管理工具CocoaPods。 CocoaPods是什么 在iOS开发中势必会用到一些第三方依赖库，比如大家都熟悉的ASIHttpRequest、AFNetworking、JSONKit等。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ryantang.me/blog/2014/01/05/cocoapods">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+       <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <link href="/atom.xml" rel="alternate" title="Ryan's Zone" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<!--为markdown超链接添加targe=_blank-->
+<script type="text/javascript">
+    
+    function addBlankTargetForLinks () {
+        
+        $('a[href^="http"]').each(function(){
+                                  
+                                  $(this).attr('target', '_blank');
+                                  
+                                  });
+                                  
+    }
+
+$(document).bind('DOMNodeInserted', function(event) {
+                 
+                 addBlankTargetForLinks();
+                 
+                 });
+                 
+    </script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42752334-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Ryan's Zone</a></h1>
+  
+    <h2>In Android & iOS</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ryantang.me" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories/index.html">Categories</a></li>
+  <li><a href="http://blog.csdn.net/ryantang03" target = "_blank">CSDN Blog</a></li>
+    
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">使用CocoaPods管理依赖库</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-05T20:16:17+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><blockquote><p>工欲善其事，必先利其器</p></blockquote>
+
+<p><img src="/images/2014/01/cocoapods/1.png" alt="" /></p>
+
+<p>本篇内容将介绍Mac和iOS开发中必备的一个依赖库管理工具<a href="https://github.com/CocoaPods/CocoaPods">CocoaPods</a>。</p>
+
+<!--More-->
+
+
+<h2>CocoaPods是什么</h2>
+
+<p>在iOS开发中势必会用到一些第三方依赖库，比如大家都熟悉的ASIHttpRequest、AFNetworking、JSONKit等。使用这些第三方类库能极大的方便项目的开发，但是，集成这些依赖库需要我们手动去配置，例如集成ASIHttpRequest库时除了加入源码以外还需要手动去添加一些系统的framework，CFNetwork、MobileCoreServices等，如果这些第三方库发生了更新，还需要手动去更新项目。这就显得非常麻烦。有麻烦自然有解决办法，CocoaPods就是为了解决这个问题而生的。通过CocoaPods，我们可以将第三方的依赖库统一管理起来，配置和更新只需要通过简单的几行命令即可完成，大大的提高了实际开发中的工作效率，使我们的主要精力集中到更重要的事情上去。</p>
+
+<h2>安装CocoaPods</h2>
+
+<p>我的环境为Mac OS X 10.9.1，安装CocoaPods之前，先确保本地有Ruby环境，因为CocoaPods运行于Ruby之上，默认情况下，Mac是自带了Ruby环境的，可以通过命令行<code>ruby -v</code>查看当前Ruby的版本，我用的是1.9.3p448。接下来我们就可以通过如下命令安装CocoaPods了。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo gem install cocoapods</span></code></pre></td></tr></table></div></figure>
+
+
+<p>输入上述命令后可能会无响应，那是因为你身在天朝，伟大的墙拦住了你的去路，不知为什么，cocoapods.org这种无害产物也要被墙。不过没关系，我们可以通过淘宝的Ruby镜像来访问Cocoapods，在终端输入如下命令将Ruby镜像替换为淘宝的。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ gem sources --remove https://rubygems.org/
+</span><span class='line'>$ gem sources -a http://ruby.taobao.org/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成后可以通过如下命令来查看当前的Ruby镜像是否已经指向了淘宝的。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ gem sources -l</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果输出结果是如下这样，那说明这一步就成功了。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*** CURRENT SOURCES ***
+</span><span class='line'>
+</span><span class='line'>http://ruby.taobao.org/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接下来就可以重新运行安装命令来安装CocoaPods了，根据你的网络情况，几秒或十几秒后安装过程就完成了，总的来说，安装过程还是比较简单的。如果其中你遇到了什么问题，请自行Google解决，都能找到你想要的答案。</p>
+
+<h2>使用CocoaPods</h2>
+
+<p>我们通过集成JSONKit类库来演示如何使用CocoaPods来做依赖库管理。首先，建立一个xcode工程，命名为CocoaPodsTest，现在的工程结构如下图所示。</p>
+
+<p><img src="/images/2014/01/cocoapods/2.png" alt="" /></p>
+
+<p>这里我们要集成JSONKit，可以先通过如下命令来判断其是否支持CocoaPods。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ pod search JSONKit</span></code></pre></td></tr></table></div></figure>
+
+
+<p>执行后通过输出结果可以看到JSONKit是支持CocoaPods的，注意红框标记的内容，这是待会我们配置xcode时需要的信息，这条配置项就是告诉CocoaPods去下载和管理哪一个第三方库。</p>
+
+<p><img src="/images/2014/01/cocoapods/3.png" alt="" /></p>
+
+<p>检测完毕后我们来到工程CocoaPodsTest的目录下，新建一个名为Podfile的文件（这里通过命令行创建）</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim Podfile</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个Podfile文件的作用是配置依赖库信息，就是告诉CocoaPods去下载和管理哪些依赖库，文件创建好以后，打开文件并加入如下内容。（vim打开文件后按i进入插入模式，编辑完成后按esc退出编辑模式，接着输入:wq保存并退出文件）</p>
+
+<p><img src="/images/2014/01/cocoapods/4.png" alt="" /></p>
+
+<p>这时候，工程目录下就会有一个Podfile文件了，注意必须和.xcodeproj在同一个目录下。接下来就可以使用CocoaPods来安装并管理JSONKit库了，确保命令行当前路径是在CocoaPodsTest目录下，运行如下命令。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ pod install</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装完成后会提示如下信息，并且我们的工程目录下会多出一个.xcworkspace结尾的文件，命令行信息绿色部分提醒我们“从此使用CocoaPodsTest.xcworkspace来打开项目”。</p>
+
+<p><img src="/images/2014/01/cocoapods/5.png" alt="" /></p>
+
+<p>通过CocoaPodsTest.xcworkspace来打开项目，这时，我们的项目工程结构就会变成下图这样，多出一个名为Pods的依赖工程，打开Pods文件夹后，发现JSONKit已经在里面了</p>
+
+<p><img src="/images/2014/01/cocoapods/6.png" alt="" /></p>
+
+<p>这时候就可以在项目文件中引入JSONKit.h了，这时候如果你发现import的时候没有提示JSONKit的文件，可以在target-Build Settings下修改“User Header Search Paths”项，新增${SRCROOT}并选择rcursive，如下图。</p>
+
+<p><img src="/images/2014/01/cocoapods/7.png" alt="" /></p>
+
+<p>设置完成后就可以在文件中直接引用第三方库的文件并使用了。</p>
+
+<p><img src="/images/2014/01/cocoapods/8.png" alt="" /></p>
+
+<p>到此，新建工程并使用CocoaPods来管理依赖库的过程就完成了，如果是直接使用已有CocoaPods的项目，则需要首先运行一下pod update命令来更新项，然后照样通过.xcworkspace来打开工程。</p>
+
+<p>如果需要依赖多个第三方类库，只需要修改Podfile文件的配置，然后运行pod update命令即可，比如新增一个AFNetworking的依赖库，首先执行pod search AFNetworking查看一下AFNetworking的配置信息，修改Podfile文件，在后面增加AFNetworking的对应配置信息，然后运行pod update命令就完成了对AFNetworking的集成。</p>
+
+<p><img src="/images/2014/01/cocoapods/9.png" alt="" /></p>
+
+<p>添加AFNetworking库后的目录结构如下。</p>
+
+<p><img src="/images/2014/01/cocoapods/10.png" alt="" /></p>
+
+<p>如果类库有更新，查看更新配置并执行pod update即可简单完成了，从此从手动更新繁重的体力劳动中解脱出来。</p>
+
+<p>简单小结一下：</p>
+
+<ul>
+<li>安装CocoaPods</li>
+<li>新建项目并在工程根目录下新建Podfile文件，配置需要管理的第三方库</li>
+<li>运行pod install下载安装第三方库</li>
+</ul>
+
+
+<h6>更多内容请参考<a href="http://guides.cocoapods.org/">CocoaPods Guides</a></h6>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2014/01/05/cocoapods/'>http://ryantang.me/blog/2014/01/05/cocoapods/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">唐韧_Ryan</span></span>
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-05T20:16:17+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <!--
+  
+   -->
+  
+  <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_tqq">腾讯微博</a>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_douban">豆瓣</a>
+	<a class="jiathis_button_hi">百度空间</a>
+	<a class="jiathis_button_ydnote">有道云笔记</a>
+	<a href="http://www.jiathis.com/share?uid=1817416" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1817416" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread"></div>
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"ryantang"};
+	(function() {
+     var ds = document.createElement('script');
+     ds.type = 'text/javascript';ds.async = true;
+     ds.src = 'http://static.duoshuo.com/embed.js';
+     ds.charset = 'UTF-8';
+     (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+     })();
+	</script>
+<!-- Duoshuo Comment END -->
+  
+</div>
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/01/02/android-event-dispatch/" title="Previous Post: Android事件传递机制">&laquo; Android事件传递机制</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/01/24/android-optimise-layout/" title="Next Post: Android布局优化">Android布局优化 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Me</h1>
+  <p><a href = "http://weibo.com/renrentang"  target="_blank"><img class="left" src="/images/me.png"></a>Focus on life. Focus on work. Don't let yourself regret forever!</p>
+  <p>
+    <html xmlns:wb=“http://open.weibo.com/wb”>
+        <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+        <wb:follow-button uid="2127420750" type="red_3" width="100%" height="24" ></wb:follow-button>
+  </p>
+</section>
+<section>
+  <h1>Join Us</h1>
+  <p>[Android及iOS开发汇总] 微信公众账号</p>
+  <p><img class="center" src="/images/qrcode.png"></p>
+  <p>
+    Ryan's Zone QQ讨论群<br/>
+    [Android-1群：282552849](满)<br/>
+    [Android-2群：320277793](满)<br/>
+    [Android-3群：366026653]<br/><br/>
+    [iOS-1群：220223507](满)<br/>
+    [iOS-2群：320277961](满)<br/>
+    [iOS-3群：372023474]
+  </p>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - 唐韧_Ryan -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F4fb6e3dcf98b3708272cf85211d6709d' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+</body>
+</html>

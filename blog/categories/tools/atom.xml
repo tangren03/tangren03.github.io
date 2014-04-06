@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Tools | Ryan's Zone]]></title>
+  <link href="http://ryantang.me/blog/categories/tools/atom.xml" rel="self"/>
+  <link href="http://ryantang.me/"/>
+  <updated>2014-04-06T15:24:43+08:00</updated>
+  <id>http://ryantang.me/</id>
+  <author>
+    <name><![CDATA[唐韧_Ryan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用GoAgent翻墙]]></title>
+    <link href="http://ryantang.me/blog/2013/11/30/use-goagent/"/>
+    <updated>2013-11-30T14:17:16+08:00</updated>
+    <id>http://ryantang.me/blog/2013/11/30/use-goagent</id>
+    <content type="html"><![CDATA[<blockquote><p>天朝上国，长城伟岸<br>
+茫茫世界，何止一墙</p></blockquote>
+
+<p>互联网本是个开放的世界，互联网的本质就是开放、交流和分享，无奈身在天朝，一堵伟岸的墙将我们与一些美好的事物隔离开来。有压迫的地方就总有反抗，有技术的地方就总有解决方法。虽然我们置身墙内，但还是有方法绕过这道墙去领略外面的世界，也就是我们俗称的翻墙。现在的翻墙方法有很多，网上也有一些翻墙工具下载，但大多不稳定，稳定的就要收费。既然我们是搞技术的，那就用技术手段来翻墙吧。本次要介绍的就是使用GoAgent来实现翻墙。以下操作均在Mac OS X 10.9上完成,Windows用户操作基本类似。</p>
+
+<!--More-->
+
+
+<h2>GoAgent是什么</h2>
+
+<p>GoAgent是使用Python编写的网络软件，可以运行在Windows/Mac/Linux/Android/iTouch/iPhone/iPad/webOS/OpenWRT/Maemo上</p>
+
+<h2>使用GoAgent有什么好处</h2>
+
+<p>简单来说，使用GoAgent翻墙最大的好处就是稳定，不会像一些翻墙软件一样出现时常掉线的情况。俗话说，好不好，只有自己用了才知道！</p>
+
+<h2>如何使用GoAgent</h2>
+
+<h3>一、申请Google App Engine</h3>
+
+<p>Google App Engine是一个网络服务挂载，我们可以将自己的服务挂载在上面，首先，我们进入<a href="https://appengine.google.com/">Google App Engine</a>，如果你有gmail账户，则直接登录即可，登录成功后我们新建一个Application</p>
+
+<p><img src="/images/2013/11/goagent/1.png" alt="1" /></p>
+
+<p>新建成功后就可以看到如下信息</p>
+
+<p><img src="/images/2013/11/goagent/2.png" alt="2" /></p>
+
+<p>进入Application列表我们就可以看到刚才创建的应用了。Application一列显示的就是App ID，最后一列显示了当前应用的状态，由于这是一个新应用，所以状态为None-Deployed。到这里，Google App Engine我们就配置好了。</p>
+
+<h3>二、安装配置GoAgent</h3>
+
+<p>进入<a href="https://code.google.com/p/goagent/">GoAgent官网</a>下载GoAgent压缩包，并解压到用户根目录下，进入GoAgent/local目录，找到proxy.ini文件并用编辑器打开。</p>
+
+<p><img src="/images/2013/11/goagent/3.png" alt="1" /></p>
+
+<p>打开proxy.ini后找到appid一栏，将默认的值修改成之前注册的Google App Engine的App ID，然后保存。</p>
+
+<p><img src="/images/2013/11/goagent/4.png" alt="1" /></p>
+
+<p>接下来用命令行进入GoAgent目录下的server文件夹，然后运行python uploader.zip命令将我们的应用上传到Google App Engine。</p>
+
+<p><code>xml
+cd GoAgent/server
+python uploader.zip
+</code>
+命令执行后，会要求我们输入APPID，输入我们在Google App Engine创建的App ID。</p>
+
+<p><img src="/images/2013/11/goagent/5.png" alt="1" /></p>
+
+<p>输入完AppID后回车，接着会要我们输入Emial，此处输入你的Gmail邮箱地址，接下来就是输入密码。输入密码这里需要注意，如果你的Gmail开启了<code>两步验证</code>，那么你需要到Google账户设置-安全性-两步验证里去获取临时密码，如果你没有设置两步验证，那这里的密码就输入你的Gmial邮箱密码。</p>
+
+<p><img src="/images/2013/11/goagent/6.png" alt="1" /></p>
+
+<p>点击“管理您的应用专用密码”进入下面界面</p>
+
+<p><img src="/images/2013/11/goagent/7.png" alt="1" /></p>
+
+<p>在输入框中输入描述点击生成密码就会跳转到另外的界面，同时会看到为你生成的密码，将这个密码输入到前面的密码输入中（不要带空格），最后回车，就开始上传了。上传工程后你会看到Complete update&hellip;等信息。</p>
+
+<p>接下来命令行进入/GoAgent/local目录，运行python proxy.py命令，就开启GoAgent服务了。</p>
+
+<p><code>xml
+cd GoAgent/local
+python proxy.py
+</code>
+如果运行上述命令后你看到有WARNING信息输出，提示权限问题，这时可以找到GoAgent/local目录下CA.cer文件，双击安装这个证书，在钥匙串中就可以看到这个证书了，双击打开，并且修改权限为总是信任，重启命令窗口再运行上述命令就可以了。</p>
+
+<p><img src="/images/2013/11/goagent/8.png" alt="1" /></p>
+
+<h3>三、设置浏览器代理插件</h3>
+
+<p>Chrome可以安装这个插件<a href="https://chrome.google.com/webstore/detail/proxy-switchysharp/dpplabbmogkhghncfbfdeeokoefdjegm">SwitchySharp</a>，然后下载并在SwitchySharp设置中导入已经配置好的文件<a href="https://code.google.com/p/wwqgtxx-GoAgent/downloads/detail?name=SwitchyOptions.bak&amp;can=2&amp;q=">SwitchyOptions.bak</a></p>
+
+<p><img src="/images/2013/11/goagent/9.png" alt="1" /></p>
+
+<p>导入成功后就可以看到配置信息了</p>
+
+<p><img src="/images/2013/11/goagent/10.png" alt="1" /></p>
+
+<p>FirFox可以安装<a href="https://addons.mozilla.org/zh-cn/firefox/addon/foxyproxy-standard/">FoxyProxy</a>插件。到这里，所有的安装和设置我们都已经完成了，接下来我们就看看如何使用GoAgent来进行翻墙。</p>
+
+<h4>四、平时使用GoAgent翻墙</h4>
+
+<p>1、打开命令行窗口，运行下列命令开启GoAgent服务</p>
+
+<p><code>xml
+cd GoAgent/local
+python proxy.py
+</code>
+2、打开Chrome浏览器，将地址栏右侧的蓝色地球点开，选择代理为GoAgent</p>
+
+<p><img src="/images/2013/11/goagent/11.png" alt="1" /></p>
+
+<p>好了，输入youtube.com，尽情去享受墙外的世界吧！</p>
+
+<p><img src="/images/2013/11/goagent/12.png" alt="1" /></p>
+
+<p><img src="/images/2013/11/goagent/13.png" alt="1" /></p>
+
+<p>3、不用的时候切换代理然后关闭命令行窗口即可，需要注意的是，一个Google App Engine上得Application一天只提供1G的流量限制，但是，我们可以最多申请10个Application，如果1G不够用，你可以多申请几个，然后在之前提到的proxy.ini文件中appid一项添加App ID即可，多个之间用|分割。</p>
+
+<blockquote><p>本次关于GoAgent翻墙的介绍就到此结束了，有不足之处还望指正，如果过程中有问题可以在下面留言讨论！</p></blockquote>
+
+<p>另外这有个叫<a href="https://github.com/ohdarling/GoAgentX">GoAgentX</a>的东东，感兴趣的自己去折腾吧！</p>
+
+<p><a href="https://code.google.com/p/GoAgent/">More Tips About GoAgent</a></p>
+]]></content>
+  </entry>
+  
+</feed>

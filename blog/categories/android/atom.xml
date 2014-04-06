@@ -1,0 +1,1150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Android | Ryan's Zone]]></title>
+  <link href="http://ryantang.me/blog/categories/android/atom.xml" rel="self"/>
+  <link href="http://ryantang.me/"/>
+  <updated>2014-04-06T15:24:43+08:00</updated>
+  <id>http://ryantang.me/</id>
+  <author>
+    <name><![CDATA[唐韧_Ryan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Android布局优化]]></title>
+    <link href="http://ryantang.me/blog/2014/01/24/android-optimise-layout/"/>
+    <updated>2014-01-24T20:42:44+08:00</updated>
+    <id>http://ryantang.me/blog/2014/01/24/android-optimise-layout</id>
+    <content type="html"><![CDATA[<h6>本文为InfoQ中文站特供稿件，首发地址为：<a href="http://www.infoq.com/cn/articles/android-optimise-layout">http://www.infoq.com/cn/articles/android-optimise-layout</a>。如需转载，请与InfoQ中文站联系。</h6>
+
+<p><img src="/images/2014/01/android_optimise_layout/0.png" alt="" /></p>
+
+<p>在Android开发中，我们常用的布局方式主要有LinearLayout、RelativeLayout、FrameLayout等，通过这些布局我们可以实现各种各样的界面。与此同时，如何正确、高效的使用这些布局方式来组织UI控件，是我们构建优秀Android App的主要前提之一。本篇内容就主要围绕Android布局优化来讨论在日常开发中我们使用常用布局需要注意的一些方面，同时介绍一款SDK自带的UI性能检测工具HierarchyViewer。</p>
+
+<!--More-->
+
+
+<h2>布局原则</h2>
+
+<p>通过一些惯用、有效的布局原则，我们可以制作出加载效率高并且复用性高的UI。简单来说，在Android UI布局过程中，需要遵守的原则包括如下几点：</p>
+
+<ul>
+<li>尽量多使用RelativeLayout，不要使用绝对布局AbsoluteLayout；</li>
+<li>将可复用的组件抽取出来并通过&lt; include />标签使用；</li>
+<li>使用&lt; ViewStub />标签来加载一些不常用的布局；</li>
+<li>使用&lt; merge />标签减少布局的嵌套层次；</li>
+</ul>
+
+
+<p>由于Android的碎片化程度很高，市面上存在的屏幕尺寸也是各式各样，使用RelativeLayout能使我们构建的布局适应性更强，构建出来的UI布局对多屏幕的适配效果越好，通过指定UI控件间的相对位置，使在不同屏幕上布局的表现能基本保持一致。当然，也不是所有情况下都得使用相对布局，根据具体情况来选择和其他布局方式的搭配来实现最优布局。</p>
+
+<h4>1、&lt; include />的使用</h4>
+
+<p>在实际开发中，我们经常会遇到一些共用的UI组件，比如带返回按钮的导航栏，如果为每一个xml文件都设置这部分布局，一是重复的工作量大，二是如果有变更，那么每一个xml文件都得修改。还好，Android为我们提供了&lt; include />标签，顾名思义，通过它，我们可以将这些共用的组件抽取出来单独放到一个xml文件中，然后使用&lt; include />标签导入共用布局，这样，前面提到的两个问题都解决了。例如上面提到的例子，新建一个xml布局文件作为顶部导航的共用布局。</p>
+
+<p>```xml common_navitationbar.xml</p>
+
+<p>&lt;RelativeLayout xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:background="@android:color/white"
+android:padding="10dip" &gt;
+
+&lt;Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:text="Back"
+    android:textColor="@android:color/black" /&gt;
+
+&lt;TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:text="Title"
+    android:textColor="@android:color/black" /&gt;
+</code></pre>
+
+<p></RelativeLayout></p>
+
+<p>```</p>
+
+<p>然后我们在需要引入导航栏的布局xml中通过&lt; include />导入这个共用布局。</p>
+
+<p>```xml main.xml
+&lt;RelativeLayout xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent" &gt;
+
+&lt;include 
+    android:layout_alignParentTop="true"
+    layout="@layout/common_navitationbar" /&gt;
+</code></pre>
+
+<p></RelativeLayout>
+```</p>
+
+<p>通过这种方式，我们既能提高UI的制作和复用效率，也能保证制作的UI布局更加规整和易维护。布局完成后我们运行一下，可以看到如下布局效果，这就是我们刚才完成的带导航栏的界面。</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/1.png" alt="" /></p>
+
+<p>接着我们进入sdk目录下的tools文件夹下，找到HierarchyViewer并运行（此时保持你的模拟器或真机正在运行需要进行分析的App），双击我们正在显示的这个App所代表的进程。</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/3.png" alt="" /></p>
+
+<p>接下来便会进入hierarchyviewer的界面，我们可以在这里很清晰看到正在运行的UI的布局层次结构以及它们之间的关系。</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/4.png" alt="" /></p>
+
+<p>分析刚刚我们构建的导航栏布局，放大布局分析图可以看到，被include进来的common_navitationbar.xml根节点是一个RelativeLayout，而包含它的主界面main.xml根节点也是一个RelativeLayout，它前面还有一个FrameLayout等几个节点，FrameLayout就是Activity布局中默认的父布局节点，再往上是一个LinearLayout，这个LinearLayout就是包含Activity布局和状态栏的整个屏幕显示的布局父节点，这个LinearLayout还有一个子节点就是ViewStub，关于这个节点我们在后面会详细介绍。</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/2.png" alt="" /></p>
+
+<h4>2、&lt; merge />的使用</h4>
+
+<p><merge>标签的作用是合并UI布局，使用该标签能降低UI布局的嵌套层次。该标签的主要使用场景主要包括两个，第一是当xml文件的根布局是FrameLayout时，可以用merge作为根节点。理由是因为Activity的内容布局中，默认就用了一个FrameLayout作为xml布局根节点的父节点，这一点可以从上图中看到，main.xml的根节点是一个RelativeLayout，其父节点就是一个FrameLayout，如果我们在main.xml里面使用FrameLayout作为根节点的话，这时就可以使用merge来合并成一个FrameLayout，这样就降低了布局嵌套层次。</p>
+
+<p>我们修改一下main.xml的内容，将根节点修改为merge标签。</p>
+
+<p>```xml main.xml</p>
+
+<p>&lt;merge xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:background="@android:color/darker_gray"
+android:layout_height="match_parent" &gt;
+
+&lt;include layout="@layout/common_navitationbar" /&gt;
+</code></pre>
+
+<p></merge></p>
+
+<p>```</p>
+
+<p>重新运行并打开HierarchyViewer查看此时的布局层次结构，发现之前多出来的一个RelativeLayout就没有了，直接将common_navigationbar.xml里面的内容合并到了main.xml里面。</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/5.png" alt="" /></p>
+
+<p>使用&lt; merge />的第二种情况是当用include标签导入一个共用布局时，如果父布局和子布局根节点为同一类型，可以使用merge将子节点布局的内容合并包含到父布局中，这样就可以减少一级嵌套层次。首先我们看看不使用merge的情况。我们新建一个布局文件common_navi_right.xml用来构建一个在导航栏右边的按钮布局。</p>
+
+<p>```xml common_navi_right.xml
+&lt;RelativeLayout xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content" &gt;
+
+&lt;Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:text="Ok"
+    android:textColor="@android:color/black" /&gt;
+</code></pre>
+
+<p></RelativeLayout>
+```</p>
+
+<p>然后修改common_navitationbar.xml的内容，添加一个include，将右侧按钮的布局导入：</p>
+
+<p>```xml common_navitationbar.xml</p>
+
+<p>&lt;RelativeLayout xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:background="@android:color/white"
+android:padding="10dip" &gt;
+
+&lt;Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:text="Back"
+    android:textColor="@android:color/black" /&gt;
+
+&lt;TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:text="Title"
+    android:textColor="@android:color/black" /&gt;
+
+&lt;include layout="@layout/common_center" /&gt;
+</code></pre>
+
+<p></RelativeLayout></p>
+
+<p>```</p>
+
+<p>运行后的效果如下图，在导航栏右侧添加了一个按钮“ok”</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/6.png" alt="" /></p>
+
+<p>然后再运行HierarchyViewer看看现在的布局结构，发现common_navi_right.xml作为一个布局子节点嵌套在了common_navitationbar.xml下面。</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/7.png" alt="" /></p>
+
+<p>这时我们再将common_navi_right.xml的根节点类型改为merge。</p>
+
+<p>```xml common_navi_right.xml
+&lt;merge xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content" &gt;
+
+&lt;Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:text="Ok"
+    android:textColor="@android:color/black" /&gt;
+</code></pre>
+
+<p></merge>
+```</p>
+
+<p>重新运行并打开HierarchyViewer查看布局结构，发现之前嵌套的一个RelativeLayout就没有了，这就是使用merge的效果，能降低布局的嵌套层次。</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/8.png" alt="" /></p>
+
+<h4>3、&lt; ViewStub />的使用</h4>
+
+<p>也许有不少同学对ViewStub还比较陌生，首先来看看ViewStub在官方文档里是怎么介绍的：</p>
+
+<p>A ViewStub is an invisible, zero-sized View that can be used to lazily inflate layout resources at runtime. When a ViewStub is made visible, or when inflate() is invoked, the layout resource is inflated. The ViewStub then replaces itself in its parent with the inflated View or Views. Therefore, the ViewStub exists in the view hierarchy until setVisibility(int) or inflate() is invoked. The inflated View is added to the ViewStub&rsquo;s parent with the ViewStub&rsquo;s layout parameters.</p>
+
+<p>大致意思是：ViewStub是一个不可见的，能在运行期间延迟加载的大小为0的View，它直接继承于View。当对一个ViewStub调用inflate()方法或设置它可见时，系统会加载在ViewStub标签中引入的我们自己定义的View，然后填充在父布局当中。也就是说，在对ViewStub调用inflate()方法或设置visible之前，它是不占用布局空间和系统资源的。它的使用场景可以是在我们需要加载并显示一些不常用的View时，例如一些网络异常的提示信息等。</p>
+
+<p>我们新建一个xml文件用来显示一个提示信息：</p>
+
+<p>```xml common_msg.xml
+&lt;RelativeLayout xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content" &gt;
+</code></pre>
+
+<p>   &lt;TextView</p>
+
+<pre><code>    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:background="@android:color/white"
+    android:padding="10dip"
+    android:text="Message"
+    android:textColor="@android:color/black" /&gt;
+</code></pre>
+
+<p></RelativeLayout>
+```</p>
+
+<p>然后在main.xml里面加入ViewStub的标签引入上面的布局：</p>
+
+<p>```xml main.xml
+&lt;merge xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:background="@android:color/darker_gray"
+android:layout_height="match_parent" &gt;
+
+&lt;include layout="@layout/common_navitationbar" /&gt;
+
+&lt;ViewStub
+    android:id="@+id/msg_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout="@layout/common_msg" /&gt;
+</code></pre>
+
+<p></merge>
+```</p>
+
+<p>修改MainActivity.java的代码，我们这里设置为点击右上角按钮的时候显示自定义的common_msg.xml的内容。</p>
+
+<p>```java MainActivity.java
+public class MainActivity extends Activity {</p>
+
+<pre><code>private View msgView;
+private boolean flag = true;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    this.findViewById(R.id.rightButton).setOnClickListener(new OnClickListener() {
+
+        @Override
+        public void onClick(View arg0) {
+            System.out.print("111");
+            if(flag){
+                showMsgView();
+            }else{
+                closeMsgView();
+            }
+            flag = !flag;
+        }
+    });
+}
+
+private void showMsgView(){
+    if(msgView != null){
+        msgView.setVisibility(View.VISIBLE);
+        return;
+    }
+    ViewStub stub = (ViewStub)findViewById(R.id.msg_layout);
+    msgView = stub.inflate();
+}
+
+private void closeMsgView(){
+    if(msgView != null){
+        msgView.setVisibility(View.GONE);
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>代码中我们通过flag来切换显示和隐藏common_msg.xml的内容，然后我们运行一下并点击右上角按钮来切换，效果如下：</p>
+
+<p><img src="/images/2014/01/android_optimise_layout/9.png" alt="" /></p>
+
+<h2>总结</h2>
+
+<p>好了，到目前为止，我们就介绍了Android中关于布局优化的一些内容以及工具HierarchyViewer的使用。将前文提及的布局原则再列一下，欢迎大家补充更多的关于Android布局优化的实用原则。</p>
+
+<ul>
+<li>尽量多使用RelativeLayout，不要使用绝对布局AbsoluteLayout；</li>
+<li>将可复用的组件抽取出来并通过&lt; include />标签使用；</li>
+<li>使用&lt; ViewStub />标签来加载一些不常用的布局；</li>
+<li>使用&lt; merge />标签减少布局的嵌套层次；</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Android事件传递机制]]></title>
+    <link href="http://ryantang.me/blog/2014/01/02/android-event-dispatch/"/>
+    <updated>2014-01-02T10:12:13+08:00</updated>
+    <id>http://ryantang.me/blog/2014/01/02/android-event-dispatch</id>
+    <content type="html"><![CDATA[<h6>本文为InfoQ中文站特供稿件，首发地址为：<a href="http://www.infoq.com/cn/articles/android-event-delivery-mechanism">http://www.infoq.com/cn/articles/android-event-delivery-mechanism</a>。如需转载，请与InfoQ中文站联系。</h6>
+
+<blockquote><p>运用的前提是掌握</br>
+掌握的本质是理解</p></blockquote>
+
+<p>本篇内容将结合Android源码来分析Android的事件传递机制。众所周知，点按、滑动、触摸构成了Android等智能设备的基本操作，几乎所有的应用都通过对触摸屏的操作来进行应用程序的使用。那么，在Android中，触摸事件是如何响应及传递的呢，通过本篇内容你将有一个初步的了解。</p>
+
+<!--More-->
+
+
+<h4>实验环境</h4>
+
+<ul>
+<li>OS X 10.9</li>
+<li>Eclipse(ADT)</li>
+<li>Android源码版本：API Level 19（Android 4.4）</li>
+</ul>
+
+
+<h2>Android事件构成</h2>
+
+<p>在Android中，事件主要包括点按、长按、拖拽、滑动等，点按又包括单击和双击，另外还包括单指操作和多指操作。所有这些都构成了Android中得事件响应。总的来说，所有的事件都由如下三个部分作为基础：</p>
+
+<ul>
+<li>按下（ACTION_DOWN）</li>
+<li>移动（ACTION_MOVE）</li>
+<li>抬起（ACTION_UP）</li>
+</ul>
+
+
+<p>所有的操作事件首先必须执行的是按下操作（ACTION_DOWN），之后所有的操作都是以按下操作作为前提，当按下操作完成后，接下来可能是一段移动（ACTION_MOVE）然后抬起（ACTION_UP），或者是按下操作执行完成后没有移动就直接抬起。这一系列的动作在Android中都可以进行控制。</p>
+
+<p>我们知道，所有的事件操作都发生在触摸屏上，而在屏幕上与我们交互的就是各种各样的视图组件（View），在Android中，所有的视图都继承于View，另外通过各种布局组件（ViewGroup）来对View进行布局，ViewGroup也继承于View。所有的UI控件例如Button、TextView都是继承于View，而所有的布局控件例如RelativeLayout、容器控件例如ListView都是继承于ViewGroup。所以，我们的事件操作主要就是发生在View和ViewGroup之间，那么View和ViewGroup中主要有哪些方法来对这些事件进行响应呢？记住如下3个方法，我们通过查看View和ViewGroup的源码可以看到：</p>
+
+<p><code>java View.java
+public boolean dispatchTouchEvent(MotionEvent event)
+public boolean onTouchEvent(MotionEvent event)
+</code></p>
+
+<p><code>java ViewGroup.java
+public boolean dispatchTouchEvent(MotionEvent event)
+public boolean onTouchEvent(MotionEvent event)
+public boolean onInterceptTouchEvent(MotionEvent ev)
+</code></p>
+
+<p>在View和ViewGroup中都存在dispatchTouchEvent和onTouchEvent方法，但是在ViewGroup中还有一个onInterceptTouchEvent方法，那这些方法都是干嘛的呢？别急，我们先看看他们的返回值。这些方法的返回值全部都是<code>boolean</code>型，为什么是boolean型呢，看看本文的标题，“事件传递”，传递的过程就是一个接一个，那到了某一个点后是否要继续往下传递呢？你发现了吗，“是否”二字就决定了这些方法应该用boolean来作为返回值。没错，这些方法都返回true或者是false。在Android中，所有的事件都是从开始经过传递到完成事件的消费，这些方法的返回值就决定了某一事件是否是继续往下传，还是被拦截了，或是被消费了。</p>
+
+<p>接下来就是这些方法的参数，都接受了一个<code>MotionEvent</code>类型的参数，MotionEvent继承于InputEvent，用于标记各种动作事件。之前提到的ACTION_DOWN、ACTION_MOVE、ACTION_UP都是MotinEvent中定义的常量。我们通过MotionEvent传进来的事件类型来判断接收的是哪一种类型的事件。到现在，这三个方法的返回值和参数你应该都明白了，接下来就解释一下这三个方法分别在什么时候处理事件。</p>
+
+<ul>
+<li><code>dispatchTouchEvent</code>方法用于事件的分发，Android中所有的事件都必须经过这个方法的分发，然后决定是自身消费当前事件还是继续往下分发给子控件处理。返回true表示不继续分发，事件没有被消费。返回false则继续往下分发，如果是ViewGroup则分发给onInterceptTouchEvent进行判断是否拦截该事件。</li>
+<li><code>onTouchEvent</code>方法用于事件的处理，返回true表示消费处理当前事件，返回false则不处理，交给子控件进行继续分发。</li>
+<li><code>onInterceptTouchEvent</code>是ViewGroup中才有的方法，View中没有，它的作用是负责事件的拦截，返回true的时候表示拦截当前事件，不继续往下分发，交给自身的onTouchEvent进行处理。返回false则不拦截，继续往下传。这是ViewGroup特有的方法，因为ViewGroup中可能还有子View，而在Android中View中是不能再包含子View的（iOS可以）。</li>
+</ul>
+
+
+<p>到目前为止，Android中事件的构成以及事件处理方法的作用你应该比较清楚了，接下来我们就通过一个Demo来实际体验实验一下。</p>
+
+<h2>Android事件处理</h2>
+
+<p>首先在Eclipse新建一个工程，并新建一个类RTButton继承Button，用来实现我们对按钮事件的跟踪。</p>
+
+<p>```java RTButton.java
+public class RTButton extends Button {</p>
+
+<pre><code>public RTButton(Context context, AttributeSet attrs) {
+    super(context, attrs);
+}
+
+@Override
+public boolean dispatchTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+        System.out.println("RTButton---dispatchTouchEvent---DOWN");
+        break;
+    case MotionEvent.ACTION_MOVE:
+        System.out.println("RTButton---dispatchTouchEvent---MOVE");
+        break;
+    case MotionEvent.ACTION_UP:
+        System.out.println("RTButton---dispatchTouchEvent---UP");
+        break;
+    default:
+        break;
+    }
+    return super.dispatchTouchEvent(event);
+}
+
+@Override
+public boolean onTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+        System.out.println("RTButton---onTouchEvent---DOWN");
+        break;
+    case MotionEvent.ACTION_MOVE:
+        System.out.println("RTButton---onTouchEvent---MOVE");
+        break;
+    case MotionEvent.ACTION_UP:
+        System.out.println("RTButton---onTouchEvent---UP");
+        break;
+    default:
+        break;
+    }
+    return super.onTouchEvent(event);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>在RTButton中我重写了dispatchTouchEvent和onTouchEvent方法，并获取了MotionEvent各个事件状态，打印输出了每一个状态下的信息。然后在activity_main.xml中直接在根布局下放入自定义的按钮RTButton。</p>
+
+<p>```xml activity_main.xml
+&lt;LinearLayout xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/myLayout"
+android:layout_width="match_parent"
+android:layout_height="match_parent" &gt;
+
+&lt;com.ryantang.eventdispatchdemo.RTButton 
+    android:id="@+id/btn"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Button"/&gt;
+</code></pre>
+
+<p></LinearLayout>
+```</p>
+
+<p>接下来在Activity中为RTButton设置onTouch和onClick的监听器来跟踪事件传递的过程，另外，Activity中也有一个dispatchTouchEvent方法和一个onTouchEvent方法，我们也重写他们并输出打印信息。</p>
+
+<p>```java MainActivity.java
+public class MainActivity extends Activity {</p>
+
+<pre><code>private RTButton button;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+    button = (RTButton)this.findViewById(R.id.btn);
+    button.setOnTouchListener(new OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                System.out.println("RTButton---onTouch---DOWN");
+                break;
+            case MotionEvent.ACTION_MOVE:
+                System.out.println("RTButton---onTouch---MOVE");
+                break;
+            case MotionEvent.ACTION_UP:
+                System.out.println("RTButton---onTouch---UP");
+                break;
+            default:
+                break;
+            }
+            return false;
+        }
+    });
+
+    button.setOnClickListener(new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            System.out.println("RTButton clicked!");
+        }
+    });
+
+}
+
+@Override
+public boolean dispatchTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+        System.out.println("Activity---dispatchTouchEvent---DOWN");
+        break;
+    case MotionEvent.ACTION_MOVE:
+        System.out.println("Activity---dispatchTouchEvent---MOVE");
+        break;
+    case MotionEvent.ACTION_UP:
+        System.out.println("Activity---dispatchTouchEvent---UP");
+        break;
+    default:
+        break;
+    }
+    return super.dispatchTouchEvent(event);
+}
+
+@Override
+public boolean onTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+        System.out.println("Activity---onTouchEvent---DOWN");
+        break;
+    case MotionEvent.ACTION_MOVE:
+        System.out.println("Activity---onTouchEvent---MOVE");
+        break;
+    case MotionEvent.ACTION_UP:
+        System.out.println("Activity---onTouchEvent---UP");
+        break;
+    default:
+        break;
+    }
+    return super.onTouchEvent(event);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>代码部分已经完成了，接下来运行工程，并点击按钮，查看日志输出信息，我们可以看到如下结果：</p>
+
+<p><img src="/images/2013/12/android_event_dispatch/2.png" alt="" /></p>
+
+<p>通过日志输出可以看到，首先执行了Activity的dispatchTouchEvent方法进行事件分发，在<code>MainActivity.java</code>代码第55行，dispatchTouchEvent方法的返回值是super.dispatchTouchEvent(event)，因此调用了父类方法，我们进入<code>Activity.java</code>的源码中看看具体实现。</p>
+
+<p>```java Activity.java</p>
+
+<pre><code>/**
+ * Called to process touch screen events.  You can override this to
+ * intercept all touch screen events before they are dispatched to the
+ * window.  Be sure to call this implementation for touch screen events
+ * that should be handled normally.
+ * 
+ * @param ev The touch screen event.
+ * 
+ * @return boolean Return true if this event was consumed.
+ */
+public boolean dispatchTouchEvent(MotionEvent ev) {
+    if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+        onUserInteraction();
+    }
+    if (getWindow().superDispatchTouchEvent(ev)) {
+        return true;
+    }
+    return onTouchEvent(ev);
+}
+</code></pre>
+
+<p>```</p>
+
+<p>从源码中可以看到，dispatchTouchEvent方法只处理了ACTION_DOWN事件，前面提到过，所有的事件都是以按下为起点的，所以，Android认为当ACTION_DOWN事件没有执行时，后面的事件都是没有意义的，所以这里首先判断ACTION_DOWN事件。如果事件成立，则调用了onUserInteraction方法，该方法可以在Activity中被重写，在事件被分发前会调用该方法。该方法的返回值是void型，不会对事件传递结果造成影响，接着会判断getWindow().superDispatchTouchEvent(ev)的执行结果，看看它的源码：</p>
+
+<p>```java Activity.java</p>
+
+<pre><code>/**
+ * Used by custom windows, such as Dialog, to pass the touch screen event
+ * further down the view hierarchy. Application developers should
+ * not need to implement or call this.
+ *
+ */
+public abstract boolean superDispatchTouchEvent(MotionEvent event);
+</code></pre>
+
+<p>```</p>
+
+<p>通过源码注释我们可以了解到这是个抽象方法，用于自定义的Window，例如自定义Dialog传递触屏事件，并且提到开发者不需要去实现或调用该方法，系统会完成，如果我们在MainActivity中将dispatchTouchEvent方法的返回值设为true，那么这里的执行结果就为true，从而不会返回执行onTouchEvent(ev)，如果这里返回false，那么最终会返回执行onTouchEvent方法，由此可知，接下来要调用的就是onTouchEvent方法了。别急，通过日志输出信息可以看到，ACTION_DOWN事件从Activity被分发到了RTButton，接着执行了onTouch和onTouchEvent方法，为什么先执行onTouch方法呢？我们到RTButton中的dispatchTouchEvent看看View中的源码是如何处理的。</p>
+
+<p>```java View.java</p>
+
+<pre><code>/**
+ * Pass the touch screen motion event down to the target view, or this
+ * view if it is the target.
+ *
+ * @param event The motion event to be dispatched.
+ * @return True if the event was handled by the view, false otherwise.
+ */
+public boolean dispatchTouchEvent(MotionEvent event) {
+    if (mInputEventConsistencyVerifier != null) {
+        mInputEventConsistencyVerifier.onTouchEvent(event, 0);
+    }
+
+    if (onFilterTouchEventForSecurity(event)) {
+        //noinspection SimplifiableIfStatement
+        ListenerInfo li = mListenerInfo;
+        if (li != null &amp;&amp; li.mOnTouchListener != null &amp;&amp; (mViewFlags &amp; ENABLED_MASK) == ENABLED
+                &amp;&amp; li.mOnTouchListener.onTouch(this, event)) {
+            return true;
+        }
+
+        if (onTouchEvent(event)) {
+            return true;
+        }
+    }
+
+    if (mInputEventConsistencyVerifier != null) {
+        mInputEventConsistencyVerifier.onUnhandledEvent(event, 0);
+    }
+    return false;
+}
+</code></pre>
+
+<p>```</p>
+
+<p>挑选关键代码进行分析，可以看代码第16行，这里有几个条件，当几个条件都满足时该方法就返回true，当条件li.mOnTouchListener不为空时，通过在源码中查找，发现mOnTouchListener实在以下方法中进行设置的。</p>
+
+<p>```java View.java</p>
+
+<pre><code>/**
+ * Register a callback to be invoked when a touch event is sent to this view.
+ * @param l the touch listener to attach to this view
+ */
+public void setOnTouchListener(OnTouchListener l) {
+    getListenerInfo().mOnTouchListener = l;
+}
+</code></pre>
+
+<p>```</p>
+
+<p>这个方法就已经很熟悉了，就是我们在<code>MainActivity.java</code>中为RTButton设置的onTouchListener，条件(mViewFlags &amp; ENABLED_MASK) == ENABLED判断的是当前View是否是ENABLE的，默认都是ENABLE状态的。接着就是li.mOnTouchListener.onTouch(this, event)条件，这里调用了onTouch方法，该方法的调用就是我们在<code>MainActivity.java</code>中为RTButton设置的监听回调，如果该方法返回true，则整个条件都满足，dispatchTouchEvent就返回true，表示该事件就不继续向下分发了，因为已经被onTouch消费了。</p>
+
+<p>如果onTouch返回的是false，则这个判断条件不成立，接着执行onTouchEvent(event)方法进行判断，如果该方法返回true，表示事件被onTouchEvent处理了，则整个dispatchTouchEvent就返回true。到这里，我们就可以回答之前提出的“为什么先执行onTouch方法”的问题了。到目前为止，ACTION_DOWN的事件经过了从Activity到RTButton的分发，然后经过onTouch和onTouchEvent的处理，最终，ACTION_DOWN事件交给了RTButton得onTouchEvent进行处理。</p>
+
+<p>当我们的手（我这里用的Genymotion然后用鼠标进行的操作，用手的话可能会执行一些ACTION_MOVE操作）从屏幕抬起时，会发生ACTION_UP事件。从之前输出的日志信心中可以看到，ACTION_UP事件同样从Activity开始到RTButton进行分发和处理，最后，由于我们注册了onClick事件，当onTouchEvent执行完毕后，就调用了onClick事件，那么onClick是在哪里被调用的呢？继续回到<code>View.java</code>的源代码中寻找。由于onTouchEvent在<code>View.java</code>中的源码比较长，这里就不贴出来了，感兴趣的可以自己去研究一下，通过源码阅读，我们在ACTION_UP的处理分支中可以看到一个<code>performClick()</code>方法，从这个方法的源码中可以看到执行了哪些操作。</p>
+
+<p>```java View.java</p>
+
+<pre><code>/**
+ * Call this view's OnClickListener, if it is defined.  Performs all normal
+ * actions associated with clicking: reporting accessibility event, playing
+ * a sound, etc.
+ *
+ * @return True there was an assigned OnClickListener that was called, false
+ *         otherwise is returned.
+ */
+public boolean performClick() {
+    sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
+
+    ListenerInfo li = mListenerInfo;
+    if (li != null &amp;&amp; li.mOnClickListener != null) {
+        playSoundEffect(SoundEffectConstants.CLICK);
+        li.mOnClickListener.onClick(this);
+        return true;
+    }
+
+    return false;
+}
+</code></pre>
+
+<p>```</p>
+
+<p>在if分支里可以看到执行了li.mOnClickListener.onClick(this);这句代码，这里就执行了我们为RTButton实现的onClick方法，所以，到目前为止，可以回答前一个“onClick是在哪里被调用的呢？”的问题了，onClick是在onTouchEvent中被执行的，并且，onClick要后于onTouch的执行。</p>
+
+<p>到此，点击按钮的事件传递就结束了，我们结合源代码窥探了其中的执行细节，如果我们修改各个事件控制方法的返回值又会发生什么情况呢，带着这个问题，进入下一节的讨论。</p>
+
+<h2>Android事件拦截</h2>
+
+<p>从上一节分析中，我们知道了在Android中存在哪些事件类型，事件的传递过程以及在源码中对应哪些处理方法。我们可以知道在Android中，事件是通过层级传递的，一次事件传递对应一个完整的层级关系，例如上节中分析的ACTION_DOWN事件从Activity传递到RTButton，ACTION_UP事件也同样。结合源码分析各个事件处理的方法，也可以明确看到事件的处理流程。</p>
+
+<p>之前提过，所有事件处理方法的返回值都是boolean类型的，现在我们来修改这个返回值，首先从Aactivity开始，根据之前的日志输出结果，首先执行的是Activity的dispatchTouchEvent方法，现在将之前的返回值super.dispatchTouchEvent(event)修改为true，然后重新编译运行并点击按钮，看到如下的日志输出结果。</p>
+
+<p><img src="/images/2013/12/android_event_dispatch/1.png" alt="" /></p>
+
+<p>可以看到，事件执行到dispatchTouchEvent方法就没有再继续往下分发了，这也验证了之前的说法，返回true时，不再继续往下分发，从之前分析过的Activity的dispatchTouchEvent源码中也可知，当返回true时，就没有去执行onTouchEvent方法了。</p>
+
+<p>接着，将上述修改还原，让事件在Activity这继续往下分发，接着就分发到了RTButton，将RTButton的dispatchTouchEvent方法的返回值修改为true，重新编译运行并查看输出日志结果。</p>
+
+<p><img src="/images/2013/12/android_event_dispatch/3.png" alt="" /></p>
+
+<p>从结果可以看到，事件在RTButton的dispatchTouchEvent方法中就没有再继续往下分发了。接着将上述修改还原，将RTButton的onTouchEvent方法返回值修改为true，让其消费事件，根据之前的分析，onClick方法是在onTouchEvent方法中被调用的，事件在这被消费后将不会调用onClick方法了，编译运行，得到如下日志输出结果。</p>
+
+<p><img src="/images/2013/12/android_event_dispatch/4.png" alt="" /></p>
+
+<p>跟分析结果一样，onClick方法并没有被执行，因为事件在RTButton的onTouchEvent方法中被消费了。下图是整个事件传递的流程图。</p>
+
+<p><img src="/images/2013/12/android_event_dispatch/7.png" alt="" /></p>
+
+<p>到目前为止，Android中的事件拦截机制就分析完了。但这里我们只讨论了单布局结构下单控件的情况，如果是嵌套布局，那情况又是怎样的呢？接下来我们就在嵌套布局的情况下对Android的事件传递机制进行进一步的探究和分析。</p>
+
+<h2>Android嵌套布局事件传递</h2>
+
+<p>首先，新建一个类RTLayout继承于LinearLayout，同样重写dispatchTouchEvent和onTouchEvent方法，另外，还需要重写onInterceptTouchEvent方法，在文章开头介绍过，这个方法只有在ViewGroup和其子类中才存在，作用是控制是否需要拦截事件。这里不要和dispatchTouchEvent弄混淆了，后者是控制对事件的分发，并且后者要先执行。</p>
+
+<p>那么，事件是先传递到View呢，还是先传递到ViewGroup的？通过下面的分析我们可以得出结论。首先，我们需要对工程代码进行一些修改。</p>
+
+<p>```java RTLayout.java
+public class RTLayout extends LinearLayout {</p>
+
+<pre><code>public RTLayout(Context context, AttributeSet attrs) {
+    super(context, attrs);
+}
+
+@Override
+public boolean dispatchTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+        System.out.println("RTLayout---dispatchTouchEvent---DOWN");
+        break;
+    case MotionEvent.ACTION_MOVE:
+        System.out.println("RTLayout---dispatchTouchEvent---MOVE");
+        break;
+    case MotionEvent.ACTION_UP:
+        System.out.println("RTLayout---dispatchTouchEvent---UP");
+        break;
+    default:
+        break;
+    }
+    return super.dispatchTouchEvent(event);
+}
+
+@Override
+public boolean onInterceptTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+        System.out.println("RTLayout---onInterceptTouchEvent---DOWN");
+        break;
+    case MotionEvent.ACTION_MOVE:
+        System.out.println("RTLayout---onInterceptTouchEvent---MOVE");
+        break;
+    case MotionEvent.ACTION_UP:
+        System.out.println("RTLayout---onInterceptTouchEvent---UP");
+        break;
+    default:
+        break;
+    }
+    return super.onInterceptTouchEvent(event);
+}
+
+@Override
+public boolean onTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+        System.out.println("RTLayout---onTouchEvent---DOWN");
+        break;
+    case MotionEvent.ACTION_MOVE:
+        System.out.println("RTLayout---onTouchEvent---MOVE");
+        break;
+    case MotionEvent.ACTION_UP:
+        System.out.println("RTLayout---onTouchEvent---UP");
+        break;
+    default:
+        break;
+    }
+    return super.onTouchEvent(event);
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>同时，在布局文件中为RTButton添加一个父布局，指明为自定义的RTLayout，修改后的布局文件如下。</p>
+
+<p>```xml activity_main.xml
+&lt;LinearLayout xmlns:android=&ldquo;<a href="http://schemas.android.com/apk/res/android">http://schemas.android.com/apk/res/android</a>&rdquo;</p>
+
+<pre><code>xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent" &gt;
+
+&lt;com.ryantang.eventdispatchdemo.RTLayout
+    android:id="@+id/myLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" &gt;
+
+    &lt;com.ryantang.eventdispatchdemo.RTButton
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" /&gt;
+&lt;/com.ryantang.eventdispatchdemo.RTLayout&gt;
+</code></pre>
+
+<p></LinearLayout>
+```</p>
+
+<p>最后，我们在Activity中也为RTLayout设置onTouch和onClick事件，在MainActivity中添加如下代码。</p>
+
+<p>```java MainActivity.java</p>
+
+<pre><code>rtLayout.setOnTouchListener(new OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                System.out.println("RTLayout---onTouch---DOWN");
+                break;
+            case MotionEvent.ACTION_MOVE:
+                System.out.println("RTLayout---onTouch---MOVE");
+                break;
+            case MotionEvent.ACTION_UP:
+                System.out.println("RTLayout---onTouch---UP");
+                break;
+            default:
+                break;
+            }
+            return false;
+        }
+    });
+
+rtLayout.setOnClickListener(new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            System.out.println("RTLayout clicked!");
+        }
+    });
+</code></pre>
+
+<p>```</p>
+
+<p>代码修改完毕后，编译运行工程，同样，点击按钮，查看日志输出结果如下：</p>
+
+<p><img src="/images/2013/12/android_event_dispatch/5.png" alt="" /></p>
+
+<p>从日志输出结果我们可以看到，嵌套了RTLayout以后，事件传递的顺序变成了Activity->RTLayout->RTButton，这也就回答了前面提出的问题，Android中事件传递是从ViewGroup传递到View的，而不是反过来传递的。</p>
+
+<p>从输出结果第三行可以看到，执行了RTLayout的onInterceptTouchEvent方法，该方法的作用就是判断是否需要拦截事件，我们到ViewGroup的源码中看看该方法的实现。</p>
+
+<p>```java ViewGroup.java
+public boolean onInterceptTouchEvent(MotionEvent ev) {</p>
+
+<pre><code>    return false;
+}
+</code></pre>
+
+<p>```</p>
+
+<p>该方法的实现很简单，只返回了一个false。那么这个方法是在哪被调用的呢，通过日志输出分析可知它是在RTLayout的dispatchTouchEvent执行后执行的，那我们就进到dispatchTouchEvent源码里面去看看。由于源码比较长，我将其中的关键部分截取出来做解释说明。</p>
+
+<p>```java ViewGroup.java
+// Check for interception.
+final boolean intercepted;</p>
+
+<pre><code>        if (actionMasked == MotionEvent.ACTION_DOWN
+                || mFirstTouchTarget != null) {
+            final boolean disallowIntercept = (mGroupFlags &amp; FLAG_DISALLOW_INTERCEPT) != 0;
+            if (!disallowIntercept) {
+                intercepted = onInterceptTouchEvent(ev);
+                ev.setAction(action); // restore action in case it was changed
+            } else {
+                intercepted = false;
+            }
+        } else {
+            // There are no touch targets and this action is not an initial down
+            // so this view group continues to intercept touches.
+            intercepted = true;
+        }
+</code></pre>
+
+<p>```</p>
+
+<p>从这部分代码中可以看到onInterceptTouchEvent调用后返回值被赋值给intercepted，该变量控制了事件是否要向其子控件分发，所以它起到拦截的作用，如果onInterceptTouchEvent返回false则不拦截，如果返回true则拦截当前事件。我们现在将RTLayout中的该方法返回值修改为true，并重新编译运行，然后点击按钮，查看输出结果如下。</p>
+
+<p><img src="/images/2013/12/android_event_dispatch/6.png" alt="" /></p>
+
+<p>可以看到，我们明明点击的按钮，但输出结果显示RTLayout点击事件被执行了，再通过输出结果分析，对比上次的输出结果，发现本次的输出结果完全没有RTButton的信息，没错，由于onInterceptTouchEvent方法我们返回了true，在这里就将事件拦截了，所以他不会继续分发给RTButton了，反而交给自身的onTouchEvent方法执行了，理所当然，最后执行的就是RTLayout的点击事件了。</p>
+
+<h2>总结</h2>
+
+<p>以上我们对Android事件传递机制进行了分析，期间结合系统源码对事件传递过程中的处理情况进行了探究。通过单布局情况和嵌套布局情况下的事件传递和处理进行了分析，现总结如下：</p>
+
+<ul>
+<li>Android中事件传递按照从上到下进行层级传递，事件处理从Activity开始到ViewGroup再到View。</li>
+<li>事件传递方法包括<code>dispatchTouchEvent</code>、<code>onTouchEvent</code>、<code>onInterceptTouchEvent</code>，其中前两个是View和ViewGroup都有的，最后一个是只有ViewGroup才有的方法。这三个方法的作用分别是负责事件分发、事件处理、事件拦截。</li>
+<li>onTouch事件要先于onClick事件执行，onTouch在事件分发方法dispatchTouchEvent中调用，而onClick在事件处理方法onTouchEvent中被调用，onTouchEvent要后于dispatchTouchEvent方法的调用。</li>
+</ul>
+
+
+<blockquote><p>后记：本文结合Android系统源码对事件传递机制进行了深入剖析，结合实例分析了事件传递和处理过程。不足之处还望指正。</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Android模拟神器——Genymotion]]></title>
+    <link href="http://ryantang.me/blog/2013/08/16/genymotion/"/>
+    <updated>2013-08-16T15:35:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/16/genymotion</id>
+    <content type="html"><![CDATA[<blockquote><p>纠结的时光总会过去，<br>
+美好和光明就在前方！</p></blockquote>
+
+<p><img src="/images/2013/08/genymotion/logo.png" alt="logo" /></p>
+
+<p>刚开始接触Android开发的同学不免都接触过Android自带的模拟器，启动慢、操作卡、没法用，基本属于摆设状态。这是大家对Android模拟器的普遍印象，时至今日，终于出现了一款神器来改变这一印象，那就是<a href = http://www.genymotion.com/ target = _blank >Genymotion</a>，Genymotion是一个基于虚拟机的Android模拟环境，包括了除电话和短信外大部分Android真机的功能，其流畅性和使用体验完全不亚于真机，是Android开发者、测试人员等非常有力的工具。它支持Window、MacOS、Linux，今天的话题就是Genymotion的特性和在Mac上的安装及使用。</p>
+
+<!--More-->
+
+
+<h2>一、基本特性</h2>
+
+<ul>
+<li>支持OpenGL加速以提供良好的3D表现</li>
+<li>能从Google Play下载和安装应用</li>
+<li>提供电量控制、GPS和加速传感器控制模拟</li>
+<li>和ADB完美结合，能像传统模拟器和真机一样通过命令行控制模拟器</li>
+<li>提供丰富的自定义属性，包括屏幕分辨率、内存大小和CPU控制等</li>
+<li>能在Eclipse上进行应用开发和调试</li>
+<li>支持多模拟器运行</li>
+</ul>
+
+
+<h2>二、安装</h2>
+
+<ul>
+<li>1.Genymotion依赖于虚拟机VirtualBox，它是Oracle公司开发的一套虚拟机运行环境，和VMware类似。所以，安装之前我们先需要安装<a href = https://www.virtualbox.org/wiki/Downloads target = _blank >VirtualBox</a>。</li>
+<li>2.安装完VirtualBox后就可以到<a href = https://cloud.genymotion.com/page/launchpad/download/ target = _blank >Genymotion下载</a>页下载安装包了（在此需要先注册Genymotion的使用账号）。下载完成后双击dmg文件并将Genymotion和Genymotion shell拖入Application文件夹中，至此，便完成了Genymotion的下载和安装。</li>
+<li>3.到Application文件夹中找到Genymotion并双击运行，可以看到如下界面，从列表中选择一个准备安装的虚拟机点击Add(这一步需要登陆之前注册的账号)，然后便会下载该模拟器需要的安装文件和配置信息：</li>
+</ul>
+
+
+<p><img src="/images/2013/08/genymotion/1.png" alt="1" /></p>
+
+<p>下载完成后点击Next：</p>
+
+<p><img src="/images/2013/08/genymotion/3.png" alt="3" /></p>
+
+<ul>
+<li>4.下载完成后就可以看到我们选择的模拟器已经存在于我们的虚拟机列表中了，运行前，先要启动一下VirtualBox然后在点击窗口中的Play图标，后续使用时直接点击Play即可启动Android模拟器了。</li>
+</ul>
+
+
+<p>运行VirtualBox：</p>
+
+<p><img src="/images/2013/08/genymotion/7.png" alt="7" /></p>
+
+<p>运行安装好的Android模拟器，点击右边的小显示器图标可以配置模拟器的显示分辨率：</p>
+
+<p><img src="/images/2013/08/genymotion/4.png" alt="4" /></p>
+
+<ul>
+<li>5.启动后会要求配置Android SDK的路径，选择并确定SDK的安装目录，然后点击OK，至此，Genymotion的下载和安装就完成了。</li>
+</ul>
+
+
+<p>配置Android SDK路径：</p>
+
+<p><img src="/images/2013/08/genymotion/5.png" alt="5" /></p>
+
+<p>Android模拟器运行效果：</p>
+
+<p><img src="/images/2013/08/genymotion/6.png" alt="6" /></p>
+
+<h2>支持</h2>
+
+<p>Genymotion支持Eclipse和IntelliJ插件，可以直接通过Eclipse进行项目开发和调试，同时，也可以通过ADB命令行对模拟器进行相应的操作。</p>
+
+<p>Eclipse连接Genymotion模拟器：</p>
+
+<p><img src="/images/2013/08/genymotion/2.png" alt="2" /></p>
+
+<p>更多功能请参阅官方<a href="https://cloud.genymotion.com/page/doc/">User Guide</a></p>
+
+<blockquote><p>后记：Genymotion的出现可以说是一场革命，改变了开发者对Android模拟器以往糟糕表现的看法。Genymotion基于VirtualBox虚拟机搭建，所以如果本机配置够高的话，用Genymotion来取代真机进行测试和开发是完全可以的（大部分项目），另外，不足的是Genymotion目前支持的模拟器类型有限，相信后期会不断的新增和优化！</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Android推送服务——百度云推送]]></title>
+    <link href="http://ryantang.me/blog/2013/08/06/baidu-push-service/"/>
+    <updated>2013-08-06T15:59:00+08:00</updated>
+    <id>http://ryantang.me/blog/2013/08/06/baidu-push-service</id>
+    <content type="html"><![CDATA[<p>本文已授权InfoQ进行转载：<a href="http://www.infoq.com/cn/articles/baidu-android-cloud-push">http://www.infoq.com/cn/articles/baidu-android-cloud-push</a></p>
+
+<blockquote><p>身在天朝，置身墙内<br>
+或是自给，或是出走</p></blockquote>
+
+<h2>一、推送服务简介</h2>
+
+<p>消息推送，顾名思义，是由一方主动发起，而另一方与发起方以某一种方式建立连接并接收消息。在Android开发中，这里的发起方我们把它叫做<code>推送服务器（Push Server）</code>，接收方叫做<code>客户端（Client）</code>。相比通过轮询来获取新消息或通知，推送无论是在对客户端的资源消耗还是设备耗电量来说都比轮询要好，所以，目前绝大多数需要及时消息推送的App都采用Push的方式来进行消息通知。</p>
+
+<p><img src="/images/2013/08/baidu_push_service/1.jpg" alt="push" /></p>
+
+<!--more-->
+
+
+<p>身在天朝，置身墙内！Android生态系统原本提供了类似于Apple iOS推送服务<code>APNS</code>的<code>GCM(Google Cloud Messaging for Android)</code>，以前叫<code>C2DM</code>,但是由于某些原因，导致这项服务在国内不是很好使，为了弥补这个不足，并且我朝各大同胞又想使用Android推送服务，所以国内各大平台陆续推出了<code>GCM</code>的替代品，今天要介绍的就是其中一家，由百度提供的云推送。另外，国内做消息推送服务的还有极光推送和个推等，他们的客户包括新浪微博、淘宝等国内一线大公司。</p>
+
+<p>推送的实现技术简单来说就是利用Socket维持Client和Server间的一个TCP长连接，通过这种方式能大大降低由轮询方式带来的Device的耗电量和数据访问流量。目前，百度云推送提供的推送服务支持的单一消息体大小是4k，如果超过4k，则建议在消息内携带服务请求URL进行二次请求。目前，百度云推送针对Android端提供通知推送，文本消息推送以及富媒体推送。</p>
+
+<h2>二、使用场景</h2>
+
+<h4>1. 单播消息推送</h4>
+
+<p>Push Server向指定的设备（Device）或是用户（User）推送消息，一个用户对应一个<code>userID</code>，一个User可能拥有多台Device，我们希望向同一个userID推送消息时，他所有绑定了userID的Device都能收到消息。百度云推送给出的解决方案是通过Client向Push Server注册，并在Client端的监听端口取得Push Server返回的  <code>channelID</code>和<code>userID</code>，<code>channelID</code>指定一个终端，在向Push Server注册的过程中，Device可以发送IMIE码或者UUID作为唯一标示，在Push Server注册后再返回给Client生成的<code>channelID</code>和<code>userID</code>。这两个ID获取到后由开发者自行维护，注册完毕后，Push Server维护一个注册设备列表，这个列表维护了<code>userID</code>和<code>channelID</code>以及与Device对应的关系，当需要向指定的设备或用户推送消息时，Push Server会首先遍历这个设备列表，通过这两个ID来做唯一性判断并找到需要推送消息的Device，然后就可以进行消息推送了。</p>
+
+<p><img src="/images/2013/08/baidu_push_service/2.jpg" alt="push" /></p>
+
+<p>实例：用户A发表问题时，记录问题id及其对应的A的userID（或channelID），用户B发表问题回答时，通过服务端API向问题id对应的userID（或channelID）指向的Device推送答案。</p>
+
+<h4>2. 分组消息推送</h4>
+
+<p>百度云推送通过对Client设置标签（Tag）的方式来进行用户分组，Tag的产生方式可以是由Client维护也可以由Server收集，Push Server针对不同的Tag进行推送过滤，最终将消息推送到指定的Client。无论是由Client主动设置的Tag还是由Server根据用户使用习惯收集的，都由Push Server进行统一管理，在基于Tag的分组消息推送实现上，Push Server首先根据指定Tag从所有Tag下遍历出的对应的已注册的Device，从而可以获得与Device对应的<code>userID</code>和<code>channelID</code>，继而可以针对指定Tag进行分组消息推送。对比单播消息推送，分组消息推送在推送周期上势必要长一些，并且在待推消息列表的维护上也需要做一些处理，哪些消息是推送成功的，哪些是失败的，这需要接收消息推送的Client在接收到消息后给Push Server一个消息回执，这样就保证了消息送达的准确性，如果消息推送失败，则分组列表里的待推消息会继续推送，直到推送消息成功。另外，在消息推送的实时性上，分组消息推送对比单播消息推送会根据分组消息队列的先后存在一个消息接收的延时，好比现在微信公众账号的推送，就是一个分组消息推送的实例，在消息接收的时效性上对比单播推送存在一定的延时性。</p>
+
+<p>另外，还有一类消息推送使用场景，就是广播消息，该类型可以理解为分组消息的一个特列，即向所有的Tag对应的Client推送消息。广播消息是对全体集合的一个消息推送，在消息队列维护和消息推送时效性上比单个或几个Tag的分组推送成本要高。</p>
+
+<p>实例：给应用提供喜好设置页面，用户勾选不同的类别，触发对应Tag的设置，这种方式是由Client主动维护Tag。或者用户阅读了某个类别的图书，触发对应Tag的设置，在服务端，给指定类别的图书设置Tag，后续会根据服务端收集的Tag给应用推送该Tag下的新书信息，这种方式就是由服务端来维护Tag分组。</p>
+
+<h2>三、百度云推送Android_SDK</h2>
+
+<p>百度提供了完整的Demo帮助开发者集成云推送服务，推送服务SDK通过.jar包和.so文件的方式可以集成到我们自己的工程中。在此之前，需要到百度开发者中心进行应用注册并获取<code>API Key</code>，这个作为使用推送服务应用的唯一标示，具体流程我就不赘述了，需要使用的话可以直接访问<code>百度开发者中心</code>进行查看。</p>
+
+<p>下面主要看看Android_SDK的整体概览和内部运行机制：</p>
+
+<p><img src="/images/2013/07/baidu_push_service/1.png" alt="structure" /></p>
+
+<p>上图是百度云推送Android_SDK的框架图，通过SDK可以绕过复杂的Push HTTP/HTTPS API直接和Push服务器进行交互，主要提供如下功能：</p>
+
+<ul>
+<li>Push服务初始化以及Client注册绑定</li>
+<li>创建或删除标签（Tag）</li>
+<li>接收Push Server的通知并提供自定义展现消息方式</li>
+<li>推送统计分析功能，包括通知的点击和删除统计以及应用使用情况统计</li>
+<li>富媒体推送</li>
+</ul>
+
+
+<p>在Android端，总共实现了三个Receiver和一个Service，其中，一个Receiver是用来处理注册绑定后接收服务端返回的channelID等信息：</p>
+
+<p><code>xml
+&lt;receiver android:name="com.baidu.android.pushservice.RegistrationReceiver"android:process=": bdservice_v1"&gt;&lt;intent-filter&gt;&lt;action android:name="com.baidu.android.pushservice.action.METHOD " /&gt;&lt;action android:name="com.baidu.android.pushservice.action.BIND_SYNC " /&gt;
+&lt;/intent-filter&gt;&lt;intent-filter&gt;&lt;action android:name="android.intent.action.PACKAGE_REMOVED"/&gt; &lt;data android:scheme="package" /&gt;&lt;/intent-filter&gt;
+&lt;/receiver&gt;
+</code></p>
+
+<p>第二个Receiver是用于接收系统消息以保证PushService正常运行：</p>
+
+<p><code>xml
+&lt;receiver android:name="com.baidu.android.pushservice.PushServiceReceiver" android:process=": bdservice_v1"&gt;&lt;intent-filter&gt;&lt;action android:name="android.intent.action.BOOT_COMPLETED" /&gt;&lt;action android:name="android.net.conn.CONNECTIVITY_CHANGE" /&gt;&lt;action android:name="com.baidu.android.pushservice.action.notification.SHOW" /&gt; &lt;action android:name="com.baidu.android.pushservice.action.media.CLICK" /&gt;&lt;/intent-filter&gt;&lt;/receiver&gt;
+</code></p>
+
+<p>第三个Receiver就是开发者自己实现的用来接收并处理推送消息：</p>
+
+<p><code>xml
+&lt;receiver android:name="your.package.PushMessageReceiver"&gt; &lt;intent-filter&gt;&lt;!-- 接收 push 消息 --&gt;&lt;action android:name="com.baidu.android.pushservice.action.MESSAGE" /&gt;&lt;!-- 接收 bind、setTags 等 method 的返回结果 --&gt;&lt;action android:name="com.baidu.android.pushservice.action.RECEIVE" /&gt;&lt;/intent-filter&gt;
+&lt;/receiver&gt;
+</code></p>
+
+<p>一个Service就是在后台运行的用于保障与Push Server维持长连接并做相关处理的后台服务：</p>
+
+<p><code>xml
+&lt;service android:name="com.baidu.android.pushservice.PushService"android:exported="true" android:process=" bdservice_v1"/&gt; &lt;!-- push service end --&gt;
+</code>
+在开发者自己需要处理的广播接收器中，可以对接收到的推送消息进行处理，Push消息通过 action为com.baidu.android.pushservice.action.MESSAGE的Intent把数据发送给客户端your.package.PushMessageReceiver，消息格式由应用自己决定，PushService只负责把服务器下发的消息以字符串格式透传给客户端。接口调用回调通过action为com.baidu.android.pushservice.action.RECEIVE的Intent 返回给your.package.PushMessageReceiver。</p>
+
+<p>```java PushMessageReceiver.java
+/<em>*
+ * Push消息处理receiver
+ * @Author Ryan
+ * @Create 2013-8-6 下午5:59:38
+ </em>/
+public class PushMessageReceiver extends BroadcastReceiver {</p>
+
+<pre><code>public static final String TAG = PushMessageReceiver.class.getSimpleName();
+
+@Override
+public void onReceive(final Context context, Intent intent) {
+
+    if (intent.getAction().equals(PushConstants.ACTION_MESSAGE)) {
+        //获取消息内容
+        String message = intent.getExtras().getString(
+                PushConstants.EXTRA_PUSH_MESSAGE_STRING);
+        //消息的用户自定义内容读取方式
+        Log.i(TAG, "onMessage: " + message);
+
+    } else if (intent.getAction().equals(PushConstants.ACTION_RECEIVE)) {
+        //处理绑定等方法的返回数据
+        //PushManager.startWork()的返回值通过PushConstants.METHOD_BIND得到
+
+        //获取方法
+        final String method = intent
+                .getStringExtra(PushConstants.EXTRA_METHOD);
+        //方法返回错误码。若绑定返回错误（非0），则应用将不能正常接收消息。
+        //绑定失败的原因有多种，如网络原因，或access token过期。
+        //请不要在出错时进行简单的startWork调用，这有可能导致死循环。
+        //可以通过限制重试次数，或者在其他时机重新调用来解决。
+        final int errorCode = intent
+                .getIntExtra(PushConstants.EXTRA_ERROR_CODE,
+                        PushConstants.ERROR_SUCCESS);
+        //返回内容
+        final String content = new String(
+                intent.getByteArrayExtra(PushConstants.EXTRA_CONTENT));
+
+        //用户在此自定义处理消息,以下代码为demo界面展示用  
+        Log.d(TAG, "onMessage: method : " + method);
+        Log.d(TAG, "onMessage: result : " + errorCode);
+        Log.d(TAG, "onMessage: content : " + content);
+
+    } 
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>通过在入口Activity的onCreate方法中进行推送服务的注册绑定后，即可在推送管理后台或是自己的应用服务器上进行消息推送的操作了。</p>
+
+<p><code>java
+PushManager.startWork(getApplicationContext(),PushConstants.LOGIN_TYPE_API_KEY, "you_api_key");
+</code></p>
+
+<p>另外，云推送提供php、java等Server端的SDK供开发者在自己的服务器上实现推送服务进行定制化管理和操作。</p>
+
+<h2>四、单服务单通道机制</h2>
+
+<p>百度云推送实现了单服务单通道的机制，如果在一台Device上安装了多款Push SDK的应用，不会为每个应用都创建PushService，而是会采用多应用共享一个PushService的模式。这样既能减少资源消耗也能降低网络流量。PushService运行于一个独立进程，没有和主进程运行于同一进程，所以主进程不需要常驻内存，当有新的Push消息时，PushService会通过Intent发送消息给主进程进行处理。通过Intent，以指定目标应用包名的方式，发送私有消息给应用。应用即不能接收不属于自己的消息，也不能截取别人的消息，同时又降低了消耗，如下为示意图：</p>
+
+<p><img src="/images/2013/07/baidu_push_service/2.png" alt="structure" /></p>
+
+<blockquote><p>后记：如今，国内提供Android推送服务的还有很多家，例如个推和极光推送等，实现的原理大同小异，开发者可以根据自身需要进行选择。身在天朝，置身墙内，用不到GCM，就创造Android Push Service for China自给，或者，出走！</p></blockquote>
+]]></content>
+  </entry>
+  
+</feed>

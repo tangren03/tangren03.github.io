@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>iOS事件机制(一) - Ryan's Zone</title>
+  <meta name="author" content="唐韧_Ryan">
+
+  
+  <meta name="description" content="运用的前提是掌握
+掌握的本质是理解 本篇内容将围绕iOS中事件及其传递机制进行学习和分析。在iOS中，事件分为三类： 触控事件（单点、多点触控以及各种手势操作）
+传感器事件（重力、加速度传感器等）
+远程控制事件（远程遥控iOS设备多媒体播放等） &hellip;">
+  <meta name="keywords" content="iOS事件,响应者链">
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+       <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <link href="/atom.xml" rel="alternate" title="Ryan's Zone" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<!--为markdown超链接添加targe=_blank-->
+<script type="text/javascript">
+    
+    function addBlankTargetForLinks () {
+        
+        $('a[href^="http"]').each(function(){
+                                  
+                                  $(this).attr('target', '_blank');
+                                  
+                                  });
+                                  
+    }
+
+$(document).bind('DOMNodeInserted', function(event) {
+                 
+                 addBlankTargetForLinks();
+                 
+                 });
+                 
+    </script>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42752334-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Ryan's Zone</a></h1>
+  
+    <h2>In Android & iOS</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ryantang.me" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories/index.html">Categories</a></li>
+  <li><a href="http://blog.csdn.net/ryantang03" target = "_blank">CSDN Blog</a></li>
+    
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">iOS事件机制(一)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-07T15:10:42+08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><blockquote><p>运用的前提是掌握</br>
+掌握的本质是理解</p></blockquote>
+
+<p><img src="/images/2013/12/ios_event_dispatch/1.png" alt="" /></p>
+
+<!--More-->
+
+
+<p>本篇内容将围绕iOS中事件及其传递机制进行学习和分析。在iOS中，事件分为三类：</p>
+
+<ul>
+<li>触控事件（单点、多点触控以及各种手势操作）</li>
+<li>传感器事件（重力、加速度传感器等）</li>
+<li>远程控制事件（远程遥控iOS设备多媒体播放等）</li>
+</ul>
+
+
+<p>这三类事件共同构成了iOS设备丰富的操作方式和使用体验，本次就首先来针对第一类事件：触控事件，进行学习和分析。</p>
+
+<h2>Gesture Recognizers</h2>
+
+<p>Gesture Recognizers是一类手势识别器对象，它可以附属在你指定的View上，并且为其设定指定的手势操作，例如是点击、滑动或者是拖拽。当触控事件 发生时，设置了Gesture Recognizers的View会先通过识别器去拦截触控事件，如果该触控事件是事先为View设定的触控监听事件，那么Gesture Recognizers将会发送动作消息给目标处理对象，目标处理对象则对这次触控事件进行处理，先看看如下流程图。</p>
+
+<p><img src="/images/2013/12/ios_event_dispatch/2.png" alt="" /></p>
+
+<p>在iOS中，View就是我们在屏幕上看到的各种UI控件，当一个触控事件发生时，Gesture Recognizers会先获取到指定的事件，然后发送动作消息(action message)给目标对象(target)，目标对象就是ViewController，在ViewController中通过事件方法完成对该事件的处理。Gesture Recognizers能设置诸如单击、滑动、拖拽等事件，通过Action-Target这种设计模式，好处是能动态为View添加各种事件监听，而不用去实现一个View的子类去完成这些功能。</p>
+
+<p>以上过程就是我们在开发中在方法中常见的设置action和设置target，例如为UIButton设置监听事件等。</p>
+
+<h3>常用手势识别类</h3>
+
+<p>在UIKit框架中，系统为我们事先定义好了一些常用的手势识别器，包括点击、双指缩放、拖拽、滑动、旋转以及长按。通过这些手势识别器我们可以构造丰富的操作方式。</p>
+
+<p><img src="/images/2013/12/ios_event_dispatch/3.png" alt="" /></p>
+
+<p>在上表中可以看到，UIKit框架中已经提供了诸如UITapGestureRecognizer在内的六种手势识别器，如果你需要实现自定义的手势识别器，也可以通过继承UIGestureRecognizer类并重写其中的方法来完成，这里我们就不详细讨论了。</p>
+
+<p>每一个Gesture Recognizer关联一个View，但是一个View可以关联多个Gesture Recognizer，因为一个View可能还能响应多种触控操作方式。当一个触控事件发生时，Gesture Recognizer接收一个动作消息要先于View本身，结果就是Gesture Recognizer作为View处理触控事件的代表，或者叫代理。当Gesture Recognizer接收到指定的事件时，它就会发送一条动作消息(action message)给ViewController并处理。</p>
+
+<h3>连续和不连续动作</h3>
+
+<p><img src="/images/2013/12/ios_event_dispatch/4.png" alt="" /></p>
+
+<p>触控动作同时分为连续动作(continuous)和不连续动作(discrete)，连续动作例如滑动和拖拽，它会持续一小段时间，而不连续动作例如单击，它瞬间就会完成，在这两类事件的处理上又稍有不同。对于不连续动作，Gesture Recognizer只会给ViewContoller发送一个单一的动作消息(action message),而对于连续动作，Gesture Recognizer会发送多条动作消息给ViewController，直到所有的事件都结束。</p>
+
+<p>为一个View添加GestureRecognizer有两种方式，一种是通过InterfaceBuilder实现，另一种就是通过代码实现，我们看看通过代码来如何实现。</p>
+
+<figure class='code'><figcaption><span>MyViewContoller.m</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">-</span> <span class="o">(</span><span class="kt">void</span><span class="o">)</span><span class="n">viewDidLoad</span> <span class="o">{</span>
+</span><span class='line'>     <span class="o">[</span><span class="kd">super</span> <span class="n">viewDidLoad</span><span class="o">];</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">// 创建并初始化手势对象</span>
+</span><span class='line'>     <span class="n">UITapGestureRecognizer</span> <span class="o">*</span><span class="n">tapRecognizer</span> <span class="o">=</span> <span class="o">[[</span><span class="n">UITapGestureRecognizer</span> <span class="n">alloc</span><span class="o">]</span>
+</span><span class='line'>          <span class="nl">initWithTarget:</span><span class="n">self</span> <span class="nl">action:</span><span class="nd">@selector</span><span class="o">(</span><span class="nl">respondToTapGesture:</span><span class="o">)];</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">// 指定操作为单击一次</span>
+</span><span class='line'>     <span class="n">tapRecognizer</span><span class="o">.</span><span class="na">numberOfTapsRequired</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">// 为当前View添加GestureRecognizer</span>
+</span><span class='line'>     <span class="o">[</span><span class="n">self</span><span class="o">.</span><span class="na">view</span> <span class="nl">addGestureRecognizer:</span><span class="n">tapRecognizer</span><span class="o">];</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c1">// ...</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过上述代码，我们实现了为当前MyViewController的View添加一个单击事件，首先构造了UITapGestureRecognizer对象，指定了target为当前ViewController本身，action就是后面自己实现的处理方法，这里就呼应了前文提到的Action-Target模式。</p>
+
+<p>在事件处理过程中，这两种方式所处的状态又各有不同，首先，所有的触控事件最开始都是处于可用状态(Possible)，对应UIKit里面的UIGestureRecognizerStatePossible类，如果是不连续动作事件，则状态只会从Possible转变为已识别状态(Recognized,UIGestureRecognizerStateRecognized)或者是失败状态(Failed,UIGestureRecognizerStateFailed)。例如一次成功的单击动作，就对应了Possible-Recognized这个过程。</p>
+
+<p><img src="/images/2013/12/ios_event_dispatch/5.png" alt="" /></p>
+
+<p>如果是连续动作事件，如果事件没有失败并且连续动作的第一个动作被成功识别(Recognized)，则从Possible状态转移到Began(UIGestureRecognizerStateBegan)状态，这里表示连续动作的开始，接着会转变为Changed(UIGestureRecognizerStateChanged)状态，在这个状态下会不断循环的处理连续动作，直到动作执行完成变转变为Recognized已识别状态，最终该动作会处于完成状态(UIGestureRecognizerStateEnded)，另外，连续动作事件的处理状态会从Changed状态转变为Canceled(UIGestureRecognizerStateCancelled)状态，原因是识别器认为当前的动作已经不匹配当初对事件的设定了。每个动作状态的变化，Gesture Recognizer都会发送消息(action message)给Target，也就是ViewController，它可以根据这些动作消息进行相应的处理。例如一次成功的滑动手势动作就包括按下、移动、抬起的过程，分别对应了Possible-Began-Changed-Recognized这个过程。</p>
+
+<h3>UITouch &amp; UIEvent</h3>
+
+<p>在屏幕上的每一次动作事件都是一次Touch，在iOS中用UITouch对象表示每一次的触控，多个Touch组成一次Event，用UIEvent来表示一次事件对象。</p>
+
+<p><img src="/images/2013/12/ios_event_dispatch/6.png" alt="" /></p>
+
+<p>在上述过程中，完成了一次双指缩放的事件动作，每一次手指状态的变化都对应事件动作处理过程中得一个阶段。通过Began-Moved-Ended这几个阶段的动作(Touch)共同构成了一次事件(Event)。在事件响应对象UIResponder中有对应的方法来分别处理这几个阶段的事件。</p>
+
+<ul>
+<li>touchesBegan:withEvent:</li>
+<li>touchesMoved:withEvent:</li>
+<li>touchesEnded:withEvent:</li>
+<li>touchesCancelled:withEvent:</li>
+</ul>
+
+
+<p>后面的参数分别对应UITouchPhaseBegan、UITouchPhaseMoved、UITouchPhaseEnded、UITouchPhaseCancelled这几个类。用来表示不同阶段的状态。</p>
+
+<h3>事件传递</h3>
+
+<p><img src="/images/2013/12/ios_event_dispatch/7.png" alt="" /></p>
+
+<p>如上图，iOS中事件传递首先从App(UIApplication)开始，接着传递到Window(UIWindow)，在接着往下传递到View之前，Window会将事件交给GestureRecognizer，如果在此期间，GestureRecognizer识别了传递过来的事件，则该事件将不会继续传递到View去，而是像我们之前说的那样交给Target(ViewController)进行处理。</p>
+
+<h2>响应者链(Responder Chain)</h2>
+
+<p>通常，一个iOS应用中，在一块屏幕上通常有很多的UI控件，也就是有很多的View，那么当一个事件发生时，如何来确定是哪个View响应了这个事件呢，接下来我们就一起来看看。</p>
+
+<h3>寻找hit-test view</h3>
+
+<p>什么是hit-test view呢？简单来说就是你触发事件所在的那个View，寻找hit-test view的过程就叫做Hit-Testing。那么，系统是如何来执行Hit-Testing呢，首先假设现在有如下这么一个UI布局，一种有ABCDE五个View。</p>
+
+<p><img src="/images/2013/12/ios_event_dispatch/8.png" alt="" /></p>
+
+<p>假设一个单击事件发生在了View D里面，系统首先会从最顶层的View A开始寻找，发现事件是在View A或者其子类里面，那么接着从B和C找，发现事件是在C或者其子类里面，那么接着到C里面找，这时发现事件是在D里面，并且D已经没有子类了，那么hit-test view就是View D啦。</p>
+
+<h3>响应者对象(Responsder Object)</h3>
+
+<p>响应者对象是能够响应并且处理事件的对象，UIResponder是所有响应者对象的父类，包括UIApplication、UIView和UIViewController都是UIResponder的子类。也就意味着所有的View和ViewController都是响应者对象。</p>
+
+<h3>第一响应者(First Responder)</h3>
+
+<p>第一响应者是第一个接收事件的View对象，我们在Xcode的Interface Builder画视图时，可以看到视图结构中就有First Responder。</p>
+
+<p><img src="/images/2013/12/ios_event_dispatch/10.png" alt="" /></p>
+
+<p>这里的First Responder就是UIApplication了。另外，我们可以控制一个View让其成为First Responder，通过实现 canBecomeFirstResponder方法并返回YES可以使当前View成为第一响应者，或者调用View的becomeFirstResponder方法也可以，例如当UITextField调用该方法时会弹出键盘进行输入，此时输入框控件就是第一响应者。</p>
+
+<h3>事件传递机制</h3>
+
+<p>如上所说，，如果hit-test view不能处理当前事件，那么事件将会沿着响应者链(Responder Chain)进行传递，知道遇到能处理该事件的响应者(Responsder Object)。通过下图，我们来看看两种不同情况下得事件传递机制。</p>
+
+<p><img src="/images/2013/12/ios_event_dispatch/9.png" alt="" /></p>
+
+<p>左边的情况，接收事件的initial view如果不能处理该事件并且她不是顶层的View，则事件会往它的父View进行传递。initial view的父View获取事件后如果仍不能处理，则继续往上传递，循环这个过程。如果顶层的View还是不能处理这个事件的话，则会将事件传递给它们的ViewController，如果ViewController也不能处理，则传递给Window(UIWindow)，此时Window不能处理的话就将事件传递给Application(UIApplication)，最后如果连Application也不能处理，则废弃该事件。</p>
+
+<p>右边图的流程唯一不同就在于，如果当前的ViewController是由层级关系的，那么当子ViewController不能处理事件时，它会将事件继续往上传递，直到传递到其Root ViewController，后面的流程就跟之前分析的一样了。</p>
+
+<p>这就是事件响应者链的传递机制，通过这些内容，我们可以更深入的了解事件在iOS中得传递机制，对我们在实际开发中更好的理解事件操作的原理有很大的帮助，也对我们实现复杂布局进行事件处理时增添了多一份的理解。</p>
+
+<h2>总结</h2>
+
+<p>通过前面的内容分析，我们已经学习并了解了如下内容：</p>
+
+<ul>
+<li>Gesture Recognizers，是用来控制手势识别的过程和方法，并且其通过Action-Target模式与ViewController的通信的方式。连续和不连续手势动作情况下GestureRecognizer的状态转变。</li>
+<li>UITouch和UIEvent对象，他们都是UIKit中来进行事件处理的对象，多个UITouch对象构成一个UIEvent对象，重写相应的方法可以控制和处理事件各个阶段的操作。</li>
+<li>系寻找hit-test view的方式、事件传递机、制响应者链</li>
+</ul>
+
+
+<blockquote><p>后记：本篇是iOS事件传递机制的上篇，下篇将继续讨论多点触控事件和手势操作的内容！</p></blockquote>
+
+<p class='post-footer'>
+        原文地址：
+        <a href='http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/'>http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/</a>
+        <br/>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"></a>版权声明：保持署名-非商用-禁止演绎 | <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">Creative Commons BY-NC-ND 3.0</a> | <img alt="知识共享许可协议" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+        </p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">唐韧_Ryan</span></span>
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-07T15:10:42+08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios/'>iOS</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <!--
+  
+   -->
+  
+  <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+	<span class="jiathis_txt">分享到：</span>
+	<a class="jiathis_button_tsina">新浪微博</a>
+	<a class="jiathis_button_tqq">腾讯微博</a>
+	<a class="jiathis_button_weixin">微信</a>
+	<a class="jiathis_button_douban">豆瓣</a>
+	<a class="jiathis_button_hi">百度空间</a>
+	<a class="jiathis_button_ydnote">有道云笔记</a>
+	<a href="http://www.jiathis.com/share?uid=1817416" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1817416" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread"></div>
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"ryantang"};
+	(function() {
+     var ds = document.createElement('script');
+     ds.type = 'text/javascript';ds.async = true;
+     ds.src = 'http://static.duoshuo.com/embed.js';
+     ds.charset = 'UTF-8';
+     (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+     })();
+	</script>
+<!-- Duoshuo Comment END -->
+  
+</div>
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/11/30/use-goagent/" title="Previous Post: 使用GoAgent翻墙">&laquo; 使用GoAgent翻墙</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/12/29/ios-event-dispatch-2/" title="Next Post: iOS事件机制(二)">iOS事件机制(二) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Me</h1>
+  <p><a href = "http://weibo.com/renrentang"  target="_blank"><img class="left" src="/images/me.png"></a>Focus on life. Focus on work. Don't let yourself regret forever!</p>
+  <p>
+    <html xmlns:wb=“http://open.weibo.com/wb”>
+        <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+        <wb:follow-button uid="2127420750" type="red_3" width="100%" height="24" ></wb:follow-button>
+  </p>
+</section>
+<section>
+  <h1>Join Us</h1>
+  <p>[Android及iOS开发汇总] 微信公众账号</p>
+  <p><img class="center" src="/images/qrcode.png"></p>
+  <p>
+    Ryan's Zone QQ讨论群<br/>
+    [Android-1群：282552849](满)<br/>
+    [Android-2群：320277793](满)<br/>
+    [Android-3群：366026653]<br/><br/>
+    [iOS-1群：220223507](满)<br/>
+    [iOS-2群：320277961](满)<br/>
+    [iOS-3群：372023474]
+  </p>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - 唐韧_Ryan -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F4fb6e3dcf98b3708272cf85211d6709d' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+</body>
+</html>
