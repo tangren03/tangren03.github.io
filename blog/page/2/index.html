@@ -9,8 +9,7 @@
   <meta name="author" content="唐韧_Ryan">
 
   
-  <meta name="description" content="运用的前提是掌握
-掌握的本质是理解 ">
+  <meta name="description" content="本篇内容接上一篇iOS事件机制(一)，本次主要介绍iOS事件中的多点触控事件和手势事件。 从上一篇的内容我们知道，在iOS中一个事件用一个UIEvent对象表示，UITouch用来表示一次对屏幕的操作动作，由多个UITouch对象构成了一个UIEvent对象。另外， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -103,6 +102,49 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/12/29/ios-event-dispatch-2/">iOS事件机制(二)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-29T10:20:43+08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本篇内容接上一篇<a href="http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/">iOS事件机制(一)</a>，本次主要介绍iOS事件中的多点触控事件和手势事件。</p>
+
+<p>从上一篇的内容我们知道，在iOS中一个事件用一个UIEvent对象表示，UITouch用来表示一次对屏幕的操作动作，由多个UITouch对象构成了一个UIEvent对象。另外，<code>UIResponder</code>是所有响应者的父类，UIView、UIViewController、UIWindow、UIApplication都直接或间接的集成了UIResponder。关于事件响应者链的传递机制在上一篇中也有阐述，如果你还不是很了解，可以先看看<a href="http://ryantang.me/blog/2013/12/07/ios-event-dispatch-1/">iOS事件机制(一)</a>。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/12/29/ios-event-dispatch-2/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -335,52 +377,6 @@ $(document).bind('DOMNodeInserted', function(event) {
   
     <footer>
       <a rel="full-article" href="/blog/2013/08/28/apple-account-1/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/08/16/genymotion/">Android模拟神器——Genymotion</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-16T15:35:00+08:00" pubdate data-updated="true">Aug 16<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><blockquote><p>纠结的时光总会过去，<br>
-美好和光明就在前方！</p></blockquote>
-
-<p><img src="/images/2013/08/genymotion/logo.png" alt="logo" /></p>
-
-<p>刚开始接触Android开发的同学不免都接触过Android自带的模拟器，启动慢、操作卡、没法用，基本属于摆设状态。这是大家对Android模拟器的普遍印象，时至今日，终于出现了一款神器来改变这一印象，那就是<a href = http://www.genymotion.com/ target = _blank >Genymotion</a>，Genymotion是一个基于虚拟机的Android模拟环境，包括了除电话和短信外大部分Android真机的功能，其流畅性和使用体验完全不亚于真机，是Android开发者、测试人员等非常有力的工具。它支持Window、MacOS、Linux，今天的话题就是Genymotion的特性和在Mac上的安装及使用。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/08/16/genymotion/">Read on &rarr;</a>
     </footer>
   
 
