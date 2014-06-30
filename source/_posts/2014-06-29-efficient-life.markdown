@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "程序员的高效生活"
+title: "程序员的生活"
 date: 2014-06-29 16:33:27 +0800
 comments: true
 categories: RyanSay
