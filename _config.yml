@@ -68,6 +68,6 @@ default_asides: [custom/asides/about.html, custom/asides/joinus.html]
 weibo_share: true
 
 # Google Analytics
-google_analytics_tracking_id: UA-42752334-1
+# google_analytics_tracking_id: UA-42752334-1
 
 original_url_pre: 原文地址：
