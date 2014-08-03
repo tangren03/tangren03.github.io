@@ -4,7 +4,7 @@
   <title><![CDATA[Category: iOS | Ryan's Zone]]></title>
   <link href="http://ryantang.me/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://ryantang.me/"/>
-  <updated>2014-07-18T12:21:02+08:00</updated>
+  <updated>2014-08-03T15:42:10+08:00</updated>
   <id>http://ryantang.me/</id>
   <author>
     <name><![CDATA[唐韧_Ryan]]></name>
@@ -12,6 +12,140 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[我的iOS工程结构]]></title>
+    <link href="http://ryantang.me/blog/2014/08/03/ios-prj-structure/"/>
+    <updated>2014-08-03T11:09:53+08:00</updated>
+    <id>http://ryantang.me/blog/2014/08/03/ios-prj-structure</id>
+    <content type="html"><![CDATA[<blockquote><p>好的架构不是设计出来的，而是进化而来的！</p></blockquote>
+
+<h4>写在前面</h4>
+
+<p>从2011年底开始学习iOS开发，到现在也已经快3年了，虽然中途没有一直进行iOS的开发（总是在Android和iOS间切换），但始终没有离开，而我现在的工作也一样，在iOS和Android间来回游走，正如我博客的slogan一样，“In Android&amp;iOS”。其实对我来说，两个平台没有绝对的好坏，我都喜欢、我都热爱。有人会说，同样的产品在不同平台做两次不会觉得厌烦吗？这个问题我会给出肯定的回答，不会！因为如果你真的喜欢你所做的产品，做多少次都不会觉得烦，每一次的复盘都是一次改进的过程，很多创新都是在重复的工作中产生的。在技术层面，同一套思想用不同的技术来实现，本身就是一个加强对不同平台技术巩固和理解的过程，技术本来就是来承载和表现业务的，在实现业务的过程中加强对业务的理解、实现对业务的创新，这或许也就是堆代码和写程序的区别吧！^_^</p>
+
+<!--More-->
+
+
+<h4>我的iOS工程结构</h4>
+
+<p>接下来，我就简单介绍下我做iOS项目时使用的工程结构。首先要说的是，这只是我的工程结构，并不是规范，或许它存在很多问题和不规范的地方，我只是把它分享出来，给大家提供一个参考，也希望收到大家的一些反馈来帮助我改进！</p>
+
+<h5>项目结构</h5>
+
+<p>下图是我做iOS项目的一个常用工程结构，整体模式还是按照MVC的结构，只是在每一层做了一些细分处理，下面就简单介绍下。</p>
+
+<p><img src="/images/2014/08/ios_prj_structure/1.png" alt="1" /></p>
+
+<p>iOS工程中没有像Java那样非常严格的分包机制，不过在iOS工程中我们也可以通过Group的方式在工程中实现逻辑分包，这样更有利于我们组织和管理代码，使工程结构更清晰和易于理解。在我的工程结构中，主要有如下group：</p>
+
+<ul>
+<li>Application：这个group中放的是AppDelegate和一些系统常量及系统配置文件；</li>
+<li>Base：一些基本父类，包括父ViewController和一些公用顶层自定义父类，其他模块的类一般都继承自这里的一些类；</li>
+<li>Controller：系统控制层，放置ViewController，均继承于Group Base中的BaseViewController或BaseTableViewController；</li>
+<li>View：系统中视图层，由于我比较喜欢通过代码实现界面，所以这里放的都是继承于UIView的视图，我将视图从ViewController中分离出来全部放在这里，这样能保持ViewController的精简；</li>
+<li>Model：系统中的实体，通过类来描述系统中的一些角色和业务，同时包含对应这些角色和业务的处理逻辑；</li>
+<li>Handler：系统业务逻辑层，负责处理系统复杂业务逻辑，上层调用者是ViewController；</li>
+<li>Storage：简单数据存储，主要是一些键值对存储及系统外部文件的存取，包括对NSUserDefault和plist存取的封装；</li>
+<li>Network：网络处理层(<a href="https://github.com/tangren03/RTLibrary-ios/blob/master/RTLibrary-ios/RTHttpClient.h">RTHttpClient</a>)，封装了基于AFNetworking的网络处理层，通过block实现处理结果的回调，上层调用者是Handler层；</li>
+<li>Database：数据层，封装基于FMDB的sqlite数据库存取和管理(<a href="https://github.com/tangren03/RTLibrary-ios/blob/master/RTLibrary-ios/RTDatabaseHelper.h">RTDatabaseHelper</a>)，对外提供基于Model层对象的调用接口，封装对数据的存储过程。</li>
+<li>Utils：系统工具类(<a href="https://github.com/tangren03/RTLibrary-ios/blob/master/RTLibrary-ios/AppUtils.h">AppUtils</a>)，主要放置一些系统常用工具类；</li>
+<li>Categories：类别，对现有系统类和自定义类的扩展；</li>
+<li>Resource：资源库，包括图片，plist文件等；</li>
+</ul>
+
+
+<p>以上是对我的工程结构中各个group的介绍，通过以下登录模块的系统类图，可以比较直观的看到这种工程结构的全貌。</p>
+
+<p><img src="/images/2014/08/ios_prj_structure/2.png" alt="2" /></p>
+
+<p>整体来看分为三大块，黄色区域的模型和业务逻辑层（M），蓝色区域的视图层（V），红色区域的视图控制器层（C），其中，黄色区域实现了对业务逻辑和数据处理的封装，对应他们的上层ViewController，可以实现非常简单的接口调用，将业务复杂性从ViewController中抽离出来，通过模块化的方式，保证ViewController的可读性和可维护性。</p>
+
+<h5>保持ViewController简单</h5>
+
+<p>往往大家都会抱怨iOS中ViewController写着写着就会越来越臃肿，那时因为随着业务的复杂，功能的增多，所有的逻辑都包含在ViewController中，还包括一些诸如UITableViewDatasource的代理方法，使得ViewController臃肿不堪，可维护性极低，耦合性也很高，为了使ViewController能更简单，便于维护和后续的开发，给ViewController瘦身就显得尤为必要，我的做法主要有三个方面。</p>
+
+<h6>1、View视图与ViewController分离</h6>
+
+<p>如果你用Storyboard或者xib这是当然的，我比较喜欢手写代码，所以不在ViewController里面嵌入过多的View层代码是保证ViewController简单的方法之一，那么，可以将View部分的代码单独封装到一个继承自UIView的子类当中，然后通过自定义Delegate实现View与ViewController的通信。</p>
+
+<h6>2、业务逻辑与ViewController分离</h6>
+
+<p>将网络请求处理和复杂的业务逻辑以及数据的存取工作单独放到Handler层，对ViewController只暴露简单的调用接口和通过block或delegate实现的回调，这样不仅能使我们的工程模块化，也能大大降低ViewController的复杂性，就不会出现既包括网络处理又包括数据处理的冗长的ViewController代码了。Handler通过block或delegate将处理完的结果回调给ViewController，ViewController再将结果与View视图层相关联处理，这样就真正起到了MVC的作用，整体原则就是，让ViewController只关系和负责处理与它相关的事。</p>
+
+<p>在BaseHandler.h中可以定义一些简单的业务处理规则：</p>
+
+<p>```c BaseHandler.h</p>
+
+<h1>import &lt;Foundation/Foundation.h></h1>
+
+<p>/<em>*
+ *  Handler处理完成后调用的Block
+ </em>/
+typedef void (^CompleteBlock)();</p>
+
+<p>/<em>*
+ *  Handler处理成功时调用的Block
+ </em>/
+typedef void (^SuccessBlock)(id obj);</p>
+
+<p>/<em>*
+ *  Handler处理失败时调用的Block
+ </em>/
+typedef void (^FailedBlock)(id obj);</p>
+
+<p>@interface BaseHandler : NSObject</p>
+
+<p>/<em><em>
+ *  获取请求URL
+ *
+ *  @param path
+ *  @return 拼装好的URL
+ </em>/
++ (NSString </em>)requestUrlWithPath:(NSString *)path;</p>
+
+<p>@end
+```</p>
+
+<p>在LoginHandler中就可以定义对LoginViewController暴露的调用接口，在LoginHandler中封装负责的网络处理和业务处理逻辑，对LoginViewcontroller来说，只需要调用这个方法并传入对应的UserEntity实体对象和处理成功和失败状态下的回调block就可以了。</p>
+
+<p>```c LoginHandler.h</p>
+
+<h1>import &ldquo;BaseHandler.h&rdquo;</h1>
+
+<h1>import &ldquo;UserEntity.h&rdquo;</h1>
+
+<p>@interface LoginHandler : BaseHandler</p>
+
+<p>/<em><em>
+ *  用户登录业务逻辑处理
+ *
+ *  @param user
+ *  @param success
+ *  @param failed<br/>
+ </em>/
+&ndash; (void)executeLoginTaskWithUser:(UserEntity </em>)user &ndash; success:(SuccessBlock)success failed:(FailedBlock)failed;</p>
+
+<p>@end
+```</p>
+
+<h6>3、Datasource或Delegate与ViewController分离</h6>
+
+<p>在iOS开发中经常用到的UITableView包含了一系列的代理方法，这些方法往往也是使得ViewController变长变复杂的元凶之一，那么，将这些Datasource或Delegate分离出来也是行之有效的方法之一，例如，通过自定义Datasource类（实现UITableViewDatasource协议）来将跟UITableView相关的数据源处理代理方法都集中到一个特定的类当中，ViewController只需要设置这个自定义数据源类给UITableView，然后其他的就都可以交给自定义数据源类去处理了。</p>
+
+<p>我参考了<a href="http://www.objc.io/issue-1/lighter-view-controllers.html">Lighter View Controllers</a>上的介绍改进了一个<code>BaseTableViewProtocol</code>，基本上常用的一些场景是可以使用的，不过这个还得不断优化以适应更多的场景，具体的代码我放在Github上了，感兴趣的同学可以去看看，使用方法可以参考上面链接中的介绍，基本类似，我的改进主要是支持对多section的适用。</p>
+
+<ul>
+<li><a href="https://github.com/tangren03/RTLibrary-ios/blob/master/RTLibrary-ios/BaseTableViewProtocol.h">BaseTableViewProtocol.h</a></li>
+<li><a href="https://github.com/tangren03/RTLibrary-ios/blob/master/RTLibrary-ios/BaseTableViewProtocol.m">BaseTableViewProtocol.m</a></li>
+</ul>
+
+
+<h4>写在最后</h4>
+
+<p>以上是我在开发iOS项目中的一些总结和工程实践，其中肯定还是存在很多问题的，我也在不断寻求改进的方法，也欢迎各路高手给我提出意见和建议。关于这个工程结构的一个简单事例我放在我的Github上了，感兴趣的同学可以去看看<a href="https://github.com/tangren03/RTLibrary-ios">RTLibrary-ios</a>。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用CocoaPods管理依赖库]]></title>
@@ -686,90 +820,6 @@ return self;
 <blockquote><p>本期内容就到这里了，有不足之处，欢迎指正，如果你希望经常收到一些有趣的内容，欢迎微信扫描网页右边的二维码关注我的微信公众账号“Android及iOS开发汇总”。</p></blockquote>
 
 <p>Reference From <a href="https://developer.apple.com/library/mac/documentation/IDEs/Conceptual/AppDistributionGuide/Introduction/Introduction.html">Apple Developer Center</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[苹果开发者账号那些事儿（二）]]></title>
-    <link href="http://ryantang.me/blog/2013/09/03/apple-account-2/"/>
-    <updated>2013-09-03T21:24:00+08:00</updated>
-    <id>http://ryantang.me/blog/2013/09/03/apple-account-2</id>
-    <content type="html"><![CDATA[<blockquote><p>这是一篇教程<br>
-这里有手把手教学<br></p></blockquote>
-
-<p>这是苹果开发者账号系列第二篇，如果你还没有看过第一篇，也许你会想看一看：</p>
-
-<ul>
-<li><a href="http://ryantang.me/blog/2013/08/28/apple-account-1/" target="_blank">苹果开发者账号那些事儿（一）</a></li>
-</ul>
-
-
-<h2>一、关于证书</h2>
-
-<p>苹果使用密文签名技术来验证App的合法性，不管是iOS应用还是Mac应用都需要相应的签名证书来作为测试或发布App用。这里主要谈谈iOS的证书，当然，Mac的证书也基本类似。</p>
-
-<p>在开发iOS应用的时候，我们需要签名证书（<code>开发证书</code>）来验证，并允许我们在真机上对App进行测试。另外，在发布App到App store的时候，我们也需要证书(<code>发布证书</code>)来做验证。那么什么是签名证书，如何获取签名证书，下面听我慢慢道来。</p>
-
-<!--More-->
-
-
-<p>首先，证书（<code>Certificate</code>）是用来证明某一件事是否成立的，好比拿到的获奖证书，是证明参加比赛并获奖的凭证。类似，在iOS开发中，用证书来证明你是否具有某些权限或者能力来做某事。代码签名验证允许我们的操作系统来判断是谁对App进行了签名，在安装了Xcode后，Xcode会在项目编译期间使用你的代码签名验证，这个验证由一个由Apple认证过的公钥-私钥对组成，私钥存储在你的钥匙串中（Mac本地，在系统实用工具中），公钥包含在证书（Certificates）中，证书在本地钥匙串和开发者账号中都有存储，这种公钥-私钥验证授权的方式在很多地方都有使用到，比如Git中的SSH协议也是通过这种方式来确认访问权限。另外，还有一个我们可以叫做媒介证书的证书来确保我们的证书（Certificates）是经过授权而发布的。如下图所示：</p>
-
-<p><img src="/images/2013/09/apple_account_2/1.png" alt="1" /></p>
-
-<p>当安装好Xcode时，媒介证书（Intermediate Certificate）就已经安装到我们的钥匙串中去了。通过在开发者账号（Developer Account）和本地（Mac）都经过验证的证书（Certificate）我们就可以利用合法的证书进行App的测试和发布了。</p>
-
-<h2>二、请求证书</h2>
-
-<p>在为App签名前，我们需要向Apple请求签名证书，前提是你已经注册了开发者计划并付费。</p>
-
-<p>1、打开Xcode并进入右上角Organizer窗口，选中顶部第一个名为Devices的Tab，如下图：</p>
-
-<p><img src="/images/2013/09/apple_account_2/2.png" alt="2" /></p>
-
-<p>2、点击菜单栏Editor并选择Refresh from Developer Portal</p>
-
-<p>3、输入开发者账号用户名和密码并点击“Log in”，如下图：</p>
-
-<p><img src="/images/2013/09/apple_account_2/3.png" alt="3" /></p>
-
-<p>4、完成后点击“Submit Request”按钮，此时Xcode会向开发者后台请求相应的证书，证书包括开发证书（Development）和发布证书（Distribution）。窗口如下图所示：</p>
-
-<p><img src="/images/2013/09/apple_account_2/4.png" alt="4" /></p>
-
-<p>5、请求完毕后，Xcode会询问是否需要导出开发者证书，选择“Export”导出。前面的介绍中我们提到过，私钥（Private key）是存储在本地的，证书（Certificate）随着公钥（Public key）存储在开发者账号后台，公钥=私钥对完成对一个开发者和一台开发Mac设备的授权，所以，当我们创建证书时就需要马上备份我们的证书，当切换Mac进行作业时，我们只需要导入我们的私钥证书即可（公钥证书在本地和开发者中心都存储有）。</p>
-
-<p><img src="/images/2013/09/apple_account_2/5.png" alt="5" /></p>
-
-<p>6、导出过程中会要求你对导出的证书设置密码，下次导入此证书时需要输入该密码，所以需要记住此处设置的密码。导出的证书扩展名为.developerprofile，当下次切换Mac进行开发时，，导入该证书即可。</p>
-
-<p><img src="/images/2013/09/apple_account_2/6.png" alt="6" /></p>
-
-<p>导入.developerprofile证书：</p>
-
-<p><img src="/images/2013/09/apple_account_2/7.png" alt="7" /></p>
-
-<h2>三、验证证书</h2>
-
-<p>1、在Xcode Organizer中左侧TEAMS选项卡中可以看到两个证书显示其中，一个是开发证书（Development），一个是发布证书（Distribution），如果开发者证书验证授权成功，则在证书上的小人头像会显示绿色小钩。</p>
-
-<p><img src="/images/2013/09/apple_account_2/8.png" alt="8" /></p>
-
-<p>2、当请求了开发者证书后，会自动在钥匙串中（系统实用工具-钥匙串访问）显示开发证书和发布证书。当选中一个证书时，顶部的说明信息包括了证书发行商和授权信息，同样如果看到绿色打钩说明证书已经安装成功。</p>
-
-<p><img src="/images/2013/09/apple_account_2/9.png" alt="9" /></p>
-
-<p>3、在开发者后台查看开发证书，登陆Developer后台以后进入Certificates选项卡，分别在Development和Distribution选项卡中查看开发证书和发布证书。此时，证书的信息应该和在Xcode中一致。</p>
-
-<p><img src="/images/2013/09/apple_account_2/10.png" alt="10" /></p>
-
-<h2>四、回顾总结</h2>
-
-<p>在上面的讨论中，我们介绍了签名证书以及如何请求及验证证书。在iOS开发中，总的来说主要包括两个证书，一个是开发证书（Development certificates）用来验证哪些设备能用来测试App，在开发测试阶段使用这个证书。另一个是发布证书（Distribution certificates），用来验证是否能向App store提交App审核和发布。如果是公司团队账号，发布证书能在具有发布权限的团队成员间共享。以下是官方对证书类型和名字的一个列表统计，比较详细的例举了证书类型、名字以及简要描述。</p>
-
-<p><img src="/images/2013/09/apple_account_2/11.png" alt="11" /></p>
-
-<blockquote><p>后记：本次关于苹果开发者账号证书相关的介绍就到此结束了，不足之处望大家指正和补充。下篇将主要介绍Provisioning Profile的二三事。欢迎继续关注。</p></blockquote>
 ]]></content>
   </entry>
   
