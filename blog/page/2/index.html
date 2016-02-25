@@ -9,7 +9,7 @@
   <meta name="author" content="唐韧_Ryan">
 
   
-  <meta name="description" content="好的架构不是设计出来的，而是进化而来的！ 写在前面 从2011年底开始学习iOS开发，到现在也已经快3年了，虽然中途没有一直进行iOS的开发（总是在Android和iOS间切换），但始终没有离开，而我现在的工作也一样，在iOS和Android间来回游走，正如我博客的slogan一样，“In &hellip;">
+  <meta name="description" content="本文为objc.io原创译文，发布在objc中国上。 简介 在理想情况下，你所做的所有测试都是能应对你实际代码的高级测试。例如，UI 测试将模拟实际的用户输入（Klaas 在他的文章中有讨论）等等。实但际上，这并非永远都是个好主意。为每个测试用例都访问一次数据库或者旋转一次 UI &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -90,6 +90,53 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/08/21/test-doubles/">置换测试: Mock, Stub 和其他</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-21T10:18:38+08:00" pubdate data-updated="true">Aug 21<span>st</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h6>本文为objc.io原创译文，发布在<a href="http://objccn.io/issue-15-5/">objc中国</a>上。</h6>
+
+<h2>简介</h2>
+
+<p>在理想情况下，你所做的所有测试都是能应对你实际代码的高级测试。例如，UI 测试将模拟实际的用户输入（Klaas 在<a href="http://objccn.io/issue-15-6">他的文章</a>中有讨论）等等。实但际上，这并非永远都是个好主意。为每个测试用例都访问一次数据库或者旋转一次 UI 会使你的测试跑得非常慢，这会降低你的生产力，并导致你不去经常跑那些测试。若你测试的某段代码依赖于网络连接，这会要求你的测试环境具备网络接入条件，而且这也难以模拟某些特殊的测试，比如当电话处于飞行模式情况下的时候。</p>
+
+<p>正因如此，我们可以用一些模拟代码替换你的实际代码来编写一些测试用例。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/08/21/test-doubles/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -304,52 +351,6 @@ $(document).bind('DOMNodeInserted', function(event) {
   
     <footer>
       <a rel="full-article" href="/blog/2014/01/05/cocoapods/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/01/02/android-event-dispatch/">Android事件传递机制</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-02T10:12:13+08:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h6>本文为InfoQ中文站特供稿件，首发地址为：<a href="http://www.infoq.com/cn/articles/android-event-delivery-mechanism">http://www.infoq.com/cn/articles/android-event-delivery-mechanism</a>。如需转载，请与InfoQ中文站联系。</h6>
-
-<blockquote><p>运用的前提是掌握</br>
-掌握的本质是理解</p></blockquote>
-
-<p>本篇内容将结合Android源码来分析Android的事件传递机制。众所周知，点按、滑动、触摸构成了Android等智能设备的基本操作，几乎所有的应用都通过对触摸屏的操作来进行应用程序的使用。那么，在Android中，触摸事件是如何响应及传递的呢，通过本篇内容你将有一个初步的了解。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/01/02/android-event-dispatch/">Read on &rarr;</a>
     </footer>
   
 
